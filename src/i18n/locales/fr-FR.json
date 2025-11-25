@@ -1,0 +1,74 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "done": "Terminé"
+  },
+  "auth": {
+    "title": "Timely App",
+    "subtitle": "Suivi du temps",
+    "continueWithApple": "Continuer avec Apple",
+    "appleNotAvailable": "La connexion avec Apple n'est disponible que sur iOS.",
+    "appleNotAvailableTitle": "Non disponible",
+    "loginError": "Erreur de connexion. Veuillez réessayer.",
+    "authenticationError": "Impossible d'obtenir les informations d'authentification. Veuillez réessayer.",
+    "tokenError": "Impossible de terminer la connexion. Veuillez réessayer."
+  },
+  "navigation": {
+    "home": "Accueil",
+    "history": "Historique",
+    "profile": "Profil"
+  },
+  "home": {
+    "clockIn": "Pointage - Entrée",
+    "clockOut": "Pointage - Sortie",
+    "clocking": "Enregistrement...",
+    "clockInSuccess": "Entrée enregistrée avec succès !",
+    "clockOutSuccess": "Sortie enregistrée avec succès !",
+    "clockInError": "Erreur lors de l'enregistrement de l'entrée. Veuillez réessayer.",
+    "clockOutError": "Erreur lors de l'enregistrement de la sortie. Veuillez réessayer."
+  },
+  "history": {
+    "title": "Historique des pointages",
+    "empty": "Aucun enregistrement trouvé",
+    "date": "Date",
+    "entry": "Entrée",
+    "exit": "Sortie",
+    "location": "Localisation",
+    "notes": "Notes"
+  },
+  "profile": {
+    "title": "Profil",
+    "name": "Nom",
+    "email": "E-mail",
+    "logout": "Déconnexion",
+    "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "logoutConfirmTitle": "Confirmer la déconnexion",
+    "user": "Utilisateur",
+    "noName": "Nom non disponible",
+    "noEmail": "E-mail non disponible",
+    "language": "Langue",
+    "languageSystem": "Système",
+    "languagePortuguese": "Portugais",
+    "languageEnglish": "Anglais",
+    "languageFrench": "Français",
+    "languageGerman": "Allemand"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "network": "Erreur de connexion. Vérifiez votre internet.",
+    "unauthorized": "Session expirée. Veuillez vous reconnecter.",
+    "locationPermission": "Permission de localisation refusée. Activez-la dans les paramètres de l'appareil.",
+    "locationError": "Erreur lors de l'obtention de la localisation. Veuillez réessayer."
+  }
+}
+

@@ -1,0 +1,74 @@
+{
+  "common": {
+    "loading": "Lädt...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig"
+  },
+  "auth": {
+    "title": "Timely App",
+    "subtitle": "Zeiterfassung",
+    "continueWithApple": "Mit Apple fortfahren",
+    "appleNotAvailable": "Die Anmeldung mit Apple ist nur auf iOS verfügbar.",
+    "appleNotAvailableTitle": "Nicht verfügbar",
+    "loginError": "Fehler beim Anmelden. Bitte versuchen Sie es erneut.",
+    "authenticationError": "Authentifizierungsinformationen konnten nicht abgerufen werden. Bitte versuchen Sie es erneut.",
+    "tokenError": "Anmeldung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
+  },
+  "navigation": {
+    "home": "Startseite",
+    "history": "Verlauf",
+    "profile": "Profil"
+  },
+  "home": {
+    "clockIn": "Stempeln - Ein",
+    "clockOut": "Stempeln - Aus",
+    "clocking": "Wird aufgezeichnet...",
+    "clockInSuccess": "Einstempeln erfolgreich aufgezeichnet!",
+    "clockOutSuccess": "Ausstempeln erfolgreich aufgezeichnet!",
+    "clockInError": "Fehler beim Aufzeichnen des Einstempelns. Bitte versuchen Sie es erneut.",
+    "clockOutError": "Fehler beim Aufzeichnen des Ausstempelns. Bitte versuchen Sie es erneut."
+  },
+  "history": {
+    "title": "Zeiterfassungsverlauf",
+    "empty": "Keine Einträge gefunden",
+    "date": "Datum",
+    "entry": "Ein",
+    "exit": "Aus",
+    "location": "Standort",
+    "notes": "Notizen"
+  },
+  "profile": {
+    "title": "Profil",
+    "name": "Name",
+    "email": "E-Mail",
+    "logout": "Abmelden",
+    "logoutConfirm": "Möchten Sie sich wirklich abmelden?",
+    "logoutConfirmTitle": "Abmeldung bestätigen",
+    "user": "Benutzer",
+    "noName": "Name nicht verfügbar",
+    "noEmail": "E-Mail nicht verfügbar",
+    "language": "Sprache",
+    "languageSystem": "System",
+    "languagePortuguese": "Portugiesisch",
+    "languageEnglish": "Englisch",
+    "languageFrench": "Französisch",
+    "languageGerman": "Deutsch"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "network": "Verbindungsfehler. Überprüfen Sie Ihr Internet.",
+    "unauthorized": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+    "locationPermission": "Standortberechtigung verweigert. Aktivieren Sie sie in den Geräteeinstellungen.",
+    "locationError": "Fehler beim Abrufen des Standorts. Bitte versuchen Sie es erneut."
+  }
+}
+

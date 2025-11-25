@@ -1,0 +1,73 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "save": "Save",
+        "edit": "Edit",
+        "delete": "Delete",
+        "close": "Close",
+        "back": "Back",
+        "next": "Next",
+        "done": "Done"
+    },
+    "auth": {
+        "title": "Timely App",
+        "subtitle": "Time Tracking",
+        "continueWithApple": "Continue with Apple",
+        "appleNotAvailable": "Apple Sign In is only available on iOS.",
+        "appleNotAvailableTitle": "Not Available",
+        "loginError": "Error signing in. Please try again.",
+        "authenticationError": "Could not get authentication information. Please try again.",
+        "tokenError": "Could not complete login. Please try again."
+    },
+    "navigation": {
+        "home": "Home",
+        "history": "History",
+        "profile": "Profile"
+    },
+    "home": {
+        "clockIn": "Clock In",
+        "clockOut": "Clock Out",
+        "clocking": "Recording...",
+        "clockInSuccess": "Clock in recorded successfully!",
+        "clockOutSuccess": "Clock out recorded successfully!",
+        "clockInError": "Error recording clock in. Please try again.",
+        "clockOutError": "Error recording clock out. Please try again."
+    },
+    "history": {
+        "title": "Time Clock History",
+        "empty": "No records found",
+        "date": "Date",
+        "entry": "Entry",
+        "exit": "Exit",
+        "location": "Location",
+        "notes": "Notes"
+    },
+    "profile": {
+        "title": "Profile",
+        "name": "Name",
+        "email": "Email",
+        "logout": "Logout",
+        "logoutConfirm": "Are you sure you want to logout?",
+        "logoutConfirmTitle": "Confirm Logout",
+        "user": "User",
+        "noName": "Name not available",
+        "noEmail": "Email not available",
+    "language": "Language",
+    "languageSystem": "System",
+    "languagePortuguese": "Portuguese",
+    "languageEnglish": "English",
+    "languageFrench": "French",
+    "languageGerman": "German"
+    },
+    "errors": {
+        "generic": "An error occurred. Please try again.",
+        "network": "Connection error. Check your internet.",
+        "unauthorized": "Session expired. Please login again.",
+        "locationPermission": "Location permission denied. Enable it in device settings.",
+        "locationError": "Error getting location. Please try again."
+    }
+}

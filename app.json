@@ -1,0 +1,61 @@
+{
+    "expo": {
+        "name": "Timely App",
+        "slug": "timely-app",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": [
+            "**/*"
+        ],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.timelyapp",
+            "scheme": "timely",
+            "usesAppleSignIn": true,
+            "infoPlist": {
+                "NSLocationWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão.",
+                "NSLocationAlwaysAndWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão."
+            }
+        },
+        "plugins": [
+            "expo-apple-authentication"
+        ],
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "package": "com.timelyapp",
+            "permissions": [
+                "ACCESS_FINE_LOCATION",
+                "ACCESS_COARSE_LOCATION"
+            ],
+            "intentFilters": [
+                {
+                    "action": "VIEW",
+                    "autoVerify": true,
+                    "data": [
+                        {
+                            "scheme": "timely"
+                        }
+                    ],
+                    "category": [
+                        "BROWSABLE",
+                        "DEFAULT"
+                    ]
+                }
+            ]
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "scheme": "timely"
+    }
+}

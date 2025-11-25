@@ -1,0 +1,73 @@
+{
+    "common": {
+        "loading": "Carregando...",
+        "error": "Erro",
+        "success": "Sucesso",
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "save": "Salvar",
+        "edit": "Editar",
+        "delete": "Excluir",
+        "close": "Fechar",
+        "back": "Voltar",
+        "next": "Próximo",
+        "done": "Concluído"
+    },
+    "auth": {
+        "title": "Timely App",
+        "subtitle": "Registro de Horas",
+        "continueWithApple": "Continuar com Apple",
+        "appleNotAvailable": "O login com Apple está disponível apenas no iOS.",
+        "appleNotAvailableTitle": "Não disponível",
+        "loginError": "Erro ao fazer login. Tente novamente.",
+        "authenticationError": "Não foi possível obter as informações de autenticação. Tente novamente.",
+        "tokenError": "Não foi possível completar o login. Tente novamente."
+    },
+    "navigation": {
+        "home": "Início",
+        "history": "Histórico",
+        "profile": "Perfil"
+    },
+    "home": {
+        "clockIn": "Bater Ponto - Entrada",
+        "clockOut": "Bater Ponto - Saída",
+        "clocking": "Registrando...",
+        "clockInSuccess": "Entrada registrada com sucesso!",
+        "clockOutSuccess": "Saída registrada com sucesso!",
+        "clockInError": "Erro ao registrar entrada. Tente novamente.",
+        "clockOutError": "Erro ao registrar saída. Tente novamente."
+    },
+    "history": {
+        "title": "Histórico de Ponto",
+        "empty": "Nenhum registro encontrado",
+        "date": "Data",
+        "entry": "Entrada",
+        "exit": "Saída",
+        "location": "Localização",
+        "notes": "Observações"
+    },
+    "profile": {
+        "title": "Perfil",
+        "name": "Nome",
+        "email": "E-mail",
+        "logout": "Sair",
+        "logoutConfirm": "Tem certeza que deseja sair?",
+        "logoutConfirmTitle": "Confirmar saída",
+        "user": "Usuário",
+        "noName": "Nome não disponível",
+        "noEmail": "E-mail não disponível",
+    "language": "Idioma",
+    "languageSystem": "Sistema",
+    "languagePortuguese": "Português",
+    "languageEnglish": "Inglês",
+    "languageFrench": "Francês",
+    "languageGerman": "Alemão"
+    },
+    "errors": {
+        "generic": "Ocorreu um erro. Tente novamente.",
+        "network": "Erro de conexão. Verifique sua internet.",
+        "unauthorized": "Sessão expirada. Faça login novamente.",
+        "locationPermission": "Permissão de localização negada. Ative nas configurações do dispositivo.",
+        "locationError": "Erro ao obter localização. Tente novamente."
+    }
+}
