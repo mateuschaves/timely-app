@@ -32,7 +32,6 @@ import {
   EmptyState,
   EmptyStateText,
   SettingsRow,
-  SettingsRowText,
   ChevronIcon,
 } from './styles';
 
@@ -40,15 +39,16 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 
 export function ProfileScreen() {
   const { t } = useTranslation();
-  const { user, signOut } = useAuthContext();
+  const { user, signOut, fetchUserMe } = useAuthContext();
   const navigation = useNavigation<NavigationProp>();
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
 
-  // Recarrega o idioma quando a tela recebe foco
   useFocusEffect(
     React.useCallback(() => {
-      const loadLanguage = async () => {
+      const loadData = async () => {
         try {
+          await fetchUserMe();
+
           const savedLanguage = await AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE);
           if (savedLanguage === 'system' || (savedLanguage && ['pt-BR', 'en-US', 'fr-FR', 'de-DE'].includes(savedLanguage))) {
             setCurrentLanguage(savedLanguage as LanguageOption);
@@ -56,11 +56,11 @@ export function ProfileScreen() {
             setCurrentLanguage('system');
           }
         } catch (error) {
-          console.error('Erro ao carregar idioma:', error);
+          console.error('Erro ao carregar dados:', error);
         }
       };
-      loadLanguage();
-    }, [])
+      loadData();
+    }, [fetchUserMe])
   );
 
   const handleSignOut = () => {
@@ -111,17 +111,21 @@ export function ProfileScreen() {
                   <AvatarText>{getInitials(user.name)}</AvatarText>
                 ) : (
                   <AvatarIcon>
-                    <Ionicons name="person" size={48} color="#ffffff" />
+                    <Ionicons name="person" size={48} color={colors.text.inverse} />
                   </AvatarIcon>
                 )}
               </Avatar>
             </AvatarContainer>
-            <UserName>
+            <UserName numberOfLines={1} ellipsizeMode="tail">
               {user?.name || user?.email || t('profile.user')}
             </UserName>
-            {user?.email && user?.name && <UserEmail>{user.email}</UserEmail>}
+            {user?.email && user?.name && (
+              <UserEmail numberOfLines={1} ellipsizeMode="tail">
+                {user.email}
+              </UserEmail>
+            )}
             {!user?.name && user?.email && (
-              <UserEmail style={{ marginTop: 4 }}>
+              <UserEmail numberOfLines={1} ellipsizeMode="tail" style={{ marginTop: 2 }}>
                 {user.email}
               </UserEmail>
             )}
@@ -132,35 +136,24 @@ export function ProfileScreen() {
               <Section>
                 <InfoCard>
                   {user.name && (
-                    <InfoRow>
-                      <InfoLeft>
-                        <InfoLabel>{t('profile.name')}</InfoLabel>
-                      </InfoLeft>
-                      <InfoValueContainer>
-                        <InfoValue>{user.name}</InfoValue>
-                      </InfoValueContainer>
-                    </InfoRow>
+                    <>
+                      <SettingsRow
+                        onPress={() => navigation.navigate('EditName')}
+                        activeOpacity={0.7}
+                        style={{ borderBottomWidth: user.appleUserId ? 1 : 0, borderBottomColor: colors.border.light }}
+                      >
+                        <InfoLeft>
+                          <InfoLabel>{t('profile.name')}</InfoLabel>
+                        </InfoLeft>
+                        <InfoValueContainer>
+                          <InfoValue>{user.name}</InfoValue>
+                          <ChevronIcon>
+                            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                          </ChevronIcon>
+                        </InfoValueContainer>
+                      </SettingsRow>
+                    </>
                   )}
-                  {user.email && (
-                    <InfoRow>
-                      <InfoLeft>
-                        <InfoLabel>{t('profile.email')}</InfoLabel>
-                      </InfoLeft>
-                      <InfoValueContainer>
-                        <InfoValue>{user.email}</InfoValue>
-                      </InfoValueContainer>
-                    </InfoRow>
-                  )}
-                  <InfoRow>
-                    <InfoLeft>
-                      <InfoLabel>{t('profile.user')} ID</InfoLabel>
-                    </InfoLeft>
-                    <InfoValueContainer>
-                      <InfoValue numberOfLines={1} ellipsizeMode="middle">
-                        {user.id}
-                      </InfoValue>
-                    </InfoValueContainer>
-                  </InfoRow>
                   {user.appleUserId && (
                     <InfoRow isLast>
                       <InfoLeft>
@@ -187,6 +180,24 @@ export function ProfileScreen() {
                     </InfoLeft>
                     <InfoValueContainer>
                       <InfoValue>{getLanguageDisplayName(currentLanguage)}</InfoValue>
+                      <ChevronIcon>
+                        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                      </ChevronIcon>
+                    </InfoValueContainer>
+                  </SettingsRow>
+                </InfoCard>
+              </Section>
+
+              <Section>
+                <InfoCard>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('WorkSettings')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>{t('profile.workSettings')}</InfoLabel>
+                    </InfoLeft>
+                    <InfoValueContainer>
                       <ChevronIcon>
                         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
                       </ChevronIcon>

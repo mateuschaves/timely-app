@@ -6,6 +6,7 @@ import * as Linking from 'expo-linking';
 import { AuthProvider, useAuthContext } from './src/features/auth';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
+import { FeedbackProvider } from './src/utils/feedback';
 import { setupReactotron } from './src/config/reactotron';
 import './src/i18n/config';
 
@@ -89,7 +90,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Navigation />
+        <FeedbackProvider>
+          <Navigation />
+        </FeedbackProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

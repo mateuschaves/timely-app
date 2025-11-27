@@ -13,14 +13,14 @@ import { STORAGE_KEYS } from '@/config/storage';
 export const SUPPORTED_LANGUAGES = ['pt-BR', 'en-US', 'fr-FR', 'de-DE'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
-const LANGUAGE_MAP: Record<string, SupportedLanguage> = {
+export const LANGUAGE_MAP: Record<string, SupportedLanguage> = {
   'pt': 'pt-BR',
   'fr': 'fr-FR',
   'de': 'de-DE',
   'en': 'en-US',
 };
 
-const DEFAULT_LANGUAGE: SupportedLanguage = 'en-US';
+export const DEFAULT_LANGUAGE: SupportedLanguage = 'en-US';
 
 const getInitialLanguage = (): SupportedLanguage => {
   const deviceLanguage = Localization.getLocales()[0]?.languageCode;
