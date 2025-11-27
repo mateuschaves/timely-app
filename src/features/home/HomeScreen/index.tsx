@@ -5,8 +5,6 @@ import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
-import { ClockAction } from '@/api/types';
-import { formatTime } from '@/utils/date';
 import { colors, spacing } from '@/theme';
 import { Container, Title, Subtitle, StatusCard, StatusMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
@@ -25,7 +23,7 @@ export function HomeScreen() {
   const buttonText = useMemo(() => {
     if (isClocking) return t('home.clocking');
 
-    if (nextAction === ClockAction.CLOCK_OUT) {
+    if (nextAction === 'clock-out') {
       return t('home.clockOutButton');
     }
     return t('home.clockInButton');
@@ -34,7 +32,7 @@ export function HomeScreen() {
   const statusMessage = useMemo(() => {
     const userName = user?.name?.split(' ')[0] || '';
 
-    if (nextAction === ClockAction.CLOCK_OUT) {
+    if (nextAction === 'clock-out') {
       if (userName) {
         return t('home.breakMessageWithName', { name: userName });
       }
@@ -47,6 +45,14 @@ export function HomeScreen() {
     return t('home.welcomeMessage');
   }, [nextAction, user?.name, t]);
 
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '--:--';
+    return date.toLocaleTimeString(
+      i18n.language === 'pt-BR' ? 'pt-BR' : 'en-US',
+      { hour: '2-digit', minute: '2-digit' }
+    );
+  };
 
   useEffect(() => {
     const pulse = Animated.loop(
@@ -128,7 +134,7 @@ export function HomeScreen() {
       { hour: '2-digit', minute: '2-digit' }
     );
 
-    if (nextAction === ClockAction.CLOCK_OUT) {
+    if (nextAction === 'clock-out') {
       return t('home.confirmClockOut', { time: currentTime });
     }
     return t('home.confirmClockIn', { time: currentTime });
@@ -142,8 +148,8 @@ export function HomeScreen() {
           <StatusMessage>{statusMessage}</StatusMessage>
           {lastEvent && (
             <LastEventInfo>
-              {lastEvent.action === ClockAction.CLOCK_IN ? t('home.lastEntry') : t('home.lastExit')}:{' '}
-              <LastEventTime>{formatTime(lastEvent.hour, i18n.language)}</LastEventTime>
+              {lastEvent.action === 'clock-in' ? t('home.lastEntry') : t('home.lastExit')}:{' '}
+              <LastEventTime>{formatTime(lastEvent.hour)}</LastEventTime>
             </LastEventInfo>
           )}
         </StatusCard>
@@ -191,7 +197,7 @@ export function HomeScreen() {
         <ConfirmModal>
           <ConfirmModalContent>
             <ConfirmModalTitle>
-              {nextAction === ClockAction.CLOCK_OUT ? t('home.confirmClockOutTitle') : t('home.confirmClockInTitle')}
+              {nextAction === 'clock-out' ? t('home.confirmClockOutTitle') : t('home.confirmClockInTitle')}
             </ConfirmModalTitle>
             <ConfirmModalMessage>
               {getConfirmMessage()}

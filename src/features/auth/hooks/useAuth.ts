@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
@@ -7,7 +7,6 @@ import { User, AuthState } from '../types';
 import { saveToken, removeToken } from '@/config/token';
 import { STORAGE_KEYS } from '@/config/storage';
 import { signInWithApple } from '@/api/signin-with-apple';
-import { getUserMe } from '@/api/get-user-me';
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
@@ -15,32 +14,6 @@ export function useAuth() {
     isAuthenticated: false,
     isLoading: true,
   });
-
-  const fetchUserMe = useCallback(async (): Promise<User | null> => {
-    try {
-      const userData = await getUserMe();
-      const user: User = {
-        id: userData.id,
-        email: userData.email,
-        name: userData.name,
-        lastLogin: userData.lastLogin,
-        createdAt: userData.createdAt,
-        updatedAt: userData.updatedAt,
-      };
-      
-      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
-      setAuthState(prev => ({
-        ...prev,
-        user,
-        isAuthenticated: true,
-      }));
-      
-      return user;
-    } catch (error) {
-      console.error('Erro ao buscar dados do usuário:', error);
-      return null;
-    }
-  }, []);
 
   const signInWithAppleApiMutation = useMutation({
     mutationFn: signInWithApple,
@@ -55,7 +28,7 @@ export function useAuth() {
 
   useEffect(() => {
     loadStoredUser();
-  }, [fetchUserMe]);
+  }, []);
 
   const loadStoredUser = async () => {
     try {
@@ -67,8 +40,6 @@ export function useAuth() {
           isAuthenticated: true,
           isLoading: false,
         });
-        
-        fetchUserMe();
       } else {
         setAuthState({
           user: null,
@@ -113,12 +84,6 @@ export function useAuth() {
         name: nameFromCredential || null,
       });
 
-      const userFromApi = await fetchUserMe();
-      
-      if (userFromApi) {
-        return userFromApi;
-      }
-
       let savedUser: User | null = null;
       try {
         const storedUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
@@ -147,6 +112,7 @@ export function useAuth() {
       return user;
     } catch (error: any) {
       if (error.code === 'ERR_CANCELED') {
+        console.log('Login cancelado pelo usuário');
         return null;
       }
       
@@ -173,7 +139,7 @@ export function useAuth() {
       
       throw new Error('Não foi possível fazer login. Tente novamente.');
     }
-  }, [signInWithAppleApiMutation, fetchUserMe]);
+  }, [signInWithAppleApiMutation]);
 
   const signOut = useCallback(async () => {
     try {
@@ -194,7 +160,6 @@ export function useAuth() {
     ...authState,
     signInWithApple: handleSignInWithApple,
     signOut,
-    fetchUserMe,
   };
 }
 

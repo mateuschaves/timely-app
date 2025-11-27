@@ -2,7 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { TimeClockDeeplinkParams } from '../types';
 import { getTimeClockEntries } from '@/api/get-time-clock-entries';
-import { clock, ClockRequest } from '@/api/clock';
+import { clockIn, ClockInRequest } from '@/api/clock-in';
+import { clockOut, ClockOutRequest } from '@/api/clock-out';
 import { useLocation } from './useLocation';
 
 export function useTimeClock() {
@@ -22,12 +23,17 @@ export function useTimeClock() {
     enabled: false,
   });
 
-  const clockMutation = useMutation({
-    mutationFn: clock,
+  const clockInMutation = useMutation({
+    mutationFn: clockIn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
-      queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
-      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+    },
+  });
+
+  const clockOutMutation = useMutation({
+    mutationFn: clockOut,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
     },
   });
 
@@ -37,14 +43,22 @@ export function useTimeClock() {
       const params = parsed.queryParams as TimeClockDeeplinkParams;
 
       if (params.hour) {
-        const requestData: ClockRequest = {
-          hour: params.hour,
+        const action = params.type === 'exit' ? 'clock-out' : 'clock-in';
+        const hour = params.hour;
+
+        const requestData: ClockInRequest | ClockOutRequest = {
+          action: action as 'clock-in' | 'clock-out',
+          hour,
           ...(params.location && { location: params.location }),
           ...(params.photoUrl && { photoUrl: params.photoUrl }),
           ...(params.notes && { notes: params.notes }),
         };
 
-        clockMutation.mutate(requestData);
+        if (action === 'clock-in') {
+          clockInMutation.mutate(requestData as ClockInRequest);
+        } else {
+          clockOutMutation.mutate(requestData as ClockOutRequest);
+        }
       }
     } catch (error) {
       console.error('Erro ao processar deeplink:', error);
@@ -59,21 +73,26 @@ export function useTimeClock() {
   return {
     entries: entries || [],
     isLoading,
-    clock: async (data: ClockRequest) => {
-      let locationToUse = data.location;
+    clockIn: async (data: Omit<ClockInRequest, 'action'>) => {
+      const currentLocation = await getCurrentLocation();
       
-      if (!locationToUse) {
-        const currentLocation = await getCurrentLocation();
-        locationToUse = currentLocation || undefined;
-      }
-      
-      clockMutation.mutate({
+      clockInMutation.mutate({
         ...data,
-        ...(locationToUse && { location: locationToUse }),
+        action: 'clock-in',
+        ...(currentLocation && { location: currentLocation }),
+      });
+    },
+    clockOut: async (data: Omit<ClockOutRequest, 'action'>) => {
+      const currentLocation = await getCurrentLocation();
+      
+      clockOutMutation.mutate({
+        ...data,
+        action: 'clock-out',
+        ...(currentLocation && { location: currentLocation }),
       });
     },
     handleDeeplink,
-    isClocking: clockMutation.isPending,
+    isClocking: clockInMutation.isPending || clockOutMutation.isPending,
   };
 }
 

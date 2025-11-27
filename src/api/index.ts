@@ -9,7 +9,4 @@ export * from './clock-out';
 export * from './get-user-me';
 export * from './update-user-me';
 export * from './update-user-settings';
-export * from './get-user-settings';
-export * from './update-clock-event';
-export * from './delete-clock-event';
 

@@ -36,24 +36,8 @@ export interface ClockHistoryDay {
   events: ClockHistoryEvent[];
 }
 
-export interface ClockHistorySummary {
-  totalWorkedHours: number;
-  totalWorkedHoursFormatted: string;
-  totalExpectedHours: number;
-  totalExpectedHoursFormatted: string;
-  hoursDifference: number;
-  hoursDifferenceFormatted: string;
-  status: 'over' | 'under' | 'exact';
-  daysWorked: number;
-  daysWithSchedule: number;
-  averageHoursPerDay: number;
-  averageHoursPerDayFormatted: string;
-  totalDays: number;
-}
-
 export interface GetClockHistoryResponse {
   data: ClockHistoryDay[];
-  summary: ClockHistorySummary;
 }
 
 export const getClockHistory = async (

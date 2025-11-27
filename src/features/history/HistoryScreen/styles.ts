@@ -1,9 +1,8 @@
 import styled from 'styled-components/native';
 import { FlatList, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled.SafeAreaView`
   flex: 1;
   background-color: ${colors.background.primary};
   padding-bottom: 100px;
@@ -153,11 +152,6 @@ export const DayHeader = styled.View`
   border-bottom-color: ${colors.border.light};
 `;
 
-export const HeaderRight = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
 export const DayDate = styled.Text`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
@@ -193,82 +187,6 @@ export const EntryRow = styled.View`
   gap: ${spacing.sm}px;
 `;
 
-export const EditButton = styled.TouchableOpacity`
-  padding: ${spacing.xs}px;
-  margin-left: ${spacing.xs}px;
-`;
-
-export const StatsContainer = styled.View`
-  padding: ${spacing.md}px;
-  padding-bottom: 0;
-`;
-
-export const StatsCard = styled.View`
-  background-color: ${colors.background.primary};
-  border-radius: ${borderRadius.lg}px;
-  padding: ${spacing.lg}px;
-  margin-bottom: ${spacing.md}px;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
-`;
-
-export const StatsTitle = styled.Text`
-  font-size: ${typography.sizes.lg}px;
-  font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
-  margin-bottom: ${spacing.lg}px;
-  text-align: center;
-`;
-
-export const StatsRow = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: ${spacing.md}px;
-`;
-
-export const StatsItem = styled.View`
-  flex: 1;
-  align-items: center;
-`;
-
-export const StatsLabel = styled.Text`
-  font-size: ${typography.sizes.sm}px;
-  color: ${colors.text.secondary};
-  margin-bottom: ${spacing.xs}px;
-  text-align: center;
-`;
-
-export const StatsValue = styled.Text`
-  font-size: ${typography.sizes.xl}px;
-  font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
-  text-align: center;
-`;
-
-export const StatsDifference = styled.View<{ status: 'over' | 'under' | 'exact' }>`
-  align-items: center;
-  margin-bottom: ${spacing.md}px;
-  padding: ${spacing.sm}px;
-  border-radius: ${borderRadius.md}px;
-  background-color: ${props => {
-    if (props.status === 'over') return colors.status.success;
-    if (props.status === 'under') return colors.status.error;
-    return colors.background.secondary;
-  }};
-`;
-
-export const StatsDifferenceText = styled.Text<{ status: 'over' | 'under' | 'exact' }>`
-  font-size: ${typography.sizes.lg}px;
-  font-weight: ${typography.weights.bold};
-  color: ${props => {
-    if (props.status === 'exact') return colors.text.primary;
-    return colors.text.inverse;
-  }};
-`;
-
 interface EntryIndicatorProps {
   type: 'entry' | 'exit';
 }
@@ -301,104 +219,26 @@ export const EntryTime = styled.Text`
   color: ${colors.text.primary};
 `;
 
-export const ConnectionLineContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-left: 17px;
-  margin-vertical: ${spacing.sm}px;
-  padding-horizontal: ${spacing.xs}px;
-  gap: ${spacing.sm}px;
-  min-height: 32px;
-`;
-
-export const ConnectionLineLeft = styled.View`
-  flex: 1;
-  min-width: 16px;
-  height: 2px;
+export const ConnectionLine = styled.View`
+  width: 2px;
+  height: ${spacing.md}px;
   background-color: ${colors.border.medium};
-`;
-
-export const ConnectionLineRight = styled.View`
-  flex: 1;
-  min-width: 16px;
-  height: 2px;
-  background-color: ${colors.border.medium};
+  margin-left: 5px;
+  margin-vertical: ${spacing.xs}px;
 `;
 
 export const HoursWorkedBadge = styled.View`
+  margin-top: ${spacing.xs}px;
+  align-self: flex-start;
   background-color: ${colors.background.secondary};
-  padding: ${spacing.xs}px ${spacing.sm}px;
+  padding: ${spacing.xs / 2}px ${spacing.sm}px;
   border-radius: ${borderRadius.sm}px;
-  border-width: 1px;
-  border-color: ${colors.border.light};
-  min-width: 50px;
-  align-items: center;
 `;
 
 export const HoursWorkedText = styled.Text`
   font-size: ${typography.sizes.xs}px;
-  font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
-`;
-
-interface WorkPeriodContainerProps {
-  isLast?: boolean;
-}
-
-export const WorkPeriodContainer = styled.View<WorkPeriodContainerProps>`
-  margin-bottom: ${(props: WorkPeriodContainerProps) => props.isLast ? '0px' : spacing.md + 'px'};
-`;
-
-export const IntervalSeparator = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-vertical: ${spacing.lg}px;
-  gap: ${spacing.sm}px;
-`;
-
-export const IntervalLine = styled.View`
-  flex: 1;
-  height: 1px;
-  background-color: ${colors.border.medium};
-`;
-
-export const IntervalLabel = styled.Text`
-  font-size: ${typography.sizes.xs}px;
   font-weight: ${typography.weights.medium};
-  color: ${colors.text.tertiary};
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding-horizontal: ${spacing.xs}px;
-`;
-
-interface StatusBadgeProps {
-  status: 'over' | 'under' | 'exact';
-}
-
-export const StatusBadge = styled.View<StatusBadgeProps>`
-  background-color: ${(props: StatusBadgeProps) => {
-    if (props.status === 'over') return colors.status.success + '20';
-    if (props.status === 'under') return colors.status.error + '20';
-    return colors.background.secondary;
-  }};
-  padding: ${spacing.xs}px ${spacing.sm}px;
-  border-radius: ${borderRadius.sm}px;
-  border-width: 1px;
-  border-color: ${(props: StatusBadgeProps) => {
-    if (props.status === 'over') return colors.status.success;
-    if (props.status === 'under') return colors.status.error;
-    return colors.border.light;
-  }};
-`;
-
-export const StatusText = styled.Text<StatusBadgeProps>`
-  font-size: ${typography.sizes.xs}px;
-  font-weight: ${typography.weights.semibold};
-  color: ${(props: StatusBadgeProps) => {
-    if (props.status === 'over') return colors.status.success;
-    if (props.status === 'under') return colors.status.error;
-    return colors.text.primary;
-  }};
+  color: ${colors.text.secondary};
 `;
 
 

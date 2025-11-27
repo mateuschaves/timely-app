@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { colors, spacing, borderRadius, typography } from '@/theme';
 
 export const Container = styled(SafeAreaView)`
   flex: 1;
@@ -32,33 +32,28 @@ export const HeaderTitle = styled.Text`
 
 export const Content = styled.View`
   flex: 1;
-  padding: ${spacing.lg}px;
+  padding: ${spacing.sm}px;
 `;
 
 export const LanguageList = styled.View`
   background-color: ${colors.background.primary};
   border-radius: ${borderRadius.lg}px;
   overflow: hidden;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  margin: ${spacing.sm}px;
 `;
 
 export const LanguageItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: ${spacing.sm}px ${spacing.md}px;
-  min-height: 48px;
+  padding: ${spacing.lg}px ${spacing.lg}px;
+  min-height: 64px;
 `;
 
 export const LanguageItemText = styled.Text`
-  font-size: ${typography.sizes.md}px;
+  font-size: ${typography.sizes.lg}px;
   color: ${colors.text.primary};
   font-weight: ${typography.weights.regular};
-  line-height: 22px;
 `;
 
 export const LanguageItemCheck = styled.View`
@@ -81,6 +76,6 @@ export const LanguageItemCheckInner = styled.View`
 export const Divider = styled.View`
   height: 1px;
   background-color: ${colors.border.light};
-  margin-left: ${spacing.md}px;
+  margin-left: ${spacing.lg}px;
 `;
 

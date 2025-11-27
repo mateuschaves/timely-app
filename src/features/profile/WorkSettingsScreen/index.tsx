@@ -7,7 +7,6 @@ import { colors } from '@/theme';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateUserSettings, WorkSchedule } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
-import { useFeedback } from '@/utils/feedback';
 import {
     Container,
     Content,
@@ -46,7 +45,6 @@ export function WorkSettingsScreen() {
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
     const queryClient = useQueryClient();
-    const { showSuccess } = useFeedback();
     const [workAddress, setWorkAddress] = useState('');
     const [days, setDays] = useState<Record<string, DaySchedule>>({
         monday: { ...defaultSchedule },
@@ -179,7 +177,6 @@ export function WorkSettingsScreen() {
             });
 
             queryClient.invalidateQueries({ queryKey: ['userSettings'] });
-            showSuccess(t('profile.workSettingsSaved'));
             navigation.goBack();
         } catch (error: any) {
             Alert.alert(

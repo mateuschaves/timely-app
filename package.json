@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "deeplink:entry": "node scripts/test-deeplink.js entry",
     "deeplink:exit": "node scripts/test-deeplink.js exit",
-    "deeplink:custom": "node scripts/test-deeplink.js custom"
+    "deeplink:custom": "node scripts/test-deeplink.js custom",
+    "deeplink:expo-go": "node scripts/test-deeplink.js expo-go"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -27,6 +28,7 @@
     "expo-linking": "~8.0.9",
     "expo-localization": "~17.0.7",
     "expo-location": "~19.0.7",
+    "expo-notifications": "^0.32.13",
     "expo-status-bar": "~3.0.8",
     "i18next": "^25.6.3",
     "react": "19.1.0",
