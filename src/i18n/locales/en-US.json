@@ -31,11 +31,23 @@
     "home": {
         "clockIn": "Clock In",
         "clockOut": "Clock Out",
+        "clockInButton": "Clock In",
+        "clockOutButton": "Clock Out",
         "clocking": "Recording...",
         "clockInSuccess": "Clock in recorded successfully!",
         "clockOutSuccess": "Clock out recorded successfully!",
         "clockInError": "Error recording clock in. Please try again.",
-        "clockOutError": "Error recording clock out. Please try again."
+        "clockOutError": "Error recording clock out. Please try again.",
+        "welcomeMessage": "Welcome!",
+        "welcomeMessageWithName": "Hello, {{name}}!",
+        "breakMessage": "Have a good break!",
+        "breakMessageWithName": "See you later, {{name}}!",
+        "confirmClockIn": "Clock in at {{time}}?",
+        "confirmClockInTitle": "Confirm Clock In",
+        "confirmClockOut": "Clock out at {{time}}?",
+        "confirmClockOutTitle": "Confirm Clock Out",
+        "lastEntry": "Last entry",
+        "lastExit": "Last exit"
     },
     "history": {
         "title": "Time Clock History",
@@ -56,12 +68,27 @@
         "user": "User",
         "noName": "Name not available",
         "noEmail": "Email not available",
-    "language": "Language",
-    "languageSystem": "System",
-    "languagePortuguese": "Portuguese",
-    "languageEnglish": "English",
-    "languageFrench": "French",
-    "languageGerman": "German"
+        "language": "Language",
+        "languageSystem": "System",
+        "languagePortuguese": "Portuguese",
+        "languageEnglish": "English",
+        "languageFrench": "French",
+        "languageGerman": "German",
+        "editName": "Edit Name",
+        "nameRequired": "Name is required",
+        "updateNameError": "Error updating name. Please try again.",
+        "workSettings": "Work Settings",
+        "workSettingsError": "Error saving settings. Please try again.",
+        "workAddress": "Work Address",
+        "workAddressPlaceholder": "Ex: latitude, longitude",
+        "workHours": "Work Hours",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
     },
     "errors": {
         "generic": "An error occurred. Please try again.",
@@ -69,5 +96,13 @@
         "unauthorized": "Session expired. Please login again.",
         "locationPermission": "Location permission denied. Enable it in device settings.",
         "locationError": "Error getting location. Please try again."
+    },
+    "notifications": {
+        "entryTitle": "Time to clock in!",
+        "entryBody": "Don't forget to record your entry.",
+        "lunchTitle": "Lunch time!",
+        "lunchBody": "Have a good lunch!",
+        "exitTitle": "Time to clock out!",
+        "exitBody": "Don't forget to record your exit."
     }
 }

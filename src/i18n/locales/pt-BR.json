@@ -31,11 +31,23 @@
     "home": {
         "clockIn": "Bater Ponto - Entrada",
         "clockOut": "Bater Ponto - Saída",
+        "clockInButton": "Bater Ponto - Entrada",
+        "clockOutButton": "Bater Ponto - Saída",
         "clocking": "Registrando...",
         "clockInSuccess": "Entrada registrada com sucesso!",
         "clockOutSuccess": "Saída registrada com sucesso!",
         "clockInError": "Erro ao registrar entrada. Tente novamente.",
-        "clockOutError": "Erro ao registrar saída. Tente novamente."
+        "clockOutError": "Erro ao registrar saída. Tente novamente.",
+        "welcomeMessage": "Bem-vindo!",
+        "welcomeMessageWithName": "Olá, {{name}}!",
+        "breakMessage": "Tenha um bom descanso!",
+        "breakMessageWithName": "Até logo, {{name}}!",
+        "confirmClockIn": "Registrar entrada às {{time}}?",
+        "confirmClockInTitle": "Confirmar Entrada",
+        "confirmClockOut": "Registrar saída às {{time}}?",
+        "confirmClockOutTitle": "Confirmar Saída",
+        "lastEntry": "Última entrada",
+        "lastExit": "Última saída"
     },
     "history": {
         "title": "Histórico de Ponto",
@@ -56,12 +68,27 @@
         "user": "Usuário",
         "noName": "Nome não disponível",
         "noEmail": "E-mail não disponível",
-    "language": "Idioma",
-    "languageSystem": "Sistema",
-    "languagePortuguese": "Português",
-    "languageEnglish": "Inglês",
-    "languageFrench": "Francês",
-    "languageGerman": "Alemão"
+        "language": "Idioma",
+        "languageSystem": "Sistema",
+        "languagePortuguese": "Português",
+        "languageEnglish": "Inglês",
+        "languageFrench": "Francês",
+        "languageGerman": "Alemão",
+        "editName": "Editar Nome",
+        "nameRequired": "O nome é obrigatório",
+        "updateNameError": "Erro ao atualizar nome. Tente novamente.",
+        "workSettings": "Configurações de Trabalho",
+        "workSettingsError": "Erro ao salvar configurações. Tente novamente.",
+        "workAddress": "Endereço de Trabalho",
+        "workAddressPlaceholder": "Ex: latitude, longitude",
+        "workHours": "Horário de Trabalho",
+        "monday": "Segunda-feira",
+        "tuesday": "Terça-feira",
+        "wednesday": "Quarta-feira",
+        "thursday": "Quinta-feira",
+        "friday": "Sexta-feira",
+        "saturday": "Sábado",
+        "sunday": "Domingo"
     },
     "errors": {
         "generic": "Ocorreu um erro. Tente novamente.",
@@ -69,5 +96,13 @@
         "unauthorized": "Sessão expirada. Faça login novamente.",
         "locationPermission": "Permissão de localização negada. Ative nas configurações do dispositivo.",
         "locationError": "Erro ao obter localização. Tente novamente."
+    },
+    "notifications": {
+        "entryTitle": "Hora de entrar!",
+        "entryBody": "Não se esqueça de registrar sua entrada.",
+        "lunchTitle": "Hora do almoço!",
+        "lunchBody": "Tenha um bom almoço!",
+        "exitTitle": "Hora de sair!",
+        "exitBody": "Não se esqueça de registrar sua saída."
     }
 }

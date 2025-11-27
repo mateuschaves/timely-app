@@ -7,6 +7,7 @@ import { User, AuthState } from '../types';
 import { saveToken, removeToken } from '@/config/token';
 import { STORAGE_KEYS } from '@/config/storage';
 import { signInWithApple } from '@/api/signin-with-apple';
+import { getUserMe } from '@/api/get-user-me';
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
@@ -156,10 +157,53 @@ export function useAuth() {
     }
   }, []);
 
+  const fetchUserMe = useCallback(async (): Promise<User | null> => {
+    try {
+      // Get existing user from storage to preserve appleUserId
+      let existingUser: User | null = null;
+      try {
+        const storedUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
+        if (storedUser) {
+          existingUser = JSON.parse(storedUser);
+        }
+      } catch (error) {
+        console.warn('Erro ao recuperar usuário salvo:', error);
+      }
+
+      const response = await getUserMe();
+      
+      // Map API response to User type, preserving appleUserId from existing user
+      const user: User = {
+        id: response.id,
+        email: response.email || null,
+        name: response.name || null,
+        appleUserId: existingUser?.appleUserId || response.id,
+      };
+
+      // Save updated user to storage
+      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+
+      // Update auth state
+      setAuthState((prev) => ({
+        ...prev,
+        user,
+        isAuthenticated: true,
+      }));
+
+      return user;
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error);
+      // If the request fails (e.g., 401), we might want to sign out
+      // But for now, just return null
+      return null;
+    }
+  }, []);
+
   return {
     ...authState,
     signInWithApple: handleSignInWithApple,
     signOut,
+    fetchUserMe,
   };
 }
 

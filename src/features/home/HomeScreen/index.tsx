@@ -6,7 +6,7 @@ import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { colors, spacing } from '@/theme';
-import { Container, Title, Subtitle, StatusCard, StatusMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
+import { Container, StatusCard, StatusMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
 
 export function HomeScreen() {
