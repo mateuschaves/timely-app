@@ -1,12 +1,10 @@
-/**
- * Tipos compartilhados entre diferentes chamadas de API
- */
+export enum ClockAction {
+  CLOCK_IN = 'clock-in',
+  CLOCK_OUT = 'clock-out',
+}
 
-/**
- * Coordenadas de localização (formato GeoJSON Point)
- */
 export interface LocationCoordinates {
   type: 'Point';
-  coordinates: [number, number]; // [longitude, latitude]
+  coordinates: [number, number];
 }
 

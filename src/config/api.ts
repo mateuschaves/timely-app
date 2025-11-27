@@ -1,26 +1,8 @@
-/**
- * Configuração da API com Axios
- * 
- * Para usar variáveis de ambiente, instale expo-constants:
- * npm install expo-constants
- * 
- * E então use:
- * import Constants from 'expo-constants';
- * export const API_BASE_URL = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000';
- */
-
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { getToken, removeToken } from './token';
 
-// URL base da API - localhost na porta 3000
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
-
-// Configurações de timeout
-export const API_TIMEOUT = 10000; // 10 segundos
-
-/**
- * Cliente Axios configurado para a API
- */
+export const API_BASE_URL = 'http://192.168.15.74:3000';
+export const API_TIMEOUT = 10000;
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: API_TIMEOUT,
@@ -30,18 +12,14 @@ export const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Interceptor para requisições - adiciona token JWT automaticamente
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
-    // Busca o token do AsyncStorage
     const token = await getToken();
     
-    // Adiciona o token no header Authorization se existir
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
+    }``
     
-    // Log no Reactotron em desenvolvimento
     if (__DEV__ && (console as any).tron) {
       (console as any).tron.display({
         name: 'API Request',
@@ -63,10 +41,8 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Interceptor para respostas (tratamento de erros global)
 apiClient.interceptors.response.use(
   (response) => {
-    // Log no Reactotron em desenvolvimento
     if (__DEV__ && (console as any).tron) {
       (console as any).tron.display({
         name: 'API Response',
@@ -84,20 +60,14 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    // Tratamento global de erros
     if (error.response) {
-      // Erro com resposta do servidor
       const status = error.response.status;
       
-      // Se receber 401 (Não autorizado), remove o token e força logout
       if (status === 401) {
         console.warn('Token inválido ou expirado. Removendo token...');
         await removeToken();
-        // Aqui você pode adicionar lógica para redirecionar para login
-        // Por exemplo, usando um evento ou contexto
       }
       
-      // Log de erro no Reactotron
       if (__DEV__ && (console as any).tron) {
         (console as any).tron.error({
           name: 'API Error',
@@ -114,7 +84,6 @@ apiClient.interceptors.response.use(
       
       console.error('Erro na API:', status, error.response.data);
     } else if (error.request) {
-      // Erro de rede
       if (__DEV__ && (console as any).tron) {
         (console as any).tron.error({
           name: 'Network Error',
@@ -125,7 +94,6 @@ apiClient.interceptors.response.use(
       }
       console.error('Erro de rede:', error.request);
     } else {
-      // Outro erro
       if (__DEV__ && (console as any).tron) {
         (console as any).tron.error({
           name: 'Request Error',
@@ -140,7 +108,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Headers padrão (mantido para compatibilidade)
 export const DEFAULT_HEADERS = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',

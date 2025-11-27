@@ -1,8 +1,9 @@
 import styled from 'styled-components/native';
 import { ScrollView } from 'react-native';
-import { colors } from '@/theme/colors';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
 
-export const Container = styled.SafeAreaView`
+export const Container = styled(SafeAreaView)`
   flex: 1;
   background-color: ${colors.background.secondary};
 `;
@@ -14,24 +15,24 @@ export const ScrollContent = styled(ScrollView)`
 
 export const Content = styled.View`
   flex: 1;
-  padding: 24px;
+  padding: ${spacing.lg}px;
   padding-bottom: 120px;
 `;
 
 export const ProfileHeader = styled.View`
   align-items: center;
-  margin-bottom: 40px;
-  padding-top: 8px;
+  margin-bottom: ${spacing.xxl}px;
+  padding-top: ${spacing.sm}px;
 `;
 
 export const AvatarContainer = styled.View`
-  margin-bottom: 24px;
+  margin-bottom: ${spacing.lg}px;
 `;
 
 export const Avatar = styled.View`
   width: 120px;
   height: 120px;
-  border-radius: 60px;
+  border-radius: ${borderRadius.round}px;
   background-color: ${colors.primary};
   align-items: center;
   justify-content: center;
@@ -39,7 +40,7 @@ export const Avatar = styled.View`
 
 export const AvatarText = styled.Text`
   font-size: 42px;
-  font-weight: 600;
+  font-weight: ${typography.weights.semibold};
   color: ${colors.text.inverse};
   letter-spacing: 1.5px;
 `;
@@ -50,42 +51,42 @@ export const AvatarIcon = styled.View`
 `;
 
 export const UserName = styled.Text`
-  font-size: 28px;
-  font-weight: 600;
+  font-size: ${typography.sizes.lg}px;
+  font-weight: ${typography.weights.semibold};
   color: ${colors.text.primary};
-  margin-bottom: 8px;
+  margin-bottom: ${spacing.xs}px;
   text-align: center;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 `;
 
 export const UserEmail = styled.Text`
-  font-size: 17px;
+  font-size: ${typography.sizes.sm}px;
   color: ${colors.text.secondary};
   text-align: center;
   letter-spacing: 0.1px;
 `;
 
 export const Section = styled.View`
-  margin-bottom: 32px;
+  margin-bottom: ${spacing.lg}px;
 `;
 
 export const InfoCard = styled.View`
   background-color: ${colors.background.primary};
-  border-radius: 12px;
+  border-radius: ${borderRadius.lg}px;
   overflow: hidden;
-  shadow-color: #000;
-  shadow-offset: 0px 1px;
-  shadow-opacity: 0.05;
-  shadow-radius: 2px;
-  elevation: 1;
+  shadow-color: ${shadows.sm.shadowColor};
+  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${shadows.sm.shadowOpacity};
+  shadow-radius: ${shadows.sm.shadowRadius}px;
+  elevation: ${shadows.sm.elevation};
 `;
 
 export const InfoRow = styled.View<{ isLast?: boolean }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  min-height: 64px;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  min-height: 48px;
   border-bottom-width: ${props => (props.isLast ? '0px' : '1px')};
   border-bottom-color: ${colors.border.light};
   background-color: ${colors.background.primary};
@@ -93,20 +94,20 @@ export const InfoRow = styled.View<{ isLast?: boolean }>`
 
 export const InfoLeft = styled.View`
   flex: 1;
-  margin-right: 16px;
+  margin-right: ${spacing.md}px;
 `;
 
 export const InfoLabel = styled.Text`
-  font-size: 16px;
+  font-size: ${typography.sizes.md}px;
   color: ${colors.text.primary};
-  font-weight: 400;
+  font-weight: ${typography.weights.regular};
   line-height: 22px;
 `;
 
 export const InfoValue = styled.Text`
-  font-size: 16px;
+  font-size: ${typography.sizes.md}px;
   color: ${colors.text.secondary};
-  font-weight: 400;
+  font-weight: ${typography.weights.regular};
   flex-shrink: 1;
   line-height: 22px;
 `;
@@ -120,33 +121,33 @@ export const InfoValueContainer = styled.View`
 
 export const Button = styled.TouchableOpacity`
   background-color: ${colors.background.primary};
-  border-radius: 12px;
-  padding: 20px 24px;
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
   justify-content: center;
-  margin-top: 8px;
-  shadow-color: #000;
-  shadow-offset: 0px 1px;
-  shadow-opacity: 0.05;
-  shadow-radius: 2px;
-  elevation: 1;
+  margin-top: ${spacing.sm}px;
+  shadow-color: ${shadows.sm.shadowColor};
+  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${shadows.sm.shadowOpacity};
+  shadow-radius: ${shadows.sm.shadowRadius}px;
+  elevation: ${shadows.sm.elevation};
 `;
 
 export const ButtonText = styled.Text`
   color: ${colors.status.error};
-  font-size: 17px;
-  font-weight: 500;
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.medium};
   letter-spacing: 0.1px;
 `;
 
 export const EmptyState = styled.View`
   align-items: center;
   justify-content: center;
-  padding: 80px 24px;
+  padding: 80px ${spacing.lg}px;
 `;
 
 export const EmptyStateText = styled.Text`
-  font-size: 16px;
+  font-size: ${typography.sizes.md}px;
   color: ${colors.text.tertiary};
   text-align: center;
   line-height: 24px;
@@ -156,12 +157,12 @@ export const SettingsRow = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  min-height: 64px;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  min-height: 48px;
 `;
 
 export const ChevronIcon = styled.View`
-  margin-left: 6px;
+  margin-left: ${spacing.xs}px;
   align-items: center;
   justify-content: center;
 `;

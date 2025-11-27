@@ -1,24 +1,19 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
-import { i18n } from '@/i18n/config';
+import { i18n, SUPPORTED_LANGUAGES, LANGUAGE_MAP, DEFAULT_LANGUAGE, SupportedLanguage } from '@/i18n/config';
 import { STORAGE_KEYS } from '@/config/storage';
 
 export type LanguageOption = 'pt-BR' | 'en-US' | 'fr-FR' | 'de-DE' | 'system';
 
-/**
- * Hook para gerenciar o idioma do aplicativo
- */
 export function useLanguage() {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Carrega o idioma salvo ao montar
   useEffect(() => {
     loadSavedLanguage();
   }, []);
 
-  // Aplica o idioma quando ele muda
   useEffect(() => {
     applyLanguage(currentLanguage);
   }, [currentLanguage]);
@@ -38,7 +33,6 @@ export function useLanguage() {
 
   const applyLanguage = (language: LanguageOption) => {
     if (language === 'system') {
-      // Detecta o idioma do sistema
       const deviceLanguage = Localization.getLocales()[0]?.languageCode;
       const deviceLocale = Localization.getLocales()[0]?.languageTag;
       
@@ -62,7 +56,6 @@ export function useLanguage() {
     }
   };
 
-  // Retorna o idioma atual sendo usado (não a preferência)
   const getActiveLanguage = (): SupportedLanguage => {
     if (currentLanguage === 'system') {
       const deviceLanguage = Localization.getLocales()[0]?.languageCode;

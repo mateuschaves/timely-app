@@ -5,6 +5,7 @@ import { User, AuthState } from '../types';
 interface AuthContextData extends AuthState {
   signInWithApple: () => Promise<User | null>;
   signOut: () => Promise<void>;
+  fetchUserMe: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);

@@ -1,21 +1,7 @@
-/**
- * Tema de cores centralizado
- * 
- * Define todas as cores usadas no aplicativo
- */
-
 export const colors = {
-  // Cores primárias
   primary: '#000000',
-  primaryLight: '#1a1a1a',
-  primaryDark: '#000000',
-  
-  // Cores secundárias
   secondary: '#ffffff',
-  secondaryLight: '#f5f5f5',
-  secondaryDark: '#e0e0e0',
   
-  // Cores de texto
   text: {
     primary: '#000000',
     secondary: '#666666',
@@ -23,21 +9,18 @@ export const colors = {
     inverse: '#ffffff',
   },
   
-  // Cores de fundo
   background: {
     primary: '#ffffff',
     secondary: '#f5f5f5',
     tertiary: '#000000',
   },
   
-  // Cores de borda
   border: {
     light: '#e0e0e0',
     medium: '#cccccc',
     dark: '#000000',
   },
   
-  // Cores de ação
   action: {
     primary: '#000000',
     secondary: '#ffffff',
@@ -45,7 +28,6 @@ export const colors = {
     success: '#28a745',
   },
   
-  // Cores de estado
   status: {
     success: '#28a745',
     error: '#dc3545',

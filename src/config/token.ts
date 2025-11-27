@@ -1,13 +1,6 @@
-/**
- * Gerenciamento de Token JWT
- */
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from './storage';
 
-/**
- * Salva o token JWT no AsyncStorage
- */
 export const saveToken = async (token: string): Promise<void> => {
   try {
     await AsyncStorage.setItem(STORAGE_KEYS.TOKEN, token);
@@ -17,9 +10,6 @@ export const saveToken = async (token: string): Promise<void> => {
   }
 };
 
-/**
- * Recupera o token JWT do AsyncStorage
- */
 export const getToken = async (): Promise<string | null> => {
   try {
     return await AsyncStorage.getItem(STORAGE_KEYS.TOKEN);
@@ -29,9 +19,6 @@ export const getToken = async (): Promise<string | null> => {
   }
 };
 
-/**
- * Remove o token JWT do AsyncStorage
- */
 export const removeToken = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(STORAGE_KEYS.TOKEN);

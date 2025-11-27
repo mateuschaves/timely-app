@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation, useLanguage, LanguageOption } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { colors } from '@/theme';
 import {
   Container,
   Content,
@@ -37,7 +38,7 @@ export function LanguageScreen() {
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </BackButton>
         <HeaderTitle>{t('profile.language')}</HeaderTitle>
       </Header>
