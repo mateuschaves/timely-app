@@ -229,4 +229,116 @@ describe('useLocation', () => {
       expect(result.current.error).not.toBeNull();
     });
   });
+
+
+  it('should handle location error with custom message', async () => {
+    mockGetForegroundPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+
+    const customError = { message: 'Custom location error' };
+    mockGetCurrentPositionAsync.mockRejectedValue(customError);
+
+    const { result } = renderHook(() => useLocation());
+
+    let location: any;
+    await act(async () => {
+      location = await result.current.requestLocationPermission();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(location).toBeNull();
+    expect(result.current.error).toBe('Custom location error');
+  });
+
+  it('should handle location error without message', async () => {
+    mockGetForegroundPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+
+    mockGetCurrentPositionAsync.mockRejectedValue({});
+
+    const { result } = renderHook(() => useLocation());
+
+    let location: any;
+    await act(async () => {
+      location = await result.current.requestLocationPermission();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(location).toBeNull();
+    expect(result.current.error).toBe('Erro ao obter localização. Tente novamente.');
+  });
+
+  it('should handle updateLocation when permission not granted', async () => {
+    mockGetForegroundPermissionsAsync.mockResolvedValue({
+      status: 'denied',
+    });
+
+    const { result } = renderHook(() => useLocation());
+
+    let location: any;
+    await act(async () => {
+      location = await result.current.updateLocation();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(location).toBeNull();
+    expect(result.current.error).toBe('Permissão de localização não concedida.');
+  });
+
+  it('should handle updateLocation error with custom message', async () => {
+    mockGetForegroundPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+
+    const customError = { message: 'Update location error' };
+    mockGetCurrentPositionAsync.mockRejectedValue(customError);
+
+    const { result } = renderHook(() => useLocation());
+
+    let location: any;
+    await act(async () => {
+      location = await result.current.updateLocation();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(location).toBeNull();
+    expect(result.current.error).toBe('Update location error');
+  });
+
+  it('should handle updateLocation error without message', async () => {
+    mockGetForegroundPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+
+    mockGetCurrentPositionAsync.mockRejectedValue({});
+
+    const { result } = renderHook(() => useLocation());
+
+    let location: any;
+    await act(async () => {
+      location = await result.current.updateLocation();
+    });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(location).toBeNull();
+    expect(result.current.error).toBe('Erro ao atualizar localização. Tente novamente.');
+  });
+
 });

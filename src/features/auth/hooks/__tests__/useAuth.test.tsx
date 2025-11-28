@@ -328,4 +328,361 @@ describe('useAuth', () => {
 
     expect(user).toBeNull();
   });
+
+  it('should handle sign in without access_token', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: {
+        givenName: 'Test',
+        familyName: 'User',
+      },
+    };
+
+    const apiResponse = {
+      // No access_token
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockResolvedValue(apiResponse as any);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Não foi possível completar o login. Tente novamente.');
+  });
+
+  it('should handle sign in without identityToken', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: null,
+      email: 'test@example.com',
+      fullName: {
+        givenName: 'Test',
+        familyName: 'User',
+      },
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Não foi possível obter as informações de autenticação. Tente novamente.');
+  });
+
+  it('should use saved user data when credential lacks email/name', async () => {
+    Platform.OS = 'ios';
+    const savedUser = {
+      id: '123',
+      email: 'saved@example.com',
+      name: 'Saved User',
+      appleUserId: 'apple123',
+    };
+
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: null,
+      fullName: null,
+    };
+
+    const apiResponse = {
+      access_token: 'access_token_123',
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockResolvedValue(apiResponse);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(savedUser));
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    let user: any;
+    await act(async () => {
+      user = await result.current.signInWithApple();
+    });
+
+    expect(user.email).toBe('saved@example.com');
+    expect(user.name).toBe('Saved User');
+  });
+
+  it('should handle error retrieving saved user during sign in', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: {
+        givenName: 'Test',
+        familyName: 'User',
+      },
+    };
+
+    const apiResponse = {
+      access_token: 'access_token_123',
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockResolvedValue(apiResponse);
+    (AsyncStorage.getItem as jest.Mock)
+      .mockResolvedValueOnce(null) // First call in loadStoredUser
+      .mockRejectedValueOnce(new Error('Storage error')); // Second call in signIn
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    let user: any;
+    await act(async () => {
+      user = await result.current.signInWithApple();
+    });
+
+    expect(user).toBeDefined();
+    expect(user.email).toBe('test@example.com');
+  });
+
+  it('should handle API error with 500 status', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    // The code does: const axiosError = error.response || error; then checks axiosError?.response
+    // So we need error.response.response.status
+    const error = {
+      response: {
+        response: { status: 500 },
+      },
+    };
+    mockSignInWithApple.mockRejectedValue(error);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Erro no servidor. Tente novamente em alguns instantes.');
+  });
+
+  it('should handle API error with 400-499 status', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    const error = {
+      response: {
+        response: { status: 403 },
+      },
+    };
+    mockSignInWithApple.mockRejectedValue(error);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Não foi possível fazer login. Verifique suas credenciais e tente novamente.');
+  });
+
+  it('should handle API error with 500+ status', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    const error = {
+      response: {
+        response: { status: 503 },
+      },
+    };
+    mockSignInWithApple.mockRejectedValue(error);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.');
+  });
+
+  it('should handle network request error', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockRejectedValue({
+      request: {},
+    });
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Sem conexão com o servidor. Verifique sua internet e tente novamente.');
+  });
+
+  it('should handle generic error without JWT/token message', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockRejectedValue(new Error('Generic error'));
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Generic error');
+  });
+
+  it('should handle error with JWT message', async () => {
+    Platform.OS = 'ios';
+    const credential = {
+      user: 'apple123',
+      identityToken: 'token123',
+      email: 'test@example.com',
+      fullName: null,
+    };
+
+    mockSignInAsync.mockResolvedValue(credential as any);
+    mockSignInWithApple.mockRejectedValue(new Error('JWT invalid'));
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    await expect(async () => {
+      await act(async () => {
+        await result.current.signInWithApple();
+      });
+    }).rejects.toThrow('Não foi possível fazer login. Tente novamente.');
+  });
+
+  it('should handle fetch user me with no existing user', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+    const apiUser = {
+      id: '123',
+      email: 'new@example.com',
+      name: 'New User',
+    };
+
+    mockGetUserMe.mockResolvedValue(apiUser);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    let user: any;
+    await act(async () => {
+      user = await result.current.fetchUserMe();
+    });
+
+    expect(user.appleUserId).toBe('123'); // Uses response.id when no existing user
+  });
+
+  it('should handle error retrieving existing user in fetchUserMe', async () => {
+    (AsyncStorage.getItem as jest.Mock)
+      .mockResolvedValueOnce(null) // First call in loadStoredUser
+      .mockRejectedValueOnce(new Error('Storage error')); // Second call in fetchUserMe
+
+    const apiUser = {
+      id: '123',
+      email: 'new@example.com',
+      name: 'New User',
+    };
+
+    mockGetUserMe.mockResolvedValue(apiUser);
+
+    const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    let user: any;
+    await act(async () => {
+      user = await result.current.fetchUserMe();
+    });
+
+    expect(user).toBeDefined();
+    expect(user.appleUserId).toBe('123');
+  });
 });
