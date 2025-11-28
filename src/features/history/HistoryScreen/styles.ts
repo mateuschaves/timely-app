@@ -246,7 +246,9 @@ export const MonthNavigationText = styled.Text`
 
 export const ScrollContent = styled.ScrollView`
   flex: 1;
-  padding: ${spacing.md}px;
+  padding-horizontal: ${spacing.lg}px;
+  padding-top: ${spacing.md}px;
+  padding-bottom: ${spacing.md}px;
 `;
 
 export const ListHeaderContainer = styled.View`
