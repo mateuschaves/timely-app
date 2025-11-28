@@ -35,8 +35,8 @@ export function BottomTabNavigator() {
         component={HomeScreen}
         options={{
           title: t('navigation.home'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "home" : "home-outline"} size={size} color={color} />
           ),
         }}
       />
@@ -45,8 +45,8 @@ export function BottomTabNavigator() {
         component={HistoryScreen}
         options={{
           title: t('navigation.history'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="time-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "time" : "time-outline"} size={size} color={color} />
           ),
         }}
       />
@@ -55,8 +55,8 @@ export function BottomTabNavigator() {
         component={ProfileScreen}
         options={{
           title: t('navigation.profile'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color} />
           ),
         }}
       />

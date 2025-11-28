@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useMemo, useState } from 'react';
-import { Animated, Easing, Modal } from 'react-native';
+import { Animated, Easing, Modal, Platform, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '@/i18n';
 import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
+import { useQueryClient } from '@tanstack/react-query';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, spacing } from '@/theme';
 import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
@@ -12,6 +16,8 @@ import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, Last
 export function HomeScreen() {
   const { t, i18n } = useTranslation();
   const { user } = useAuthContext();
+  const queryClient = useQueryClient();
+  const insets = useSafeAreaInsets();
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
   const { requestLocationPermission } = useLocation();
@@ -76,6 +82,21 @@ export function HomeScreen() {
     return () => pulse.stop();
   }, [pulseAnim]);
 
+  // Estado para controlar a cor da StatusBar
+  const [statusBarColor, setStatusBarColor] = useState<string>(colors.background.secondary);
+
+  // Configurar StatusBar para corresponder ao background do WelcomeCard
+  useFocusEffect(
+    React.useCallback(() => {
+      setStatusBarColor(colors.background.secondary);
+
+      return () => {
+        // Restaurar StatusBar padrão ao sair da tela
+        setStatusBarColor(colors.background.primary);
+      };
+    }, [])
+  );
+
   const handlePress = () => {
     if (isClocking) return;
 
@@ -109,6 +130,9 @@ export function HomeScreen() {
       await clock({
         hour: now,
       }, nextAction as 'clock-in' | 'clock-out');
+
+      // Refetch imediato para atualizar o botão instantaneamente
+      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);
       throw error;
@@ -135,6 +159,20 @@ export function HomeScreen() {
 
   return (
     <Container>
+      <StatusBar style="dark" backgroundColor={statusBarColor} />
+      {Platform.OS === 'ios' && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: insets.top,
+            backgroundColor: statusBarColor,
+            zIndex: 1000,
+          }}
+        />
+      )}
       {!isLoadingLastEvent && (
         <WelcomeCard style={{ position: 'absolute', top: spacing.xl + 20, width: '100%', marginHorizontal: spacing.lg }}>
           <WelcomeMessage>{statusMessage}</WelcomeMessage>

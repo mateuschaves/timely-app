@@ -13,6 +13,39 @@ jest.mock('@/features/time-clock/hooks/useTimeClock');
 jest.mock('@/features/time-clock/hooks/useLocation');
 jest.mock('../../hooks/useLastEvent');
 jest.mock('@/i18n');
+jest.mock('expo-status-bar', () => ({
+  StatusBar: 'StatusBar',
+}));
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaProvider: ({ children }: { children: any }) => children,
+  useSafeAreaInsets: () => ({
+    top: 44,
+    bottom: 34,
+    left: 0,
+    right: 0,
+  }),
+}));
+jest.mock('@react-navigation/native', () => {
+  const React = require('react');
+  return {
+    ...jest.requireActual('@react-navigation/native'),
+    useFocusEffect: (callback: () => void | (() => void)) => {
+      // Execute the callback immediately for testing
+      React.useEffect(() => {
+        const cleanup = callback();
+        return () => {
+          if (typeof cleanup === 'function') {
+            cleanup();
+          }
+        };
+      }, []);
+    },
+    useNavigation: () => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+    }),
+  };
+});
 
 const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthContext>;
 const mockUseTimeClock = useTimeClock as jest.MockedFunction<typeof useTimeClock>;
@@ -20,16 +53,22 @@ const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>;
 const mockUseLastEvent = useLastEvent as jest.MockedFunction<typeof useLastEvent>;
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 
+let testQueryClient: QueryClient;
+
 const createWrapper = () => {
-  const queryClient = new QueryClient({
+  testQueryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
       mutations: { retry: false },
     },
   });
 
+  const { SafeAreaProvider } = require('react-native-safe-area-context');
+
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={testQueryClient}>{children}</QueryClientProvider>
+    </SafeAreaProvider>
   );
 };
 
@@ -128,7 +167,7 @@ describe('HomeScreen', () => {
       type: 'Point',
       coordinates: [-46.6333, -23.5505],
     });
-    mockClock.mockResolvedValue({});
+    mockClock.mockResolvedValue(undefined);
 
     const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
 
@@ -147,6 +186,90 @@ describe('HomeScreen', () => {
       expect(mockClock).toHaveBeenCalled();
     });
   });
+
+  it('should refetch lastEvent query immediately after clock success', async () => {
+    mockRequestLocationPermission.mockResolvedValue({
+      type: 'Point',
+      coordinates: [-46.6333, -23.5505],
+    });
+    mockClock.mockResolvedValue(undefined);
+    mockUseLastEvent.mockReturnValue({
+      lastEvent: null,
+      nextAction: 'clock-in',
+      isLoading: false,
+    } as any);
+
+    const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
+
+    // Create spy after component is rendered to ensure we're spying on the correct queryClient
+    const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
+
+    const button = getByText('home.clockInButton');
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(getByText('common.confirm')).toBeTruthy();
+    });
+
+    const confirmButton = getByText('common.confirm');
+    await act(async () => {
+      fireEvent.press(confirmButton);
+    });
+
+    await waitFor(() => {
+      expect(mockClock).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+    }, { timeout: 10000 });
+
+    refetchQueriesSpy.mockRestore();
+  }, 15000);
+
+  it('should refetch lastEvent query immediately after clock-out success', async () => {
+    mockUseLastEvent.mockReturnValue({
+      lastEvent: {
+        id: '1',
+        hour: '2024-01-01T10:00:00Z',
+        action: 'clock-in',
+      },
+      nextAction: 'clock-out',
+      isLoading: false,
+    } as any);
+    mockRequestLocationPermission.mockResolvedValue({
+      type: 'Point',
+      coordinates: [-46.6333, -23.5505],
+    });
+    mockClock.mockResolvedValue(undefined);
+
+    const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
+
+    // Create spy after component is rendered to ensure we're spying on the correct queryClient
+    const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
+
+    const button = getByText('home.clockOutButton');
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(getByText('common.confirm')).toBeTruthy();
+    });
+
+    const confirmButton = getByText('common.confirm');
+    await act(async () => {
+      fireEvent.press(confirmButton);
+    });
+
+    await waitFor(() => {
+      expect(mockClock).toHaveBeenCalled();
+    });
+
+    await waitFor(() => {
+      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+    }, { timeout: 10000 });
+
+    refetchQueriesSpy.mockRestore();
+  }, 15000);
 
   it('should close modal when cancelled', async () => {
     const { getByText, queryByText } = render(<HomeScreen />, { wrapper: createWrapper() });
@@ -313,7 +436,7 @@ describe('HomeScreen', () => {
       type: 'Point',
       coordinates: [-46.6333, -23.5505],
     });
-    mockClock.mockResolvedValue({});
+    mockClock.mockResolvedValue(undefined);
     mockUseLastEvent.mockReturnValue({
       lastEvent: {
         id: '1',

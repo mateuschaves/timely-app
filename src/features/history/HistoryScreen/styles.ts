@@ -250,7 +250,6 @@ export const ScrollContent = styled.ScrollView`
 `;
 
 export const ListHeaderContainer = styled.View`
-  padding-horizontal: ${spacing.md}px;
   padding-top: ${spacing.md}px;
   padding-bottom: 0px;
 `;
