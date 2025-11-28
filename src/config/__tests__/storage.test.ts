@@ -15,3 +15,4 @@ describe('storage', () => {
     expect(key).toBe('@timely:user');
   });
 });
+

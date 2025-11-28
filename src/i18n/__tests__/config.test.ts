@@ -22,3 +22,4 @@ describe('i18n config', () => {
     expect(DEFAULT_LANGUAGE).toBe('en-US');
   });
 });
+

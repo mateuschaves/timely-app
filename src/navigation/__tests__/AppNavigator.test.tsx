@@ -28,3 +28,4 @@ describe('AppNavigator', () => {
     expect(UNSAFE_root).toBeTruthy();
   });
 });
+

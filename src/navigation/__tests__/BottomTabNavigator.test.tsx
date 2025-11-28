@@ -39,3 +39,4 @@ describe('BottomTabNavigator', () => {
     expect(UNSAFE_root).toBeTruthy();
   });
 });
+

@@ -18,3 +18,4 @@ describe('AuthNavigator', () => {
     expect(UNSAFE_root).toBeTruthy();
   });
 });
+
