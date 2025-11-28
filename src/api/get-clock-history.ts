@@ -6,6 +6,7 @@ export const CLOCK_HISTORY_STALE_TIME = 30000;
 export interface GetClockHistoryParams {
   startDate: string;
   endDate: string;
+  timezone?: string;
 }
 
 export interface ClockHistoryEvent {
@@ -59,7 +60,7 @@ export interface GetClockHistoryResponse {
 export const getClockHistory = async (
   params: GetClockHistoryParams
 ): Promise<GetClockHistoryResponse> => {
-  const { startDate, endDate } = params;
+  const { startDate, endDate, timezone } = params;
   
   const response = await apiClient.get<any>(
     '/clockin/history',
@@ -67,6 +68,7 @@ export const getClockHistory = async (
       params: {
         startDate,
         endDate,
+        ...(timezone && { timezone }),
       },
     }
   );

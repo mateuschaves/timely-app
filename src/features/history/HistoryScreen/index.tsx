@@ -2,9 +2,10 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { ScrollView, ListRenderItem } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
+import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
-import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, CLOCK_HISTORY_STALE_TIME } from '@/api/get-clock-history';
+import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, CLOCK_HISTORY_STALE_TIME, GetClockHistoryResponse } from '@/api/get-clock-history';
 import { ClockAction } from '@/api/types';
 import { colors, spacing } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,6 +53,10 @@ import {
     EmptyState,
     EmptyStateText,
     LoadingContainer,
+    EventEditButton,
+    ListHeaderContainer,
+    OrderIssueWarning,
+    OrderIssueText,
 } from './styles';
 
 const getMonthRange = (date: Date = new Date()) => {
@@ -80,14 +85,20 @@ const getDateLocale = (language: string) => {
 
 export function HistoryScreen() {
     const { t, i18n } = useTranslation();
+    const navigation = useNavigation<any>();
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
 
     const { startDate, endDate, month } = useMemo(() => getMonthRange(currentMonth), [currentMonth]);
 
-    const { data, isLoading } = useQuery({
-        queryKey: ['clockHistory', startDate, endDate],
-        queryFn: () => getClockHistory({ startDate, endDate }),
+    // Obter timezone do dispositivo
+    const deviceTimezone = useMemo(() => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }, []);
+
+    const { data, isLoading } = useQuery<GetClockHistoryResponse>({
+        queryKey: ['clockHistory', startDate, endDate, deviceTimezone],
+        queryFn: () => getClockHistory({ startDate, endDate, timezone: deviceTimezone }),
         staleTime: CLOCK_HISTORY_STALE_TIME,
         refetchOnWindowFocus: true,
     });
@@ -185,6 +196,12 @@ export function HistoryScreen() {
                         </EventType>
                         <EventTime>{formattedHour}</EventTime>
                     </EventContent>
+                    <EventEditButton
+                        onPress={() => navigation.navigate('EditEvent', { event })}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="create-outline" size={20} color={colors.text.secondary} />
+                    </EventEditButton>
                 </EventRow>
 
                 {/* Se for entrada e a próxima for saída, mostrar divisor com duração no meio e saída */}
@@ -205,6 +222,12 @@ export function HistoryScreen() {
                                 <EventType type="exit">{t('history.exit')}</EventType>
                                 <EventTime>{format(parseISO(nextEvent.hour), 'HH:mm', { locale: dateLocale })}</EventTime>
                             </EventContent>
+                            <EventEditButton
+                                onPress={() => navigation.navigate('EditEvent', { event: nextEvent })}
+                                activeOpacity={0.7}
+                            >
+                                <Ionicons name="create-outline" size={20} color={colors.text.secondary} />
+                            </EventEditButton>
                         </EventRow>
                     </>
                 )}
@@ -237,8 +260,37 @@ export function HistoryScreen() {
             return isLastEntry;
         })();
 
+        // Verificar se há problema de ordem (saída antes de entrada)
+        const hasOrderIssue = (() => {
+            if (!item.events || item.events.length < 2) return false;
+
+            // Verificar se o primeiro evento é uma saída (clock-out)
+            const firstEvent = item.events[0];
+            const isFirstExit = firstEvent.action === ClockAction.CLOCK_OUT;
+
+            // Verificar se há alguma entrada depois de uma saída sem ter uma entrada antes
+            for (let i = 0; i < item.events.length; i++) {
+                const event = item.events[i];
+                if (event.action === ClockAction.CLOCK_OUT) {
+                    // Se a próxima não for uma entrada imediatamente após, ou se for a primeira, há problema
+                    const nextEvent = item.events[i + 1];
+                    if (i === 0 || (nextEvent && nextEvent.action !== ClockAction.CLOCK_IN)) {
+                        return true;
+                    }
+                }
+            }
+
+            return isFirstExit;
+        })();
+
         return (
-            <DayCard incomplete={isIncomplete}>
+            <DayCard incomplete={isIncomplete} hasOrderIssue={hasOrderIssue}>
+                {hasOrderIssue && (
+                    <OrderIssueWarning>
+                        <Ionicons name="warning" size={16} color={colors.status.error} />
+                        <OrderIssueText>{t('history.orderIssue')}</OrderIssueText>
+                    </OrderIssueWarning>
+                )}
                 <DayHeader onPress={() => toggleDay(item.date)} activeOpacity={0.7}>
                     <DayDate>{formattedDate}</DayDate>
                     <DayHeaderRight>
@@ -328,52 +380,64 @@ export function HistoryScreen() {
                 </MonthNavigationButton>
             </MonthNavigation>
 
-            <ScrollContent>
-                <MonthSummaryCard>
-                    <SummaryMainRow>
-                        <SummaryMainItem>
-                            <SummaryItemValue>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValue>
-                            <SummaryItemLabel>{t('history.totalWorked')}</SummaryItemLabel>
-                        </SummaryMainItem>
-
-                        {data?.summary && (
-                            <>
-                                <SummaryDivider />
-                                <SummaryMainItem>
-                                    <SummaryItemValue>{monthSummary.totalExpectedHoursFormatted}</SummaryItemValue>
-                                    <SummaryItemLabel>{t('history.expectedHours')}</SummaryItemLabel>
-                                </SummaryMainItem>
-                            </>
-                        )}
-                    </SummaryMainRow>
-
-                    {data?.summary && (
-                        <SummaryDifferenceRow>
-                            <SummaryDifferenceLabel>{t('history.difference')}</SummaryDifferenceLabel>
-                            <SummaryDifferenceValue status={monthSummary.status}>
-                                {monthSummary.hoursDifferenceFormatted}
-                            </SummaryDifferenceValue>
-                        </SummaryDifferenceRow>
-                    )}
-                </MonthSummaryCard>
-
-                {isLoading ? (
+            {isLoading ? (
+                <ScrollContent>
+                    <MonthSummaryCard>
+                        <SummaryMainRow>
+                            <SummaryMainItem>
+                                <SummaryItemValue>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValue>
+                                <SummaryItemLabel>{t('history.totalWorked')}</SummaryItemLabel>
+                            </SummaryMainItem>
+                        </SummaryMainRow>
+                    </MonthSummaryCard>
                     <LoadingContainer>
                         <EmptyStateText>{t('common.loading')}</EmptyStateText>
                     </LoadingContainer>
-                ) : !data?.data || data.data.length === 0 ? (
-                    <EmptyState>
-                        <EmptyStateText>{t('history.empty')}</EmptyStateText>
-                    </EmptyState>
-                ) : (
-                    <DaysList
-                        data={data.data}
-                        keyExtractor={(item: ClockHistoryDay, index: number) => `${item.date}-${index}`}
-                        renderItem={renderDay}
-                        showsVerticalScrollIndicator={false}
-                    />
-                )}
-            </ScrollContent>
+                </ScrollContent>
+            ) : (
+                <DaysList
+                    data={data?.data || []}
+                    keyExtractor={(item: ClockHistoryDay, index: number) => `${item.date}-${index}`}
+                    renderItem={renderDay}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <ListHeaderContainer>
+                            <MonthSummaryCard>
+                                <SummaryMainRow>
+                                    <SummaryMainItem>
+                                        <SummaryItemValue>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValue>
+                                        <SummaryItemLabel>{t('history.totalWorked')}</SummaryItemLabel>
+                                    </SummaryMainItem>
+
+                                    {data?.summary && (
+                                        <>
+                                            <SummaryDivider />
+                                            <SummaryMainItem>
+                                                <SummaryItemValue>{monthSummary.totalExpectedHoursFormatted}</SummaryItemValue>
+                                                <SummaryItemLabel>{t('history.expectedHours')}</SummaryItemLabel>
+                                            </SummaryMainItem>
+                                        </>
+                                    )}
+                                </SummaryMainRow>
+
+                                {data?.summary && (
+                                    <SummaryDifferenceRow>
+                                        <SummaryDifferenceLabel>{t('history.difference')}</SummaryDifferenceLabel>
+                                        <SummaryDifferenceValue status={monthSummary.status}>
+                                            {monthSummary.hoursDifferenceFormatted}
+                                        </SummaryDifferenceValue>
+                                    </SummaryDifferenceRow>
+                                )}
+                            </MonthSummaryCard>
+                        </ListHeaderContainer>
+                    }
+                    ListEmptyComponent={
+                        <EmptyState>
+                            <EmptyStateText>{t('history.empty')}</EmptyStateText>
+                        </EmptyState>
+                    }
+                />
+            )}
         </Container>
     );
 }

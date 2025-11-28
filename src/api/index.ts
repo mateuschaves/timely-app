@@ -8,6 +8,8 @@ export * from './clock-in';
 export * from './clock-out';
 export * from './get-user-me';
 export * from './get-user-settings';
+export * from './update-clock-event';
+export * from './delete-clock-event';
 export * from './update-user-me';
 export * from './update-user-settings';
 

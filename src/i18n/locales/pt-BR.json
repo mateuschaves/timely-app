@@ -53,6 +53,7 @@
         "title": "Histórico de Ponto",
         "empty": "Nenhum registro encontrado",
         "date": "Data",
+        "time": "Hora",
         "entry": "Entrada",
         "exit": "Saída",
         "location": "Localização",
@@ -62,7 +63,18 @@
         "expectedHours": "Horas Esperadas",
         "difference": "Diferença",
         "exact": "Exato",
-        "interval": "Intervalo"
+        "interval": "Intervalo",
+        "editEvent": "Editar Evento",
+        "hour": "Hora",
+        "hourRequired": "A hora é obrigatória",
+        "invalidHour": "Hora inválida",
+        "updateEventError": "Erro ao atualizar evento. Tente novamente.",
+        "updateEventSuccess": "Evento atualizado com sucesso!",
+        "deleteEventTitle": "Excluir Evento",
+        "deleteEventConfirm": "Tem certeza que deseja excluir este evento?",
+        "deleteEventError": "Erro ao excluir evento. Tente novamente.",
+        "deleteEventSuccess": "Evento excluído com sucesso!",
+        "orderIssue": "Os eventos deste dia estão fora de ordem. Verifique os horários."
     },
     "profile": {
         "title": "Perfil",

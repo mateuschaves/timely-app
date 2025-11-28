@@ -53,6 +53,7 @@
     "title": "Zeiterfassungsverlauf",
     "empty": "Keine Einträge gefunden",
     "date": "Datum",
+    "time": "Uhrzeit",
     "entry": "Ein",
     "exit": "Aus",
     "location": "Standort",
@@ -62,7 +63,18 @@
     "expectedHours": "Erwartete Stunden",
     "difference": "Differenz",
     "exact": "Genau",
-    "interval": "Intervall"
+    "interval": "Intervall",
+    "editEvent": "Ereignis bearbeiten",
+    "hour": "Stunde",
+    "hourRequired": "Stunde ist erforderlich",
+    "invalidHour": "Ungültige Stunde",
+    "updateEventError": "Fehler beim Aktualisieren des Ereignisses. Bitte versuchen Sie es erneut.",
+    "updateEventSuccess": "Ereignis erfolgreich aktualisiert!",
+    "deleteEventTitle": "Ereignis löschen",
+    "deleteEventConfirm": "Sind Sie sicher, dass Sie dieses Ereignis löschen möchten?",
+    "deleteEventError": "Fehler beim Löschen des Ereignisses. Bitte versuchen Sie es erneut.",
+    "deleteEventSuccess": "Ereignis erfolgreich gelöscht!",
+    "orderIssue": "Die Ereignisse dieses Tages sind nicht in der richtigen Reihenfolge. Bitte überprüfen Sie die Zeiten."
   },
   "profile": {
     "title": "Profil",

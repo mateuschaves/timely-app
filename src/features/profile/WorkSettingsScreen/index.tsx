@@ -47,7 +47,6 @@ export function WorkSettingsScreen() {
     const navigation = useNavigation();
     const queryClient = useQueryClient();
     const { showSuccess } = useFeedback();
-    const [workAddress, setWorkAddress] = useState('');
     const [days, setDays] = useState<Record<string, DaySchedule>>({
         monday: { ...defaultSchedule },
         tuesday: { ...defaultSchedule },
@@ -76,10 +75,6 @@ export function WorkSettingsScreen() {
 
     useEffect(() => {
         if (settingsData) {
-            if (settingsData.workLocation?.coordinates) {
-                setWorkAddress(`${settingsData.workLocation.coordinates[1]}, ${settingsData.workLocation.coordinates[0]}`);
-            }
-
             const workSchedule = settingsData.workSchedule || {};
 
             setDays(prev => ({
@@ -159,23 +154,9 @@ export function WorkSettingsScreen() {
                 };
             }
 
-            const workLocation = workAddress.trim()
-                ? (() => {
-                    const coords = workAddress.trim().split(',').map(Number).filter(n => !isNaN(n));
-                    if (coords.length === 2) {
-                        return {
-                            type: 'Point' as const,
-                            coordinates: [coords[1], coords[0]] as [number, number],
-                        };
-                    }
-                    return undefined;
-                })()
-                : undefined;
-
             await updateUserSettings({
                 workSchedule,
                 customHolidays: [],
-                ...(workLocation && { workLocation }),
             });
 
             queryClient.invalidateQueries({ queryKey: ['userSettings'] });
@@ -295,23 +276,6 @@ export function WorkSettingsScreen() {
             </Header>
             <Content>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <SettingsCard>
-                        <SettingSection>
-                            <SettingLabel>{t('profile.workAddress')}</SettingLabel>
-                            <InputContainer>
-                                <Input
-                                    value={workAddress}
-                                    onChangeText={setWorkAddress}
-                                    placeholder={t('profile.workAddressPlaceholder')}
-                                    placeholderTextColor={colors.text.tertiary}
-                                    multiline
-                                    numberOfLines={3}
-                                    editable={!isSaving}
-                                />
-                            </InputContainer>
-                        </SettingSection>
-                    </SettingsCard>
-
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.workHours')}</SettingLabel>
