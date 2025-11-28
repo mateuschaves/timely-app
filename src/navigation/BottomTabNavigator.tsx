@@ -2,6 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from '@/i18n';
+import { colors } from '@/theme';
 import { HomeScreen } from '@/features/home';
 import { HistoryScreen } from '@/features/history';
 import { ProfileScreen } from '@/features/profile';
@@ -21,8 +22,12 @@ export function BottomTabNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: '#8e8e93',
+        tabBarActiveTintColor: colors.tabBar.activeTint,
+        tabBarInactiveTintColor: colors.tabBar.inactiveTint,
+        tabBarStyle: {
+          backgroundColor: colors.tabBar.background,
+          borderTopWidth: 0,
+        },
       }}
     >
       <Tab.Screen
@@ -31,7 +36,7 @@ export function BottomTabNavigator() {
         options={{
           title: t('navigation.home'),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />

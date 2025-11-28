@@ -142,23 +142,6 @@ export const DayGroupCard = styled.View<DayGroupCardProps>`
   opacity: ${(props: DayGroupCardProps) => props.incomplete ? 0.9 : 1};
 `;
 
-export const DayHeader = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${spacing.md}px;
-  padding-bottom: ${spacing.sm}px;
-  border-bottom-width: 1px;
-  border-bottom-color: ${colors.border.light};
-`;
-
-export const DayDate = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
-  text-transform: capitalize;
-`;
-
 interface DurationBadgeProps {
   incomplete?: boolean;
 }
@@ -219,14 +202,6 @@ export const EntryTime = styled.Text`
   color: ${colors.text.primary};
 `;
 
-export const ConnectionLine = styled.View`
-  width: 2px;
-  height: ${spacing.md}px;
-  background-color: ${colors.border.medium};
-  margin-left: 5px;
-  margin-vertical: ${spacing.xs}px;
-`;
-
 export const HoursWorkedBadge = styled.View`
   margin-top: ${spacing.xs}px;
   align-self: flex-start;
@@ -241,4 +216,302 @@ export const HoursWorkedText = styled.Text`
   color: ${colors.text.secondary};
 `;
 
+export const MonthNavigation = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${spacing.md}px;
+  background-color: ${colors.background.primary};
+  border-bottom-width: 1px;
+  border-bottom-color: ${colors.border.light};
+`;
+
+export const MonthNavigationButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${borderRadius.md}px;
+  background-color: ${colors.background.secondary};
+`;
+
+export const MonthNavigationText = styled.Text`
+  font-size: ${typography.sizes.lg}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${colors.text.primary};
+  text-transform: capitalize;
+  flex: 1;
+  text-align: center;
+`;
+
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
+  padding: ${spacing.md}px;
+`;
+
+export const MonthSummaryCard = styled.View`
+  background-color: ${colors.background.primary};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.lg}px;
+  margin-bottom: ${spacing.lg}px;
+  border-width: 1px;
+  border-color: ${colors.border.light};
+`;
+
+export const SummaryMainRow = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin-bottom: ${spacing.md}px;
+`;
+
+export const SummaryMainItem = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+export const SummaryDivider = styled.View`
+  width: 1px;
+  height: 40px;
+  background-color: ${colors.border.light};
+  margin: 0 ${spacing.md}px;
+`;
+
+export const SummaryItemLabel = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.secondary};
+  margin-top: ${spacing.xs}px;
+  text-align: center;
+`;
+
+export const SummaryItemValue = styled.Text`
+  font-size: ${typography.sizes.xxl}px;
+  font-weight: ${typography.weights.bold};
+  color: ${colors.text.primary};
+  text-align: center;
+`;
+
+export const SummaryDifferenceRow = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: ${spacing.md}px;
+  margin-top: ${spacing.md}px;
+  border-top-width: 1px;
+  border-top-color: ${colors.border.light};
+`;
+
+export const SummaryDifferenceLabel = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.secondary};
+  flex: 1;
+`;
+
+interface SummaryDifferenceValueProps {
+  status?: 'over' | 'under' | 'exact';
+}
+
+export const SummaryDifferenceValue = styled.Text<SummaryDifferenceValueProps>`
+  font-size: ${typography.sizes.lg}px;
+  font-weight: ${typography.weights.bold};
+  color: ${(props: SummaryDifferenceValueProps) => {
+    if (props.status === 'over') return colors.status.success;
+    if (props.status === 'under') return colors.status.error;
+    return colors.text.primary;
+  }};
+  text-align: right;
+  min-width: 100px;
+`;
+
+export const DaysList = styled(FlatList)`
+  flex: 1;
+`;
+
+interface DayCardProps {
+  incomplete?: boolean;
+}
+
+export const DayCard = styled.View<DayCardProps>`
+  background-color: ${colors.background.primary};
+  border-radius: ${borderRadius.md}px;
+  padding: ${spacing.md}px;
+  margin-bottom: ${spacing.md}px;
+  border-width: 2px;
+  border-color: ${(props: DayCardProps) => props.incomplete ? colors.status.warning : colors.border.light};
+  border-style: ${(props: DayCardProps) => props.incomplete ? 'dashed' : 'solid'};
+`;
+
+export const DayHeader = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${spacing.sm}px;
+  padding-bottom: ${spacing.sm}px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${colors.border.light};
+`;
+
+export const DayDate = styled.Text`
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${colors.text.primary};
+  flex: 1;
+`;
+
+export const DayHeaderRight = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${spacing.sm}px;
+`;
+
+export const DayTotalHoursBadge = styled.View`
+  background-color: ${colors.background.secondary};
+  padding: ${spacing.xs}px ${spacing.sm}px;
+  border-radius: ${borderRadius.sm}px;
+`;
+
+export const DayTotalHours = styled.Text`
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.primary};
+`;
+
+interface DayStatusBadgeProps {
+  status: 'over' | 'under' | 'exact';
+}
+
+export const DayStatusBadge = styled.View<DayStatusBadgeProps>`
+  background-color: ${(props: DayStatusBadgeProps) => {
+    if (props.status === 'over') return colors.status.success + '20';
+    if (props.status === 'under') return colors.status.error + '20';
+    return colors.background.secondary;
+  }};
+  padding: ${spacing.xs}px ${spacing.sm}px;
+  border-radius: ${borderRadius.sm}px;
+`;
+
+export const DayStatusText = styled.Text<DayStatusBadgeProps>`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${(props: DayStatusBadgeProps) => {
+    if (props.status === 'over') return colors.status.success;
+    if (props.status === 'under') return colors.status.error;
+    return colors.text.secondary;
+  }};
+`;
+
+export const DayExpandIcon = styled.View`
+  margin-left: ${spacing.xs}px;
+`;
+
+export const EventsList = styled.View`
+  margin-top: ${spacing.md}px;
+  padding-top: ${spacing.md}px;
+  border-top-width: 1px;
+  border-top-color: ${colors.border.light};
+  gap: ${spacing.md}px;
+`;
+
+export const EventGroup = styled.View`
+  gap: ${spacing.xs}px;
+`;
+
+export const EventRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${spacing.sm}px;
+`;
+
+export const EventIndicator = styled.View<EntryIndicatorProps>`
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: ${(props: EntryIndicatorProps) => 
+    props.type === 'entry' ? colors.status.success : colors.status.error
+  };
+`;
+
+export const EventContent = styled.View`
+  flex: 1;
+`;
+
+export const EventType = styled.Text<EntryTypeProps>`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${(props: EntryTypeProps) => (props.type === 'entry' ? colors.status.success : colors.status.error)};
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: ${spacing.xs / 2}px;
+`;
+
+export const EventTime = styled.Text`
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${colors.text.primary};
+`;
+
+export const ConnectionLine = styled.View`
+  width: 2px;
+  height: ${spacing.sm}px;
+  background-color: ${colors.border.medium};
+  margin-left: 5px;
+  margin-vertical: ${spacing.xs / 2}px;
+`;
+
+export const EventDuration = styled.View`
+  margin-left: 19px;
+  margin-top: ${spacing.xs}px;
+  align-self: flex-start;
+`;
+
+export const EventDurationText = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.secondary};
+`;
+
+export const DurationDivider = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-vertical: ${spacing.sm}px;
+  margin-left: 19px;
+  margin-right: ${spacing.md}px;
+`;
+
+export const DurationDividerLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: ${colors.border.light};
+`;
+
+export const DurationDividerText = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.secondary};
+  margin-horizontal: ${spacing.sm}px;
+`;
+
+export const PeriodSeparator = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-vertical: ${spacing.md}px;
+  margin-horizontal: ${spacing.md}px;
+`;
+
+export const PeriodSeparatorLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: ${colors.border.medium};
+`;
+
+export const PeriodSeparatorText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.text.tertiary};
+  margin-horizontal: ${spacing.md}px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
 

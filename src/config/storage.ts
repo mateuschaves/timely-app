@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   TOKEN: '@timely:token',
   LANGUAGE: '@timely:language',
   WORK_SETTINGS: '@timely:workSettings',
+  LAST_PROCESSED_DEEPLINK: '@timely:lastProcessedDeeplink',
 } as const;
 
 export type StorageKey = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];

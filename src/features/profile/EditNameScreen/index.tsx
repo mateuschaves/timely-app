@@ -6,6 +6,7 @@ import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme';
+import { useFeedback } from '@/utils/feedback';
 import {
     Container,
     Content,
@@ -22,6 +23,7 @@ export function EditNameScreen() {
     const { t } = useTranslation();
     const navigation = useNavigation();
     const { user, fetchUserMe } = useAuthContext();
+    const { showSuccess } = useFeedback();
     const [name, setName] = useState(user?.name || '');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -48,6 +50,7 @@ export function EditNameScreen() {
         try {
             await updateUserMe({ name: name.trim() });
             await fetchUserMe();
+            showSuccess(t('profile.updateNameSuccess'));
             navigation.goBack();
         } catch (error: any) {
             console.error('Erro ao atualizar nome:', error);

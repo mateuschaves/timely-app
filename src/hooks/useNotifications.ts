@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
-import { getUserSettings } from '@/api/get-user-settings';
+import { getUserSettings, type UserSettingsResponse } from '@/api/get-user-settings';
 import { requestNotificationPermissions, scheduleClockReminders, cancelAllNotifications } from '@/utils/notifications';
 
 export function useNotifications() {
   const { t } = useTranslation();
 
-  const { data: settings } = useQuery({
+  const { data: settings } = useQuery<UserSettingsResponse | undefined>({
     queryKey: ['userSettings'],
     queryFn: getUserSettings,
   });

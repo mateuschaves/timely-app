@@ -34,6 +34,12 @@ export const colors = {
     warning: '#ffc107',
     info: '#007AFF',
   },
+  
+  tabBar: {
+    background: '#ffffff',
+    activeTint: '#000000',
+    inactiveTint: '#8e8e93',
+  },
 } as const;
 
 export type ColorKey = keyof typeof colors;
@@ -42,4 +48,5 @@ export type BackgroundColorKey = keyof typeof colors.background;
 export type BorderColorKey = keyof typeof colors.border;
 export type ActionColorKey = keyof typeof colors.action;
 export type StatusColorKey = keyof typeof colors.status;
+export type TabBarColorKey = keyof typeof colors.tabBar;
 

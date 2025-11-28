@@ -3,6 +3,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { View, ActivityIndicator, StyleSheet, Linking as RNLinking } from 'react-native';
 import * as ExpoLinking from 'expo-linking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuthContext } from './src/features/auth';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
@@ -10,6 +11,7 @@ import { FeedbackProvider } from './src/utils/feedback';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
 import { useNotifications } from './src/hooks/useNotifications';
 import { setupReactotron } from './src/config/reactotron';
+import { STORAGE_KEYS } from './src/config/storage';
 import './src/config/reactotron.d';
 import './src/i18n/config';
 
@@ -67,14 +69,15 @@ function NavigationContent() {
 
   const lastProcessedUrl = useRef<string | null>(null);
   const isProcessingRef = useRef(false);
+  const initialUrlChecked = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const processDeeplink = (url: string) => {
-      // Verifica se a URL é válida e contém parâmetros de clock
-      if (!url || (!url.includes('time=') && !url.includes('hour='))) {
-        console.log('URL não contém parâmetros de clock, ignorando:', url);
+    const processDeeplink = async (url: string) => {
+      // Verifica se a URL é válida e contém parâmetro time
+      if (!url || !url.includes('time=')) {
+        console.log('URL não contém parâmetro time, ignorando:', url);
         return;
       }
 
@@ -91,22 +94,26 @@ function NavigationContent() {
 
       isProcessingRef.current = true;
       lastProcessedUrl.current = url;
-      console.log('Deeplink recebido:', url);
+      console.log('Deeplink recebido com parâmetro time:', url);
 
-      // Navega para History após sucesso
-      handleDeeplink(url, () => {
-        // Navega para a tab History após bater o ponto
-        navigation.navigate('Main', { screen: 'History' });
-      });
-
-      // Reset após um tempo para permitir novos deeplinks
-      setTimeout(() => {
-        isProcessingRef.current = false;
-        // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
+      try {
+        // Processa o deeplink e navega para History após sucesso
+        await handleDeeplink(url, () => {
+          // Navega para a tab History após bater o ponto
+          navigation.navigate('Main', { screen: 'History' });
+        });
+      } catch (error) {
+        console.error('Erro ao processar deeplink:', error);
+      } finally {
+        // Reset após um tempo para permitir novos deeplinks
         setTimeout(() => {
-          lastProcessedUrl.current = null;
-        }, 5000);
-      }, 1000);
+          isProcessingRef.current = false;
+          // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
+          setTimeout(() => {
+            lastProcessedUrl.current = null;
+          }, 5000);
+        }, 1000);
+      }
     };
 
     // Tenta usar expo-linking, se não disponível usa React Native Linking
@@ -123,19 +130,86 @@ function NavigationContent() {
     }
 
     // Listener para deeplinks recebidos enquanto o app está rodando
-    const subscription = Linking.addEventListener('url', (event: { url: string }) => {
-      // Verifica se é um deeplink válido de clock antes de processar
-      if (event.url && (event.url.includes('time=') || event.url.includes('hour='))) {
+    // Este listener só é acionado quando o app recebe um deeplink enquanto está aberto
+    const subscription = Linking.addEventListener('url', async (event: { url: string }) => {
+      // Verifica se é um deeplink válido de clock com parâmetro time
+      if (event.url && event.url.includes('time=')) {
         // Só processa se não for a mesma URL que já foi processada
         if (event.url !== lastProcessedUrl.current) {
+          // Limpa o AsyncStorage para permitir processar este novo deeplink
+          await AsyncStorage.removeItem(STORAGE_KEYS.LAST_PROCESSED_DEEPLINK);
           processDeeplink(event.url);
         }
       }
     });
 
-    // NÃO processa getInitialURL - isso causa problemas em reload
-    // Quando o app é aberto via deeplink, o listener acima captura o evento
-    // Isso evita processar URLs antigas após reload
+    // Para quando o app é aberto via deeplink (app estava fechado)
+    // getInitialURL só retorna uma URL se o app foi aberto via deeplink
+    // Usamos AsyncStorage para evitar processar em reloads
+    if (!initialUrlChecked.current) {
+      initialUrlChecked.current = true;
+
+      const checkInitialUrl = async () => {
+        try {
+          const initialUrl = await Linking.getInitialURL();
+
+          // Valida se a URL existe e contém o parâmetro time
+          if (!initialUrl) {
+            return; // Não foi aberto via deeplink
+          }
+
+          // Verifica se contém o parâmetro time
+          if (!initialUrl.includes('time=')) {
+            console.log('Initial URL não contém parâmetro time, ignorando:', initialUrl);
+            return;
+          }
+
+          // Verifica no AsyncStorage se esta URL já foi processada
+          const lastProcessed = await AsyncStorage.getItem(STORAGE_KEYS.LAST_PROCESSED_DEEPLINK);
+
+          if (lastProcessed === initialUrl) {
+            console.log('Initial URL já foi processada anteriormente (reload), ignorando:', initialUrl);
+            return;
+          }
+
+          // Valida se o parâmetro time tem um valor válido
+          try {
+            const parsed = Linking.parse(initialUrl);
+            const params = parsed.queryParams as { time?: string };
+
+            if (!params.time || params.time.trim() === '') {
+              console.log('Parâmetro time está vazio ou inválido, ignorando:', initialUrl);
+              return;
+            }
+
+            // Valida se é uma data válida
+            const timeDate = new Date(params.time);
+            if (isNaN(timeDate.getTime())) {
+              console.log('Parâmetro time não é uma data válida, ignorando:', initialUrl);
+              return;
+            }
+
+            console.log('App aberto via deeplink com time válido:', initialUrl);
+
+            // Salva a URL processada no AsyncStorage antes de processar
+            await AsyncStorage.setItem(STORAGE_KEYS.LAST_PROCESSED_DEEPLINK, initialUrl);
+
+            // Pequeno delay para garantir que o app está totalmente inicializado
+            setTimeout(() => {
+              processDeeplink(initialUrl);
+            }, 500);
+          } catch (parseError) {
+            console.error('Erro ao parsear URL do deeplink:', parseError);
+            return;
+          }
+        } catch (error) {
+          console.error('Erro ao verificar initial URL:', error);
+        }
+      };
+
+      // Verifica initial URL apenas uma vez quando autenticado
+      checkInitialUrl();
+    }
 
     return () => {
       if (subscription?.remove) {

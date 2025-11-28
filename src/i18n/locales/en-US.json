@@ -31,11 +31,23 @@
     "home": {
         "clockIn": "Clock In",
         "clockOut": "Clock Out",
-        "clocking": "Recording...",
-        "clockInSuccess": "Clock in recorded successfully!",
-        "clockOutSuccess": "Clock out recorded successfully!",
-        "clockInError": "Error recording clock in. Please try again.",
-        "clockOutError": "Error recording clock out. Please try again."
+        "clockInButton": "Start Work",
+        "clockOutButton": "End Work",
+        "clocking": "Processing...",
+        "clockInSuccess": "Clock in recorded! Have a great day!",
+        "clockOutSuccess": "Clock out recorded! See you tomorrow!",
+        "clockInError": "Oops! Couldn't record your clock in. Please try again.",
+        "clockOutError": "Oops! Couldn't record your clock out. Please try again.",
+        "welcomeMessage": "Welcome!",
+        "welcomeMessageWithName": "Hello, {{name}}!",
+        "breakMessage": "Have a good break!",
+        "breakMessageWithName": "See you later, {{name}}!",
+        "confirmClockIn": "Do you want to start work at {{time}}?",
+        "confirmClockInTitle": "Confirm Start",
+        "confirmClockOut": "Do you want to end work at {{time}}?",
+        "confirmClockOutTitle": "Confirm End",
+        "lastEntry": "Last entry",
+        "lastExit": "Last exit"
     },
     "history": {
         "title": "Time Clock History",
@@ -44,7 +56,13 @@
         "entry": "Entry",
         "exit": "Exit",
         "location": "Location",
-        "notes": "Notes"
+        "notes": "Notes",
+        "monthSummary": "Month Summary",
+        "totalWorked": "Total Worked",
+        "expectedHours": "Expected Hours",
+        "difference": "Difference",
+        "exact": "Exact",
+        "interval": "Interval"
     },
     "profile": {
         "title": "Profile",
@@ -56,12 +74,30 @@
         "user": "User",
         "noName": "Name not available",
         "noEmail": "Email not available",
-    "language": "Language",
-    "languageSystem": "System",
-    "languagePortuguese": "Portuguese",
-    "languageEnglish": "English",
-    "languageFrench": "French",
-    "languageGerman": "German"
+        "language": "Language",
+        "languageSystem": "System",
+        "languagePortuguese": "Portuguese",
+        "languageEnglish": "English",
+        "languageFrench": "French",
+        "languageGerman": "German",
+        "editName": "Edit Name",
+        "nameRequired": "Name is required",
+        "updateNameError": "Error updating name. Please try again.",
+        "updateNameSuccess": "Name updated successfully!",
+        "workSettings": "Work Settings",
+        "workSettingsError": "Error saving settings. Please try again.",
+        "workSettingsSuccess": "Work settings saved successfully!",
+        "languageChangedSuccess": "Language changed successfully!",
+        "workAddress": "Work Address",
+        "workAddressPlaceholder": "Ex: latitude, longitude",
+        "workHours": "Work Hours",
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
     },
     "errors": {
         "generic": "An error occurred. Please try again.",
@@ -69,5 +105,13 @@
         "unauthorized": "Session expired. Please login again.",
         "locationPermission": "Location permission denied. Enable it in device settings.",
         "locationError": "Error getting location. Please try again."
+    },
+    "notifications": {
+        "entryTitle": "Time to clock in!",
+        "entryBody": "Don't forget to record your entry.",
+        "lunchTitle": "Lunch time!",
+        "lunchBody": "Have a good lunch!",
+        "exitTitle": "Time to clock out!",
+        "exitBody": "Don't forget to record your exit."
     }
 }

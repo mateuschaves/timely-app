@@ -6,7 +6,7 @@ import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { colors, spacing } from '@/theme';
-import { Container, Title, Subtitle, StatusCard, StatusMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
+import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
 
 export function HomeScreen() {
@@ -105,21 +105,13 @@ export function HomeScreen() {
     ]).start();
 
     try {
-      const locationData = await requestLocationPermission();
+      await requestLocationPermission();
       await clock({
         hour: now,
-        ...(locationData && { location: locationData }),
-      });
+      }, nextAction as 'clock-in' | 'clock-out');
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);
-      try {
-        await clock({
-          hour: now,
-        });
-      } catch (fallbackError) {
-        console.error('Erro ao registrar ponto sem localização:', fallbackError);
-        throw fallbackError;
-      }
+      throw error;
     }
   };
 
@@ -144,15 +136,15 @@ export function HomeScreen() {
   return (
     <Container>
       {!isLoadingLastEvent && (
-        <StatusCard>
-          <StatusMessage>{statusMessage}</StatusMessage>
+        <WelcomeCard style={{ position: 'absolute', top: spacing.xl + 20, width: '100%', marginHorizontal: spacing.lg }}>
+          <WelcomeMessage>{statusMessage}</WelcomeMessage>
           {lastEvent && (
             <LastEventInfo>
               {lastEvent.action === 'clock-in' ? t('home.lastEntry') : t('home.lastExit')}:{' '}
               <LastEventTime>{formatTime(lastEvent.hour)}</LastEventTime>
             </LastEventInfo>
           )}
-        </StatusCard>
+        </WelcomeCard>
       )}
 
       <ButtonContainer>
@@ -173,7 +165,7 @@ export function HomeScreen() {
                 height: '100%',
                 borderRadius: 9999,
                 borderWidth: 2,
-                borderColor: '#000',
+                borderColor: colors.primary,
                 opacity: pulseAnim.interpolate({
                   inputRange: [1, 1.2],
                   outputRange: [0.3, 0],

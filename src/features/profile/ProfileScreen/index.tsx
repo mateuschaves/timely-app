@@ -136,35 +136,20 @@ export function ProfileScreen() {
               <Section>
                 <InfoCard>
                   {user.name && (
-                    <>
-                      <SettingsRow
-                        onPress={() => navigation.navigate('EditName')}
-                        activeOpacity={0.7}
-                        style={{ borderBottomWidth: user.appleUserId ? 1 : 0, borderBottomColor: colors.border.light }}
-                      >
-                        <InfoLeft>
-                          <InfoLabel>{t('profile.name')}</InfoLabel>
-                        </InfoLeft>
-                        <InfoValueContainer>
-                          <InfoValue>{user.name}</InfoValue>
-                          <ChevronIcon>
-                            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-                          </ChevronIcon>
-                        </InfoValueContainer>
-                      </SettingsRow>
-                    </>
-                  )}
-                  {user.appleUserId && (
-                    <InfoRow isLast>
+                    <SettingsRow
+                      onPress={() => navigation.navigate('EditName')}
+                      activeOpacity={0.7}
+                    >
                       <InfoLeft>
-                        <InfoLabel>Apple ID</InfoLabel>
+                        <InfoLabel>{t('profile.name')}</InfoLabel>
                       </InfoLeft>
                       <InfoValueContainer>
-                        <InfoValue numberOfLines={1} ellipsizeMode="middle">
-                          {user.appleUserId}
-                        </InfoValue>
+                        <InfoValue>{user.name}</InfoValue>
+                        <ChevronIcon>
+                          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                        </ChevronIcon>
                       </InfoValueContainer>
-                    </InfoRow>
+                    </SettingsRow>
                   )}
                 </InfoCard>
               </Section>

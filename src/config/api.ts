@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { getToken, removeToken } from './token';
 
-export const API_BASE_URL = 'http://192.168.15.74:3000';
+export const API_BASE_URL = 'https://clocking-core-api.onrender.com';
 export const API_TIMEOUT = 10000;
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
