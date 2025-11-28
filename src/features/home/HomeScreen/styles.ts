@@ -124,25 +124,29 @@ export const ButtonContainer = styled.View`
 `;
 
 export const ClockButton = styled.TouchableOpacity`
-  width: 200px;
-  height: 200px;
+  width: 240px;
+  height: 240px;
   border-radius: ${borderRadius.round}px;
   background-color: ${colors.primary};
   align-items: center;
   justify-content: center;
   position: relative;
+  padding-horizontal: ${spacing.md}px;
 `;
 
 export const ClockButtonInner = styled.View`
   align-items: center;
   justify-content: center;
   z-index: 1;
+  width: 100%;
 `;
 
 export const ClockButtonText = styled.Text`
   color: ${colors.text.inverse};
   font-size: ${typography.sizes.xl}px;
   font-weight: ${typography.weights.bold};
+  text-align: center;
+  flex-wrap: wrap;
 `;
 
 export const ConfirmModal = styled.View`

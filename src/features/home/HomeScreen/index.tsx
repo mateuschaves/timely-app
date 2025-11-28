@@ -5,6 +5,7 @@ import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
+import { useQueryClient } from '@tanstack/react-query';
 import { colors, spacing } from '@/theme';
 import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
@@ -12,6 +13,7 @@ import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, Last
 export function HomeScreen() {
   const { t, i18n } = useTranslation();
   const { user } = useAuthContext();
+  const queryClient = useQueryClient();
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
   const { requestLocationPermission } = useLocation();
@@ -109,6 +111,9 @@ export function HomeScreen() {
       await clock({
         hour: now,
       }, nextAction as 'clock-in' | 'clock-out');
+      
+      // Refetch imediato para atualizar o botão instantaneamente
+      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);
       throw error;

@@ -20,8 +20,10 @@ const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>;
 const mockUseLastEvent = useLastEvent as jest.MockedFunction<typeof useLastEvent>;
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 
+let testQueryClient: QueryClient;
+
 const createWrapper = () => {
-  const queryClient = new QueryClient({
+  testQueryClient = new QueryClient({
     defaultOptions: {
       queries: { retry: false },
       mutations: { retry: false },
@@ -29,7 +31,7 @@ const createWrapper = () => {
   });
 
   return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={testQueryClient}>{children}</QueryClientProvider>
   );
 };
 
@@ -146,6 +148,71 @@ describe('HomeScreen', () => {
       expect(mockRequestLocationPermission).toHaveBeenCalled();
       expect(mockClock).toHaveBeenCalled();
     });
+  });
+
+  it('should refetch lastEvent query immediately after clock success', async () => {
+    const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
+    mockRequestLocationPermission.mockResolvedValue({
+      type: 'Point',
+      coordinates: [-46.6333, -23.5505],
+    });
+    mockClock.mockResolvedValue({});
+
+    const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
+
+    const button = getByText('home.clockInButton');
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(getByText('common.confirm')).toBeTruthy();
+    });
+
+    const confirmButton = getByText('common.confirm');
+    fireEvent.press(confirmButton);
+
+    await waitFor(() => {
+      expect(mockClock).toHaveBeenCalled();
+      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+    }, { timeout: 5000 });
+
+    refetchQueriesSpy.mockRestore();
+  });
+
+  it('should refetch lastEvent query immediately after clock-out success', async () => {
+    const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
+    mockUseLastEvent.mockReturnValue({
+      lastEvent: {
+        id: '1',
+        hour: '2024-01-01T10:00:00Z',
+        action: 'clock-in',
+      },
+      nextAction: 'clock-out',
+      isLoading: false,
+    } as any);
+    mockRequestLocationPermission.mockResolvedValue({
+      type: 'Point',
+      coordinates: [-46.6333, -23.5505],
+    });
+    mockClock.mockResolvedValue({});
+
+    const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
+
+    const button = getByText('home.clockOutButton');
+    fireEvent.press(button);
+
+    await waitFor(() => {
+      expect(getByText('common.confirm')).toBeTruthy();
+    });
+
+    const confirmButton = getByText('common.confirm');
+    fireEvent.press(confirmButton);
+
+    await waitFor(() => {
+      expect(mockClock).toHaveBeenCalled();
+      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+    }, { timeout: 5000 });
+
+    refetchQueriesSpy.mockRestore();
   });
 
   it('should close modal when cancelled', async () => {

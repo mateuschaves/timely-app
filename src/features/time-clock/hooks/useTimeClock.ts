@@ -26,19 +26,21 @@ export function useTimeClock() {
 
   const clockInMutation = useMutation({
     mutationFn: clockIn,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
-      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
       queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      // Refetch lastEvent imediatamente para atualizar o botão
+      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     },
   });
 
   const clockOutMutation = useMutation({
     mutationFn: clockOut,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
-      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
       queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      // Refetch lastEvent imediatamente para atualizar o botão
+      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     },
   });
 
@@ -105,10 +107,11 @@ export function useTimeClock() {
 
   const clockMutation = useMutation({
     mutationFn: clockApi,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
-      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
       queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      // Refetch lastEvent imediatamente para atualizar o botão
+      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     },
   });
 
