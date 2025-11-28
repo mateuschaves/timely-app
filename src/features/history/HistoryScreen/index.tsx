@@ -58,6 +58,7 @@ import {
     OrderIssueWarning,
     OrderIssueText,
 } from './styles';
+import { HistorySkeletonLoader } from './SkeletonLoader';
 
 const getMonthRange = (date: Date = new Date()) => {
     const start = startOfMonth(date);
@@ -382,17 +383,7 @@ export function HistoryScreen() {
 
             {isLoading ? (
                 <ScrollContent>
-                    <MonthSummaryCard>
-                        <SummaryMainRow>
-                            <SummaryMainItem>
-                                <SummaryItemValue>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValue>
-                                <SummaryItemLabel>{t('history.totalWorked')}</SummaryItemLabel>
-                            </SummaryMainItem>
-                        </SummaryMainRow>
-                    </MonthSummaryCard>
-                    <LoadingContainer>
-                        <EmptyStateText>{t('common.loading')}</EmptyStateText>
-                    </LoadingContainer>
+                    <HistorySkeletonLoader />
                 </ScrollContent>
             ) : (
                 <DaysList
