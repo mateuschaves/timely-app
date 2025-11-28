@@ -250,15 +250,17 @@ export const ScrollContent = styled.ScrollView`
 `;
 
 export const ListHeaderContainer = styled.View`
-  padding: ${spacing.md}px;
+  padding-horizontal: ${spacing.md}px;
+  padding-top: ${spacing.md}px;
+  padding-bottom: 0px;
 `;
 
 export const MonthSummaryCard = styled.View`
   background-color: ${colors.background.primary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
-  margin-top: ${spacing.md}px;
   margin-bottom: ${spacing.lg}px;
+  margin-top: 0px;
   border-width: 1px;
   border-color: ${colors.border.light};
 `;
@@ -333,6 +335,7 @@ export const SummaryDifferenceValue = styled.Text<SummaryDifferenceValueProps>`
 export const DaysList = styled(FlatList)`
   flex: 1;
   padding-horizontal: ${spacing.md}px;
+  padding-top: 0px;
   padding-bottom: ${spacing.md}px;
 `;
 
@@ -343,10 +346,11 @@ interface DayCardProps {
 
 export const DayCard = styled.View<DayCardProps>`
   background-color: ${colors.background.primary};
-  border-radius: ${borderRadius.md}px;
-  padding: ${spacing.md}px;
-  margin-bottom: ${spacing.md}px;
-  border-width: 2px;
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.lg}px;
+  margin-bottom: ${spacing.lg}px;
+  margin-top: 0px;
+  border-width: 1px;
   border-color: ${(props: DayCardProps) => {
     if (props.hasOrderIssue) return colors.status.error;
     if (props.incomplete) return colors.status.warning;

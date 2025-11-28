@@ -35,16 +35,16 @@ describe('FeedbackProvider', () => {
 
   it('should throw error when used outside provider', () => {
     // Suppress console.error for this test
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+
     expect(() => {
       renderHook(() => useFeedback());
     }).toThrow('useFeedback must be used within a FeedbackProvider');
-    
+
     consoleSpy.mockRestore();
   });
 
-  it('should show success message', async () => {
+  it('should show success message', () => {
     const { result } = renderHook(() => useFeedback(), { wrapper });
 
     act(() => {
@@ -56,9 +56,7 @@ describe('FeedbackProvider', () => {
       jest.advanceTimersByTime(100);
     });
 
-    await waitFor(() => {
-      expect(Haptics.notificationAsync).toHaveBeenCalledWith('success');
-    });
+    expect(Haptics.notificationAsync).toHaveBeenCalledWith('success');
   });
 
   it('should show error message', () => {
@@ -81,22 +79,26 @@ describe('FeedbackProvider', () => {
     expect(result.current).toBeDefined();
   });
 
-  it('should hide message after timeout', async () => {
+  it('should hide message after timeout', () => {
     const { result } = renderHook(() => useFeedback(), { wrapper });
 
     act(() => {
       result.current.showSuccess('Test message');
     });
 
-    // Advance timers to trigger the timeout
+    // Advance timers to trigger the timeout (3000ms)
     act(() => {
       jest.advanceTimersByTime(3000);
     });
 
-    // Wait for the cleanup to complete
-    await waitFor(() => {
-      // Message should be hidden after timeout - just verify the hook still works
-      expect(result.current.showSuccess).toBeDefined();
-    }, { timeout: 100 });
+    // Advance a bit more to ensure cleanup completes
+    act(() => {
+      jest.advanceTimersByTime(100);
+    });
+
+    // Verify the hook still works (message should be hidden)
+    expect(result.current.showSuccess).toBeDefined();
+    expect(result.current.showError).toBeDefined();
+    expect(result.current.showInfo).toBeDefined();
   });
 });
