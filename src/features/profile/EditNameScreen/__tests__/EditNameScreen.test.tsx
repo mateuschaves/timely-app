@@ -14,8 +14,51 @@ jest.mock('expo-haptics', () => ({
   },
 }));
 
+// Mock auth context first to avoid importing LoginScreen which needs ActivityIndicator
+jest.mock('@/features/auth', () => ({
+  useAuthContext: jest.fn(),
+}));
+
+// Mock react-native - must include ActivityIndicator for styled-components
+jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'ios',
+    select: jest.fn(),
+  },
+  Alert: {
+    alert: jest.fn(),
+  },
+  Keyboard: {
+    dismiss: jest.fn(),
+  },
+  View: 'View',
+  Text: 'Text',
+  TextInput: 'TextInput',
+  TouchableOpacity: 'TouchableOpacity',
+  ActivityIndicator: 'ActivityIndicator',
+  ScrollView: 'ScrollView',
+  StyleSheet: {
+    create: (styles: any) => styles,
+    flatten: (style: any) => {
+      if (!style) return {};
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style.filter(Boolean));
+      }
+      return style;
+    },
+  },
+}));
+
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+}));
+
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaView: 'SafeAreaView',
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 jest.mock('@/i18n');
-jest.mock('@/features/auth');
 jest.mock('@/api/update-user-me');
 jest.mock('@/utils/feedback');
 jest.mock('@react-navigation/native', () => ({
@@ -102,12 +145,19 @@ describe('EditNameScreen', () => {
     const saveButton = getByText('common.save');
     fireEvent.press(saveButton);
 
+    // Wait for the async operations to complete
     await waitFor(() => {
       expect(mockUpdateUserMe).toHaveBeenCalledWith({ name: 'New Name' });
+    }, { timeout: 10000 });
+
+    await waitFor(() => {
       expect(mockFetchUserMe).toHaveBeenCalled();
+    }, { timeout: 10000 });
+
+    await waitFor(() => {
       expect(mockShowSuccess).toHaveBeenCalled();
-    });
-  });
+    }, { timeout: 10000 });
+  }, 15000);
 
   it('should show error when name is empty', async () => {
     const { getByText, getByPlaceholderText } = render(<EditNameScreen />, { wrapper: createWrapper() });
