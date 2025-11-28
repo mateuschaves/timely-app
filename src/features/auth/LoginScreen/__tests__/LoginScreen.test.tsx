@@ -8,9 +8,7 @@ import { useTranslation } from '@/i18n';
 jest.mock('../../context/AuthContext');
 jest.mock('@/i18n');
 jest.mock('react-native', () => {
-  const RN = jest.requireActual('react-native');
   return {
-    ...RN,
     Platform: {
       OS: 'ios',
       select: jest.fn(),
@@ -18,10 +16,19 @@ jest.mock('react-native', () => {
     Alert: {
       alert: jest.fn(),
     },
+    View: 'View',
+    Text: 'Text',
+    TouchableOpacity: 'TouchableOpacity',
+    ActivityIndicator: 'ActivityIndicator',
     StyleSheet: {
-      ...RN.StyleSheet,
       create: (styles: any) => styles,
-      flatten: (style: any) => style,
+      flatten: (style: any) => {
+        if (!style) return {};
+        if (Array.isArray(style)) {
+          return Object.assign({}, ...style.filter(Boolean));
+        }
+        return style;
+      },
     },
   };
 });

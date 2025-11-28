@@ -4,33 +4,38 @@ const mockGetForegroundPermissionsAsync = jest.fn();
 const mockRequestForegroundPermissionsAsync = jest.fn();
 const mockGetCurrentPositionAsync = jest.fn();
 
-// Mock Platform to ensure Location module is loaded
-jest.mock('react-native', () => {
-  return {
-    Platform: {
-      OS: 'ios',
-      select: jest.fn(),
+// Mock Platform FIRST - before any imports
+jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'ios',
+    select: jest.fn(),
+  },
+  View: 'View',
+  Text: 'Text',
+  StyleSheet: {
+    create: (styles: any) => styles,
+    flatten: (style: any) => {
+      if (!style) return {};
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style.filter(Boolean));
+      }
+      return style;
     },
-    View: 'View',
-    Text: 'Text',
-    StyleSheet: {
-      create: (styles: any) => styles,
-      flatten: (style: any) => style,
-    },
-  };
-});
+  },
+}));
 
-// Mock expo-location - must be before importing useLocation
+// Mock expo-location BEFORE importing useLocation
+// This ensures the mock is in place when the module is required
 jest.mock('expo-location', () => ({
-  getForegroundPermissionsAsync: mockGetForegroundPermissionsAsync,
-  requestForegroundPermissionsAsync: mockRequestForegroundPermissionsAsync,
-  getCurrentPositionAsync: mockGetCurrentPositionAsync,
+  getForegroundPermissionsAsync: (...args: any[]) => mockGetForegroundPermissionsAsync(...args),
+  requestForegroundPermissionsAsync: (...args: any[]) => mockRequestForegroundPermissionsAsync(...args),
+  getCurrentPositionAsync: (...args: any[]) => mockGetCurrentPositionAsync(...args),
   Accuracy: {
     Balanced: 6,
   },
 }));
 
-// Import the hook AFTER mocks are set up
+// Now import the hook - the mocks are already in place
 import { useLocation } from '../useLocation';
 
 describe('useLocation', () => {
@@ -39,6 +44,21 @@ describe('useLocation', () => {
     mockGetForegroundPermissionsAsync.mockReset();
     mockRequestForegroundPermissionsAsync.mockReset();
     mockGetCurrentPositionAsync.mockReset();
+    
+    // Reset mocks to return resolved values by default
+    mockGetForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
+    mockGetCurrentPositionAsync.mockResolvedValue({
+      coords: {
+        latitude: -23.5505,
+        longitude: -46.6333,
+        altitude: null,
+        accuracy: 10,
+        altitudeAccuracy: null,
+        heading: null,
+        speed: null,
+      },
+      timestamp: Date.now(),
+    });
   });
 
   it('should request location permission and get location successfully', async () => {
