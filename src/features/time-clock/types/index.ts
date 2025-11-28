@@ -10,7 +10,8 @@ export interface TimeClockEntry {
  * Parâmetros recebidos via deeplink para registrar ponto
  */
 export interface TimeClockDeeplinkParams {
-  hour?: string; // ISO 8601 format
+  time?: string; // ISO 8601 format - parâmetro do deeplink
+  hour?: string; // ISO 8601 format - mantido para compatibilidade
   type?: 'entry' | 'exit'; // 'entry' para clock-in, 'exit' para clock-out
   location?: {
     type: 'Point';

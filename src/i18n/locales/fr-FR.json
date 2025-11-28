@@ -31,11 +31,23 @@
   "home": {
     "clockIn": "Pointage - Entrée",
     "clockOut": "Pointage - Sortie",
-    "clocking": "Enregistrement...",
-    "clockInSuccess": "Entrée enregistrée avec succès !",
-    "clockOutSuccess": "Sortie enregistrée avec succès !",
-    "clockInError": "Erreur lors de l'enregistrement de l'entrée. Veuillez réessayer.",
-    "clockOutError": "Erreur lors de l'enregistrement de la sortie. Veuillez réessayer."
+    "clockInButton": "Commencer le travail",
+    "clockOutButton": "Terminer le travail",
+    "clocking": "Traitement...",
+    "clockInSuccess": "Pointage d'entrée enregistré ! Bonne journée !",
+    "clockOutSuccess": "Pointage de sortie enregistré ! À demain !",
+    "clockInError": "Oups ! Impossible d'enregistrer votre entrée. Veuillez réessayer.",
+    "clockOutError": "Oups ! Impossible d'enregistrer votre sortie. Veuillez réessayer.",
+    "welcomeMessage": "Bienvenue !",
+    "welcomeMessageWithName": "Bonjour, {{name}} !",
+    "breakMessage": "Bon repos !",
+    "breakMessageWithName": "À bientôt, {{name}} !",
+    "confirmClockIn": "Voulez-vous commencer le travail à {{time}} ?",
+    "confirmClockInTitle": "Confirmer le début",
+    "confirmClockOut": "Voulez-vous terminer le travail à {{time}} ?",
+    "confirmClockOutTitle": "Confirmer la fin",
+    "lastEntry": "Dernière entrée",
+    "lastExit": "Dernière sortie"
   },
   "history": {
     "title": "Historique des pointages",
@@ -44,7 +56,13 @@
     "entry": "Entrée",
     "exit": "Sortie",
     "location": "Localisation",
-    "notes": "Notes"
+    "notes": "Notes",
+    "monthSummary": "Résumé du mois",
+    "totalWorked": "Total travaillé",
+    "expectedHours": "Heures attendues",
+    "difference": "Différence",
+    "exact": "Exact",
+    "interval": "Intervalle"
   },
   "profile": {
     "title": "Profil",
@@ -61,7 +79,25 @@
     "languagePortuguese": "Portugais",
     "languageEnglish": "Anglais",
     "languageFrench": "Français",
-    "languageGerman": "Allemand"
+    "languageGerman": "Allemand",
+    "editName": "Modifier le nom",
+    "nameRequired": "Le nom est requis",
+    "updateNameError": "Erreur lors de la mise à jour du nom. Veuillez réessayer.",
+    "updateNameSuccess": "Nom mis à jour avec succès !",
+    "workSettings": "Paramètres de travail",
+    "workSettingsError": "Erreur lors de l'enregistrement des paramètres. Veuillez réessayer.",
+    "workSettingsSuccess": "Paramètres de travail enregistrés avec succès !",
+    "languageChangedSuccess": "Langue modifiée avec succès !",
+    "workAddress": "Adresse de travail",
+    "workAddressPlaceholder": "Ex: latitude, longitude",
+    "workHours": "Heures de travail",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",
@@ -69,6 +105,14 @@
     "unauthorized": "Session expirée. Veuillez vous reconnecter.",
     "locationPermission": "Permission de localisation refusée. Activez-la dans les paramètres de l'appareil.",
     "locationError": "Erreur lors de l'obtention de la localisation. Veuillez réessayer."
+  },
+  "notifications": {
+    "entryTitle": "Il est temps d'entrer !",
+    "entryBody": "N'oubliez pas d'enregistrer votre entrée.",
+    "lunchTitle": "Heure du déjeuner !",
+    "lunchBody": "Bon appétit !",
+    "exitTitle": "Il est temps de sortir !",
+    "exitBody": "N'oubliez pas d'enregistrer votre sortie."
   }
 }
 

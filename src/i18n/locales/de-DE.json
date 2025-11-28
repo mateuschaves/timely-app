@@ -31,11 +31,23 @@
   "home": {
     "clockIn": "Stempeln - Ein",
     "clockOut": "Stempeln - Aus",
-    "clocking": "Wird aufgezeichnet...",
-    "clockInSuccess": "Einstempeln erfolgreich aufgezeichnet!",
-    "clockOutSuccess": "Ausstempeln erfolgreich aufgezeichnet!",
-    "clockInError": "Fehler beim Aufzeichnen des Einstempelns. Bitte versuchen Sie es erneut.",
-    "clockOutError": "Fehler beim Aufzeichnen des Ausstempelns. Bitte versuchen Sie es erneut."
+    "clockInButton": "Arbeit beginnen",
+    "clockOutButton": "Arbeit beenden",
+    "clocking": "Wird verarbeitet...",
+    "clockInSuccess": "Einstempeln aufgezeichnet! Einen schönen Tag!",
+    "clockOutSuccess": "Ausstempeln aufgezeichnet! Bis morgen!",
+    "clockInError": "Ups! Einstempeln konnte nicht aufgezeichnet werden. Bitte versuchen Sie es erneut.",
+    "clockOutError": "Ups! Ausstempeln konnte nicht aufgezeichnet werden. Bitte versuchen Sie es erneut.",
+    "welcomeMessage": "Willkommen!",
+    "welcomeMessageWithName": "Hallo, {{name}}!",
+    "breakMessage": "Gute Pause!",
+    "breakMessageWithName": "Bis später, {{name}}!",
+    "confirmClockIn": "Möchten Sie die Arbeit um {{time}} beginnen?",
+    "confirmClockInTitle": "Beginn bestätigen",
+    "confirmClockOut": "Möchten Sie die Arbeit um {{time}} beenden?",
+    "confirmClockOutTitle": "Ende bestätigen",
+    "lastEntry": "Letzter Einstempeln",
+    "lastExit": "Letzter Ausstempeln"
   },
   "history": {
     "title": "Zeiterfassungsverlauf",
@@ -44,7 +56,13 @@
     "entry": "Ein",
     "exit": "Aus",
     "location": "Standort",
-    "notes": "Notizen"
+    "notes": "Notizen",
+    "monthSummary": "Monatszusammenfassung",
+    "totalWorked": "Gesamt gearbeitet",
+    "expectedHours": "Erwartete Stunden",
+    "difference": "Differenz",
+    "exact": "Genau",
+    "interval": "Intervall"
   },
   "profile": {
     "title": "Profil",
@@ -61,7 +79,25 @@
     "languagePortuguese": "Portugiesisch",
     "languageEnglish": "Englisch",
     "languageFrench": "Französisch",
-    "languageGerman": "Deutsch"
+    "languageGerman": "Deutsch",
+    "editName": "Namen bearbeiten",
+    "nameRequired": "Name ist erforderlich",
+    "updateNameError": "Fehler beim Aktualisieren des Namens. Bitte versuchen Sie es erneut.",
+    "updateNameSuccess": "Name erfolgreich aktualisiert!",
+    "workSettings": "Arbeitseinstellungen",
+    "workSettingsError": "Fehler beim Speichern der Einstellungen. Bitte versuchen Sie es erneut.",
+    "workSettingsSuccess": "Arbeitseinstellungen erfolgreich gespeichert!",
+    "languageChangedSuccess": "Sprache erfolgreich geändert!",
+    "workAddress": "Arbeitsadresse",
+    "workAddressPlaceholder": "Ex: Breitengrad, Längengrad",
+    "workHours": "Arbeitszeiten",
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag"
   },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
@@ -69,6 +105,14 @@
     "unauthorized": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
     "locationPermission": "Standortberechtigung verweigert. Aktivieren Sie sie in den Geräteeinstellungen.",
     "locationError": "Fehler beim Abrufen des Standorts. Bitte versuchen Sie es erneut."
+  },
+  "notifications": {
+    "entryTitle": "Zeit zum Einstempeln!",
+    "entryBody": "Vergessen Sie nicht, Ihren Einstempeln zu erfassen.",
+    "lunchTitle": "Mittagspause!",
+    "lunchBody": "Guten Appetit!",
+    "exitTitle": "Zeit zum Ausstempeln!",
+    "exitBody": "Vergessen Sie nicht, Ihren Ausstempeln zu erfassen."
   }
 }
 

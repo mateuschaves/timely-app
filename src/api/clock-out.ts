@@ -3,7 +3,6 @@ import { TimeClockEntry } from '@/features/time-clock/types';
 import { LocationCoordinates, ClockAction } from './types';
 
 export interface ClockOutRequest {
-  action: ClockAction.CLOCK_OUT;
   hour: string;
   location?: LocationCoordinates;
   photoUrl?: string;

@@ -3,24 +3,28 @@ import { useTranslation, useLanguage, LanguageOption } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme';
+import { useFeedback } from '@/utils/feedback';
 import {
   Container,
   Content,
   Header,
   HeaderTitle,
   BackButton,
-  LanguageList,
-  LanguageItem,
-  LanguageItemText,
-  LanguageItemCheck,
-  LanguageItemCheckInner,
-  Divider,
+  Section,
+  InfoCard,
+  SettingsRow,
+  InfoLeft,
+  InfoLabel,
+  InfoValueContainer,
+  InfoValue,
+  CheckIcon,
 } from './styles';
 
 export function LanguageScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const { currentLanguage, changeLanguage } = useLanguage();
+  const { showSuccess } = useFeedback();
 
   const languages: { value: LanguageOption; label: string }[] = [
     { value: 'system', label: t('profile.languageSystem') },
@@ -31,7 +35,10 @@ export function LanguageScreen() {
   ];
 
   const handleLanguageChange = (language: LanguageOption) => {
-    changeLanguage(language);
+    if (language !== currentLanguage) {
+      changeLanguage(language);
+      showSuccess(t('profile.languageChangedSuccess'));
+    }
   };
 
   return (
@@ -43,24 +50,32 @@ export function LanguageScreen() {
         <HeaderTitle>{t('profile.language')}</HeaderTitle>
       </Header>
       <Content>
-        <LanguageList>
-          {languages.map((lang, index) => (
-            <React.Fragment key={lang.value}>
-              <LanguageItem
+        <Section>
+          <InfoCard>
+            {languages.map((lang, index) => (
+              <SettingsRow
+                key={lang.value}
                 onPress={() => handleLanguageChange(lang.value)}
                 activeOpacity={0.7}
+                style={{
+                  borderBottomWidth: index < languages.length - 1 ? 1 : 0,
+                  borderBottomColor: colors.border.light,
+                }}
               >
-                <LanguageItemText>{lang.label}</LanguageItemText>
-                {currentLanguage === lang.value && (
-                  <LanguageItemCheck>
-                    <LanguageItemCheckInner />
-                  </LanguageItemCheck>
-                )}
-              </LanguageItem>
-              {index < languages.length - 1 && <Divider />}
-            </React.Fragment>
-          ))}
-        </LanguageList>
+                <InfoLeft>
+                  <InfoLabel>{lang.label}</InfoLabel>
+                </InfoLeft>
+                <InfoValueContainer>
+                  {currentLanguage === lang.value && (
+                    <CheckIcon>
+                      <Ionicons name="checkmark" size={20} color={colors.primary} />
+                    </CheckIcon>
+                  )}
+                </InfoValueContainer>
+              </SettingsRow>
+            ))}
+          </InfoCard>
+        </Section>
       </Content>
     </Container>
   );

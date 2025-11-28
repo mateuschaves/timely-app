@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { Animated, View, Text, StyleSheet } from 'react-native';
+import { Animated, View, Text, StyleSheet, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { colors, spacing, typography, borderRadius } from '@/theme';
 
 type FeedbackType = 'success' | 'error' | 'info';
 
 interface FeedbackContextData {
-    showSuccess: (message: string) => void;
-    showError: (message: string) => void;
-    showInfo: (message: string) => void;
+    showSuccess: (message: string, enableHaptics?: boolean) => void;
+    showError: (message: string, enableHaptics?: boolean) => void;
+    showInfo: (message: string, enableHaptics?: boolean) => void;
 }
 
 const FeedbackContext = createContext<FeedbackContextData | undefined>(undefined);
@@ -22,9 +23,19 @@ export function FeedbackProvider({ children }: FeedbackProviderProps) {
     const [fadeAnim] = useState(new Animated.Value(0));
     const [translateY] = useState(new Animated.Value(100));
 
-    const showFeedback = useCallback((msg: string, feedbackType: FeedbackType) => {
+    const showFeedback = useCallback((msg: string, feedbackType: FeedbackType, enableHaptics: boolean = true) => {
         setMessage(msg);
         setType(feedbackType);
+
+        // Trigger haptics for success by default
+        if (enableHaptics && feedbackType === 'success' && Platform.OS !== 'web') {
+            try {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            } catch (error) {
+                // Haptics might not be available on all devices
+                console.warn('Haptics not available:', error);
+            }
+        }
 
         Animated.parallel([
             Animated.timing(fadeAnim, {
@@ -58,16 +69,16 @@ export function FeedbackProvider({ children }: FeedbackProviderProps) {
         }, 3000);
     }, [fadeAnim, translateY]);
 
-    const showSuccess = useCallback((msg: string) => {
-        showFeedback(msg, 'success');
+    const showSuccess = useCallback((msg: string, enableHaptics: boolean = true) => {
+        showFeedback(msg, 'success', enableHaptics);
     }, [showFeedback]);
 
-    const showError = useCallback((msg: string) => {
-        showFeedback(msg, 'error');
+    const showError = useCallback((msg: string, enableHaptics: boolean = false) => {
+        showFeedback(msg, 'error', enableHaptics);
     }, [showFeedback]);
 
-    const showInfo = useCallback((msg: string) => {
-        showFeedback(msg, 'info');
+    const showInfo = useCallback((msg: string, enableHaptics: boolean = false) => {
+        showFeedback(msg, 'info', enableHaptics);
     }, [showFeedback]);
 
     const getBackgroundColor = () => {
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.md,
         borderRadius: borderRadius.lg,
         maxWidth: '90%',
-        shadowColor: '#000',
+        shadowColor: colors.primary,
         shadowOffset: {
             width: 0,
             height: 2,

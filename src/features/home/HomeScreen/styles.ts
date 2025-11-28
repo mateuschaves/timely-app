@@ -7,6 +7,7 @@ export const Container = styled.SafeAreaView`
   justify-content: center;
   padding: ${spacing.lg}px;
   padding-bottom: 100px;
+  padding-top: ${spacing.md}px;
   background-color: ${colors.background.primary};
 `;
 
@@ -70,6 +71,23 @@ export const DeeplinkMessage = styled.Text`
   border-color: ${colors.status.success}40;
 `;
 
+export const WelcomeCard = styled.View`
+  background-color: ${colors.background.secondary};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.lg}px;
+  margin-bottom: ${spacing.xl}px;
+  width: 100%;
+  align-items: center;
+`;
+
+export const WelcomeMessage = styled.Text`
+  font-size: ${typography.sizes.xl}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${colors.text.primary};
+  text-align: center;
+  margin-bottom: ${spacing.sm}px;
+`;
+
 export const StatusCard = styled.View`
   background-color: ${colors.background.secondary};
   border-radius: ${borderRadius.lg}px;
@@ -102,7 +120,7 @@ export const ButtonContainer = styled.View`
   width: 100%;
   align-items: center;
   justify-content: center;
-  margin-top: ${spacing.xl}px;
+  flex: 1;
 `;
 
 export const ClockButton = styled.TouchableOpacity`
@@ -129,7 +147,7 @@ export const ClockButtonText = styled.Text`
 
 export const ConfirmModal = styled.View`
   flex: 1;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${colors.background.tertiary}80;
   justify-content: center;
   align-items: center;
   padding: ${spacing.lg}px;

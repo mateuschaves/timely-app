@@ -10,6 +10,7 @@
 
 import Reactotron from 'reactotron-react-native';
 import { Platform } from 'react-native';
+import { scheduleTestNotification } from '@/utils/notifications';
 
 // Verifica se está em desenvolvimento
 const isDevelopment = __DEV__;
@@ -45,17 +46,44 @@ export const setupReactotron = () => {
       networking: {
         ignoreUrls: /symbolicate/, // Ignora URLs de symbolicate
       },
-      editor: false,
+      editor: true,
       errors: { veto: () => false },
-      overlay: false,
+      overlay: false
     })
     .connect();
 
   // Limpa o console do Reactotron ao iniciar
   reactotron.clear?.();
 
+  // Adiciona comandos customizados
+  reactotron.onCustomCommand?.({
+    command: 'schedule-test-notification',
+    handler: async () => {
+      try {
+        await scheduleTestNotification();
+        reactotron.log?.('✅ Notificação de teste agendada para daqui a 1 minuto!');
+      } catch (error) {
+        reactotron.error?.('❌ Erro ao agendar notificação de teste:', error);
+      }
+    },
+    title: 'Agendar Notificação de Teste',
+    description: 'Agenda uma notificação push para daqui a 1 minuto',
+  });
+
   // Adiciona um helper para logar objetos
   console.tron = reactotron;
+
+  // Expõe função globalmente para uso no console do Reactotron
+  if (typeof global !== 'undefined') {
+    (global as any).scheduleTestNotification = async () => {
+      try {
+        await scheduleTestNotification();
+        reactotron.log?.('✅ Notificação de teste agendada para daqui a 1 minuto!');
+      } catch (error) {
+        reactotron.error?.('❌ Erro ao agendar notificação de teste:', error);
+      }
+    };
+  }
 
   return reactotron;
 };

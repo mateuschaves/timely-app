@@ -2,10 +2,13 @@ import { apiClient } from '@/config/api';
 import type { WorkSchedule, CustomHoliday, WorkLocation } from './update-user-settings';
 
 export interface UserSettingsResponse {
-  id: string;
+  userId?: string;
+  id?: string;
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export const getUserSettings = async (): Promise<UserSettingsResponse> => {

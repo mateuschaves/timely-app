@@ -36,8 +36,24 @@ export interface ClockHistoryDay {
   events: ClockHistoryEvent[];
 }
 
+export interface ClockHistoryMonthSummary {
+  totalWorkedHours: number;
+  totalWorkedHoursFormatted: string;
+  totalExpectedHours: number;
+  totalExpectedHoursFormatted: string;
+  hoursDifference: number;
+  hoursDifferenceFormatted: string;
+  status: 'over' | 'under' | 'exact';
+  daysWorked: number;
+  daysWithSchedule: number;
+  averageHoursPerDay: number;
+  averageHoursPerDayFormatted: string;
+  totalDays: number;
+}
+
 export interface GetClockHistoryResponse {
   data: ClockHistoryDay[];
+  summary: ClockHistoryMonthSummary;
 }
 
 export const getClockHistory = async (
@@ -45,7 +61,7 @@ export const getClockHistory = async (
 ): Promise<GetClockHistoryResponse> => {
   const { startDate, endDate } = params;
   
-  const response = await apiClient.get<GetClockHistoryResponse>(
+  const response = await apiClient.get<any>(
     '/clockin/history',
     {
       params: {
@@ -55,6 +71,24 @@ export const getClockHistory = async (
     }
   );
   
-  return response.data;
+  // Debug: verificar estrutura da resposta
+  if (__DEV__) {
+    console.log('getClockHistory - response.data:', JSON.stringify(response.data, null, 2));
+  }
+  
+  // A resposta pode ter diferentes estruturas:
+  // 1. { status, url, data: { data: [...], summary: {...} } }
+  // 2. { data: [...], summary: {...} }
+  // Vamos verificar qual estrutura está vindo
+  if (response.data?.data && Array.isArray(response.data.data) && response.data.summary) {
+    // Estrutura: { data: [...], summary: {...} }
+    return response.data as GetClockHistoryResponse;
+  } else if (response.data?.data?.data && Array.isArray(response.data.data.data) && response.data.data.summary) {
+    // Estrutura: { status, url, data: { data: [...], summary: {...} } }
+    return response.data.data as GetClockHistoryResponse;
+  }
+  
+  // Fallback: retornar response.data diretamente
+  return response.data as GetClockHistoryResponse;
 };
 

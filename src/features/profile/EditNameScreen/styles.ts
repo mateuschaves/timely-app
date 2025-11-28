@@ -35,14 +35,18 @@ export const Content = styled.View`
   padding: ${spacing.lg}px;
 `;
 
-export const Section = styled.View`
+export const InputContainer = styled.View`
   margin-bottom: ${spacing.lg}px;
 `;
 
-export const InfoCard = styled.View`
+export const Input = styled.TextInput`
   background-color: ${colors.background.primary};
   border-radius: ${borderRadius.lg}px;
-  overflow: hidden;
+  padding: ${spacing.md}px ${spacing.lg}px;
+  font-size: ${typography.sizes.md}px;
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.regular};
+  min-height: 48px;
   shadow-color: ${shadows.sm.shadowColor};
   shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
   shadow-opacity: ${shadows.sm.shadowOpacity};
@@ -50,42 +54,20 @@ export const InfoCard = styled.View`
   elevation: ${shadows.sm.elevation};
 `;
 
-export const SettingsRow = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${spacing.sm}px ${spacing.md}px;
-  min-height: 48px;
-`;
-
-export const InfoLeft = styled.View`
-  flex: 1;
-  margin-right: ${spacing.md}px;
-`;
-
-export const InfoLabel = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  color: ${colors.text.primary};
-  font-weight: ${typography.weights.regular};
-  line-height: 22px;
-`;
-
-export const InfoValueContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-export const InfoValue = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  color: ${colors.text.secondary};
-  font-weight: ${typography.weights.regular};
-  flex-shrink: 1;
-  line-height: 22px;
-`;
-
-export const CheckIcon = styled.View`
+export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean }>`
+  background-color: ${colors.primary};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
   justify-content: center;
+  min-height: 48px;
+  opacity: ${props => (props.disabled ? 0.6 : 1)};
+`;
+
+export const SaveButtonText = styled.Text`
+  color: ${colors.text.inverse};
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.semibold};
+  letter-spacing: 0.1px;
 `;
 
