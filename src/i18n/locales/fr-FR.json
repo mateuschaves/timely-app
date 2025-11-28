@@ -53,6 +53,7 @@
     "title": "Historique des pointages",
     "empty": "Aucun enregistrement trouvé",
     "date": "Date",
+    "time": "Heure",
     "entry": "Entrée",
     "exit": "Sortie",
     "location": "Localisation",
@@ -62,7 +63,18 @@
     "expectedHours": "Heures attendues",
     "difference": "Différence",
     "exact": "Exact",
-    "interval": "Intervalle"
+    "interval": "Intervalle",
+    "editEvent": "Modifier l'événement",
+    "hour": "Heure",
+    "hourRequired": "L'heure est requise",
+    "invalidHour": "Heure invalide",
+    "updateEventError": "Erreur lors de la mise à jour de l'événement. Veuillez réessayer.",
+    "updateEventSuccess": "Événement mis à jour avec succès !",
+    "deleteEventTitle": "Supprimer l'événement",
+    "deleteEventConfirm": "Êtes-vous sûr de vouloir supprimer cet événement ?",
+    "deleteEventError": "Erreur lors de la suppression de l'événement. Veuillez réessayer.",
+    "deleteEventSuccess": "Événement supprimé avec succès !",
+    "orderIssue": "Les événements de ce jour sont dans le désordre. Veuillez vérifier les heures."
   },
   "profile": {
     "title": "Profil",

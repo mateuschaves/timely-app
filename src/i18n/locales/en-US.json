@@ -53,6 +53,7 @@
         "title": "Time Clock History",
         "empty": "No records found",
         "date": "Date",
+        "time": "Time",
         "entry": "Entry",
         "exit": "Exit",
         "location": "Location",
@@ -62,7 +63,18 @@
         "expectedHours": "Expected Hours",
         "difference": "Difference",
         "exact": "Exact",
-        "interval": "Interval"
+        "interval": "Interval",
+        "editEvent": "Edit Event",
+        "hour": "Hour",
+        "hourRequired": "Hour is required",
+        "invalidHour": "Invalid hour",
+        "updateEventError": "Error updating event. Please try again.",
+        "updateEventSuccess": "Event updated successfully!",
+        "deleteEventTitle": "Delete Event",
+        "deleteEventConfirm": "Are you sure you want to delete this event?",
+        "deleteEventError": "Error deleting event. Please try again.",
+        "deleteEventSuccess": "Event deleted successfully!",
+        "orderIssue": "Events for this day are out of order. Please check the times."
     },
     "profile": {
         "title": "Profile",

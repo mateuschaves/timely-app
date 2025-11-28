@@ -249,10 +249,15 @@ export const ScrollContent = styled.ScrollView`
   padding: ${spacing.md}px;
 `;
 
+export const ListHeaderContainer = styled.View`
+  padding: ${spacing.md}px;
+`;
+
 export const MonthSummaryCard = styled.View`
   background-color: ${colors.background.primary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
+  margin-top: ${spacing.md}px;
   margin-bottom: ${spacing.lg}px;
   border-width: 1px;
   border-color: ${colors.border.light};
@@ -327,10 +332,13 @@ export const SummaryDifferenceValue = styled.Text<SummaryDifferenceValueProps>`
 
 export const DaysList = styled(FlatList)`
   flex: 1;
+  padding-horizontal: ${spacing.md}px;
+  padding-bottom: ${spacing.md}px;
 `;
 
 interface DayCardProps {
   incomplete?: boolean;
+  hasOrderIssue?: boolean;
 }
 
 export const DayCard = styled.View<DayCardProps>`
@@ -339,8 +347,12 @@ export const DayCard = styled.View<DayCardProps>`
   padding: ${spacing.md}px;
   margin-bottom: ${spacing.md}px;
   border-width: 2px;
-  border-color: ${(props: DayCardProps) => props.incomplete ? colors.status.warning : colors.border.light};
-  border-style: ${(props: DayCardProps) => props.incomplete ? 'dashed' : 'solid'};
+  border-color: ${(props: DayCardProps) => {
+    if (props.hasOrderIssue) return colors.status.error;
+    if (props.incomplete) return colors.status.warning;
+    return colors.border.light;
+  }};
+  border-style: ${(props: DayCardProps) => (props.incomplete || props.hasOrderIssue) ? 'dashed' : 'solid'};
 `;
 
 export const DayHeader = styled.TouchableOpacity`
@@ -409,8 +421,6 @@ export const DayExpandIcon = styled.View`
 export const EventsList = styled.View`
   margin-top: ${spacing.md}px;
   padding-top: ${spacing.md}px;
-  border-top-width: 1px;
-  border-top-color: ${colors.border.light};
   gap: ${spacing.md}px;
 `;
 
@@ -422,6 +432,11 @@ export const EventRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: ${spacing.sm}px;
+`;
+
+export const EventEditButton = styled.TouchableOpacity`
+  padding: ${spacing.xs}px;
+  margin-left: ${spacing.xs}px;
 `;
 
 export const EventIndicator = styled.View<EntryIndicatorProps>`
@@ -513,5 +528,22 @@ export const PeriodSeparatorText = styled.Text`
   margin-horizontal: ${spacing.md}px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+`;
+
+export const OrderIssueWarning = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${colors.status.error}15;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-radius: ${borderRadius.sm}px;
+  margin-bottom: ${spacing.sm}px;
+  gap: ${spacing.xs}px;
+`;
+
+export const OrderIssueText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${colors.status.error};
+  flex: 1;
 `;
 
