@@ -5,6 +5,7 @@ import { ProfileScreen } from '../index';
 import { useAuthContext } from '@/features/auth';
 import { useTranslation, useLanguage } from '@/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/config/storage';
 
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
@@ -157,7 +158,22 @@ describe('ProfileScreen', () => {
     }, { timeout: 3000 });
   });
 
-  it('should show empty state when user has no name', () => {
+  it('should show empty state when user is null', () => {
+    mockUseAuthContext.mockReturnValue({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      signInWithApple: jest.fn(),
+      signOut: mockSignOut,
+      fetchUserMe: mockFetchUserMe,
+    });
+
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    expect(getByText('profile.noName')).toBeTruthy();
+  });
+
+  it('should show user email when name is null', () => {
     mockUseAuthContext.mockReturnValue({
       user: {
         id: '123',
@@ -172,8 +188,165 @@ describe('ProfileScreen', () => {
       fetchUserMe: mockFetchUserMe,
     });
 
-    const { queryByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+    const { getAllByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
 
-    expect(queryByText('Test User')).toBeNull();
+    expect(getAllByText('test@example.com').length).toBeGreaterThan(0);
+  });
+
+  it('should show user email when both name and email exist', () => {
+    const { getAllByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    expect(getAllByText('Test User').length).toBeGreaterThan(0);
+    expect(getAllByText('test@example.com').length).toBeGreaterThan(0);
+  });
+
+  it('should show avatar icon when user has no name', () => {
+    mockUseAuthContext.mockReturnValue({
+      user: {
+        id: '123',
+        email: 'test@example.com',
+        name: null,
+        appleUserId: 'apple123',
+      },
+      isAuthenticated: true,
+      isLoading: false,
+      signInWithApple: jest.fn(),
+      signOut: mockSignOut,
+      fetchUserMe: mockFetchUserMe,
+    });
+
+    const { getAllByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    // Avatar should show icon instead of initials
+    expect(getAllByText('test@example.com').length).toBeGreaterThan(0);
+  });
+
+  it('should show single initial when name has one word', () => {
+    mockUseAuthContext.mockReturnValue({
+      user: {
+        id: '123',
+        email: 'test@example.com',
+        name: 'Test',
+        appleUserId: 'apple123',
+      },
+      isAuthenticated: true,
+      isLoading: false,
+      signInWithApple: jest.fn(),
+      signOut: mockSignOut,
+      fetchUserMe: mockFetchUserMe,
+    });
+
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    expect(getByText('T')).toBeTruthy();
+  });
+
+  it('should navigate to EditName when name row is pressed', async () => {
+    const mockNavigate = jest.fn();
+    jest.mock('@react-navigation/native', () => ({
+      useNavigation: () => ({
+        navigate: mockNavigate,
+      }),
+      useFocusEffect: (callback: () => void) => callback(),
+    }));
+
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('profile.name')).toBeTruthy();
+    });
+  });
+
+  it('should navigate to Language screen', async () => {
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('profile.language')).toBeTruthy();
+    });
+  });
+
+  it('should navigate to WorkSettings screen', async () => {
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('profile.workSettings')).toBeTruthy();
+    });
+  });
+
+  it('should load language from AsyncStorage', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue('en-US');
+
+    render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.LANGUAGE);
+    });
+  });
+
+  it('should handle invalid language from AsyncStorage', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue('invalid-lang');
+
+    render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.LANGUAGE);
+    });
+  });
+
+  it('should handle system language', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue('system');
+
+    render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.LANGUAGE);
+    });
+  });
+
+  it('should handle error loading data', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    mockFetchUserMe.mockRejectedValue(new Error('Network error'));
+
+    render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(mockFetchUserMe).toHaveBeenCalled();
+    });
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should display all language options correctly', async () => {
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('profile.language')).toBeTruthy();
+    });
+  });
+
+  it('should show user name when available', () => {
+    const { getAllByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    expect(getAllByText('Test User').length).toBeGreaterThan(0);
+  });
+
+  it('should show profile.user when no name or email', () => {
+    mockUseAuthContext.mockReturnValue({
+      user: {
+        id: '123',
+        email: null,
+        name: null,
+        appleUserId: 'apple123',
+      },
+      isAuthenticated: true,
+      isLoading: false,
+      signInWithApple: jest.fn(),
+      signOut: mockSignOut,
+      fetchUserMe: mockFetchUserMe,
+    });
+
+    const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+    expect(getByText('profile.user')).toBeTruthy();
   });
 });

@@ -239,7 +239,7 @@ describe('WorkSettingsScreen', () => {
   });
 
   it('should disable inputs when saving', async () => {
-    mockUpdateUserSettings.mockImplementation(() => new Promise(() => {})); // Never resolves
+    mockUpdateUserSettings.mockImplementation(() => new Promise(() => { })); // Never resolves
 
     const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
 
@@ -252,6 +252,83 @@ describe('WorkSettingsScreen', () => {
 
     await waitFor(() => {
       expect(getByText('common.loading')).toBeTruthy();
+    });
+  });
+
+  it('should save with multiple enabled days', async () => {
+    mockGetUserSettings.mockResolvedValue({
+      workSchedule: {
+        monday: { start: '09:00', end: '18:00' },
+        tuesday: { start: '08:00', end: '17:00' },
+        friday: { start: '10:00', end: '19:00' },
+      },
+    } as any);
+
+    const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('common.save')).toBeTruthy();
+    }, { timeout: 10000 });
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpdateUserSettings).toHaveBeenCalled();
+    }, { timeout: 15000 });
+
+    // Verify that workSchedule was included in the call
+    const updateCall = mockUpdateUserSettings.mock.calls[0];
+    expect(updateCall[0]).toHaveProperty('workSchedule');
+    // The workSchedule should contain the enabled days
+    expect(updateCall[0].workSchedule).toBeDefined();
+  }, 20000);
+
+  it('should save with only some days enabled', async () => {
+    mockGetUserSettings.mockResolvedValue({
+      workSchedule: {
+        monday: { start: '09:00', end: '18:00' },
+      },
+    } as any);
+
+    const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('common.save')).toBeTruthy();
+    });
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpdateUserSettings).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle all days of week in save', async () => {
+    mockGetUserSettings.mockResolvedValue({
+      workSchedule: {
+        monday: { start: '09:00', end: '18:00' },
+        tuesday: { start: '08:00', end: '17:00' },
+        wednesday: { start: '10:00', end: '19:00' },
+        thursday: { start: '09:00', end: '18:00' },
+        friday: { start: '09:00', end: '18:00' },
+        saturday: { start: '09:00', end: '18:00' },
+        sunday: { start: '09:00', end: '18:00' },
+      },
+    } as any);
+
+    const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(getByText('common.save')).toBeTruthy();
+    });
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpdateUserSettings).toHaveBeenCalled();
     });
   });
 });

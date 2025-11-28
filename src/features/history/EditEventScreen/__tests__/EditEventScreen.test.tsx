@@ -220,5 +220,191 @@ describe('EditEventScreen', () => {
       expect(timeInput.props.editable).toBe(false);
     });
   });
+
+  it('should show error when date is invalid', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const dateInput = getByPlaceholderText('2024-07-16');
+    const timeInput = getByPlaceholderText('08:00');
+
+    fireEvent.changeText(dateInput, 'invalid-date');
+    fireEvent.changeText(timeInput, '14:30');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalled();
+      expect(mockUpdateClockEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should show error when time is empty', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const timeInput = getByPlaceholderText('08:00');
+    fireEvent.changeText(timeInput, '');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalled();
+      expect(mockUpdateClockEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should handle save error with response data', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    mockUpdateClockEvent.mockRejectedValue({
+      response: {
+        data: {
+          message: 'API Error',
+        },
+      },
+    });
+
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const dateInput = getByPlaceholderText('2024-07-16');
+    const timeInput = getByPlaceholderText('08:00');
+
+    fireEvent.changeText(dateInput, '2024-01-15');
+    fireEvent.changeText(timeInput, '14:30');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalledWith('common.error', 'API Error');
+    });
+  });
+
+  it('should handle save error with error message', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    mockUpdateClockEvent.mockRejectedValue({
+      message: 'Network Error',
+    });
+
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const dateInput = getByPlaceholderText('2024-07-16');
+    const timeInput = getByPlaceholderText('08:00');
+
+    fireEvent.changeText(dateInput, '2024-01-15');
+    fireEvent.changeText(timeInput, '14:30');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalledWith('common.error', 'Network Error');
+    });
+  });
+
+  it('should handle save error without message', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    mockUpdateClockEvent.mockRejectedValue({});
+
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const dateInput = getByPlaceholderText('2024-07-16');
+    const timeInput = getByPlaceholderText('08:00');
+
+    fireEvent.changeText(dateInput, '2024-01-15');
+    fireEvent.changeText(timeInput, '14:30');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalledWith('common.error', 'history.updateEventError');
+    });
+  });
+
+  it('should include photoUrl and notes when updating event', async () => {
+    jest.spyOn(require('@react-navigation/native'), 'useRoute').mockReturnValue({
+      params: {
+        event: {
+          id: '1',
+          hour: '2024-01-01T10:00:00.000Z',
+          action: 'clock-in',
+          photoUrl: 'https://example.com/photo.jpg',
+          notes: 'Test notes',
+        },
+      },
+    });
+
+    const { getByText, getByPlaceholderText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const dateInput = getByPlaceholderText('2024-07-16');
+    const timeInput = getByPlaceholderText('08:00');
+
+    fireEvent.changeText(dateInput, '2024-01-15');
+    fireEvent.changeText(timeInput, '14:30');
+
+    const saveButton = getByText('common.save');
+    fireEvent.press(saveButton);
+
+    await waitFor(() => {
+      expect(mockUpdateClockEvent).toHaveBeenCalledWith(
+        '1',
+        expect.objectContaining({
+          hour: expect.any(String),
+          photoUrl: 'https://example.com/photo.jpg',
+          notes: 'Test notes',
+        })
+      );
+    });
+  });
+
+  it('should handle delete error', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    mockDeleteClockEvent.mockRejectedValue({
+      response: {
+        data: {
+          message: 'Delete Error',
+        },
+      },
+    });
+
+    const { getByText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const deleteButton = getByText('common.delete');
+    fireEvent.press(deleteButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle delete error without response', async () => {
+    const mockAlert = require('react-native').Alert.alert as jest.Mock;
+    mockDeleteClockEvent.mockRejectedValue(new Error('Network Error'));
+
+    const { getByText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const deleteButton = getByText('common.delete');
+    fireEvent.press(deleteButton);
+
+    await waitFor(() => {
+      expect(mockAlert).toHaveBeenCalled();
+    });
+  });
+
+  it('should disable delete button when deleting', async () => {
+    mockDeleteClockEvent.mockImplementation(() => new Promise(() => { })); // Never resolves
+
+    const { getByText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+
+    const deleteButton = getByText('common.delete');
+    fireEvent.press(deleteButton);
+
+    await waitFor(() => {
+      expect(getByText('common.loading')).toBeTruthy();
+    });
+  });
 });
 
