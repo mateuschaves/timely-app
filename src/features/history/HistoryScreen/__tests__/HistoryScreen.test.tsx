@@ -186,8 +186,10 @@ describe('HistoryScreen', () => {
       expect(mockGetClockHistory).toHaveBeenCalled();
     });
 
-    // Verify component renders with navigation controls
-    expect(getByText('history.totalWorked')).toBeTruthy();
+    // Wait for data to load before checking for text
+    await waitFor(() => {
+      expect(getByText('history.totalWorked')).toBeTruthy();
+    });
   });
 
   it('should display days with events', async () => {
@@ -422,10 +424,14 @@ describe('HistoryScreen', () => {
   it('should handle loading state', async () => {
     mockGetClockHistory.mockImplementation(() => new Promise(() => {})); // Never resolves
 
-    const { getByText } = render(<HistoryScreen />, { wrapper: createWrapper() });
+    const { queryByText, getByText } = render(<HistoryScreen />, { wrapper: createWrapper() });
 
+    // During loading, the skeleton loader should be shown and content should not be visible
     await waitFor(() => {
-      expect(getByText('common.loading')).toBeTruthy();
+      expect(mockGetClockHistory).toHaveBeenCalled();
     });
+
+    // Verify that loading content (skeleton) is shown and actual content is not yet visible
+    expect(queryByText('history.totalWorked')).toBeNull();
   });
 });

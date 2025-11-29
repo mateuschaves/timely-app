@@ -51,6 +51,9 @@ jest.mock('expo-location', () => ({
   requestForegroundPermissionsAsync: jest.fn(() =>
     Promise.resolve({ status: 'granted' })
   ),
+  getForegroundPermissionsAsync: jest.fn(() =>
+    Promise.resolve({ status: 'granted' })
+  ),
   getCurrentPositionAsync: jest.fn(() =>
     Promise.resolve({
       coords: {
@@ -65,6 +68,17 @@ jest.mock('expo-location', () => ({
       timestamp: Date.now(),
     })
   ),
+  getLastKnownPositionAsync: jest.fn(() =>
+    Promise.reject(new Error('No last known position'))
+  ),
+  Accuracy: {
+    Lowest: 1,
+    Low: 2,
+    Balanced: 6,
+    High: 4,
+    Highest: 5,
+    Navigation: 6,
+  },
 }));
 
 jest.mock('expo-linking', () => ({
