@@ -47,7 +47,8 @@
         "confirmClockOut": "Deseja finalizar seu trabalho às {{time}}?",
         "confirmClockOutTitle": "Confirmar Saída",
         "lastEntry": "Última entrada",
-        "lastExit": "Última saída"
+        "lastExit": "Última saída",
+        "workSettingsNotConfiguredHint": "Configure seus horários de trabalho para relatórios mais completos"
     },
     "history": {
         "title": "Histórico de Ponto",
@@ -99,6 +100,9 @@
         "workSettings": "Configurações de Trabalho",
         "workSettingsError": "Erro ao salvar configurações. Tente novamente.",
         "workSettingsSuccess": "Configurações de trabalho salvas com sucesso!",
+        "workSettingsNotConfigured": "Não configurado",
+        "workSettingsNotConfiguredMessage": "Configure seus horários de trabalho para ter relatórios mais completos das horas trabalhadas no mês e até mesmo horas extras.",
+        "workSettingsSetupCta": "Configurar Agora",
         "languageChangedSuccess": "Idioma alterado com sucesso!",
         "workAddress": "Endereço de Trabalho",
         "workAddressPlaceholder": "Ex: latitude, longitude",

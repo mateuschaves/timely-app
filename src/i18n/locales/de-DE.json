@@ -46,9 +46,10 @@
     "confirmClockInTitle": "Beginn bestätigen",
     "confirmClockOut": "Möchten Sie die Arbeit um {{time}} beenden?",
     "confirmClockOutTitle": "Ende bestätigen",
-    "lastEntry": "Letzter Einstempeln",
-    "lastExit": "Letzter Ausstempeln"
-  },
+        "lastEntry": "Letzter Einstempeln",
+        "lastExit": "Letzter Ausstempeln",
+        "workSettingsNotConfiguredHint": "Konfigurieren Sie Ihre Arbeitszeiten für vollständigere Berichte"
+    },
   "history": {
     "title": "Zeiterfassungsverlauf",
     "empty": "Keine Einträge gefunden",
@@ -99,6 +100,9 @@
     "workSettings": "Arbeitseinstellungen",
     "workSettingsError": "Fehler beim Speichern der Einstellungen. Bitte versuchen Sie es erneut.",
     "workSettingsSuccess": "Arbeitseinstellungen erfolgreich gespeichert!",
+    "workSettingsNotConfigured": "Nicht konfiguriert",
+    "workSettingsNotConfiguredMessage": "Konfigurieren Sie Ihre Arbeitszeiten, um vollständigere Berichte über die geleisteten Stunden pro Monat und sogar Überstunden zu erhalten.",
+    "workSettingsSetupCta": "Jetzt konfigurieren",
     "languageChangedSuccess": "Sprache erfolgreich geändert!",
     "workAddress": "Arbeitsadresse",
     "workAddressPlaceholder": "Ex: Breitengrad, Längengrad",

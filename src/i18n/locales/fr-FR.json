@@ -46,9 +46,10 @@
     "confirmClockInTitle": "Confirmer le début",
     "confirmClockOut": "Voulez-vous terminer le travail à {{time}} ?",
     "confirmClockOutTitle": "Confirmer la fin",
-    "lastEntry": "Dernière entrée",
-    "lastExit": "Dernière sortie"
-  },
+        "lastEntry": "Dernière entrée",
+        "lastExit": "Dernière sortie",
+        "workSettingsNotConfiguredHint": "Configurez vos heures de travail pour des rapports plus complets"
+    },
   "history": {
     "title": "Historique des pointages",
     "empty": "Aucun enregistrement trouvé",
@@ -99,6 +100,9 @@
     "workSettings": "Paramètres de travail",
     "workSettingsError": "Erreur lors de l'enregistrement des paramètres. Veuillez réessayer.",
     "workSettingsSuccess": "Paramètres de travail enregistrés avec succès !",
+    "workSettingsNotConfigured": "Non configuré",
+    "workSettingsNotConfiguredMessage": "Configurez vos heures de travail pour obtenir des rapports plus complets des heures travaillées par mois et même des heures supplémentaires.",
+    "workSettingsSetupCta": "Configurer maintenant",
     "languageChangedSuccess": "Langue modifiée avec succès !",
     "workAddress": "Adresse de travail",
     "workAddressPlaceholder": "Ex: latitude, longitude",

@@ -1,12 +1,12 @@
 import styled from 'styled-components/native';
-import { colors, spacing, borderRadius, typography } from '@/theme';
+import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
   align-items: center;
   justify-content: center;
   padding: ${spacing.lg}px;
-  padding-bottom: 100px;
+  padding-bottom: 200px;
   padding-top: ${spacing.md}px;
   background-color: ${colors.background.primary};
 `;
@@ -219,5 +219,41 @@ export const CancelButtonText = styled.Text`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   text-align: center;
+`;
+
+export const WorkSettingsCard = styled.TouchableOpacity`
+  background-color: #FFF8DC;
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.md}px ${spacing.lg}px;
+  border-width: 1.5px;
+  border-color: ${colors.status.warning}60;
+  shadow-color: ${colors.status.warning}30;
+  shadow-offset: 0px 2px;
+  shadow-opacity: 0.2;
+  shadow-radius: 4px;
+  elevation: 3;
+  width: 100%;
+`;
+
+export const WorkSettingsCardContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+`;
+
+export const WorkSettingsCardIcon = styled.View`
+  margin-right: ${spacing.sm}px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+`;
+
+export const WorkSettingsCardMessage = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  color: #8B6914;
+  flex: 1;
+  line-height: 18px;
+  font-weight: ${typography.weights.semibold};
 `;
 

@@ -8,11 +8,13 @@ import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { useQueryClient } from '@tanstack/react-query';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useFeedback } from '@/utils/feedback';
-import { LocationCoordinates } from '@/api/types';
+import { useWorkSettings } from '@/features/profile';
+import { LocationCoordinates, ClockAction } from '@/api/types';
 import { colors, spacing } from '@/theme';
-import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
+import { Ionicons } from '@expo/vector-icons';
+import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage } from './styles';
 
 
 export function HomeScreen() {
@@ -20,10 +22,12 @@ export function HomeScreen() {
   const { user } = useAuthContext();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<any>();
   const { showError } = useFeedback();
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
-  const { requestLocationPermission, error: locationError, isLoading: isLoadingLocation } = useLocation();
+  const { requestLocationPermission } = useLocation();
+  const { hasWorkSettings, canShowCard } = useWorkSettings();
   const [isProcessing, setIsProcessing] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -33,7 +37,7 @@ export function HomeScreen() {
   const buttonText = useMemo(() => {
     if (isClocking) return t('home.clocking');
 
-    if (nextAction === 'clock-out') {
+    if (nextAction === ClockAction.CLOCK_OUT) {
       return t('home.clockOutButton');
     }
     return t('home.clockInButton');
@@ -42,7 +46,7 @@ export function HomeScreen() {
   const statusMessage = useMemo(() => {
     const userName = user?.name?.split(' ')[0] || '';
 
-    if (nextAction === 'clock-out') {
+    if (nextAction === ClockAction.CLOCK_OUT) {
       if (userName) {
         return t('home.breakMessageWithName', { name: userName });
       }
@@ -161,7 +165,7 @@ export function HomeScreen() {
       console.log('Fazendo clock...', location ? 'com localização' : 'sem localização');
       await clock({
         hour: now,
-      }, nextAction as 'clock-in' | 'clock-out');
+      }, nextAction);
 
       console.log('Clock realizado com sucesso');
       // Refetch imediato para atualizar o botão instantaneamente
@@ -175,7 +179,7 @@ export function HomeScreen() {
       });
 
       // Mostrar erro ao usuário
-      const errorMessage = error.response?.data?.message || error.message || (nextAction === 'clock-out' ? t('home.clockOutError') : t('home.clockInError')) || 'Erro ao processar ponto. Tente novamente.';
+      const errorMessage = error.response?.data?.message || error.message || (nextAction === ClockAction.CLOCK_OUT ? t('home.clockOutError') : t('home.clockInError')) || 'Erro ao processar ponto. Tente novamente.';
       showError(errorMessage);
     } finally {
       setIsProcessing(false);
@@ -193,7 +197,7 @@ export function HomeScreen() {
       { hour: '2-digit', minute: '2-digit' }
     );
 
-    if (nextAction === 'clock-out') {
+    if (nextAction === ClockAction.CLOCK_OUT) {
       return t('home.confirmClockOut', { time: currentTime });
     }
     return t('home.confirmClockIn', { time: currentTime });
@@ -221,7 +225,7 @@ export function HomeScreen() {
           <WelcomeMessage>{statusMessage}</WelcomeMessage>
           {lastEvent && (
             <LastEventInfo>
-              {lastEvent.action === 'clock-in' ? t('home.lastEntry') : t('home.lastExit')}:{' '}
+              {lastEvent.action === ClockAction.CLOCK_IN ? t('home.lastEntry') : t('home.lastExit')}:{' '}
               <LastEventTime>{formatTime(lastEvent.hour)}</LastEventTime>
             </LastEventInfo>
           )}
@@ -282,6 +286,29 @@ export function HomeScreen() {
         </Animated.View>
       </ButtonContainer>
 
+      {canShowCard && !hasWorkSettings && (
+        <View style={{
+          position: 'absolute',
+          bottom: insets.bottom + 85,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+          paddingHorizontal: spacing.lg,
+        }}>
+          <WorkSettingsCard
+            onPress={() => navigation.navigate('WorkSettings')}
+            activeOpacity={0.7}
+          >
+            <WorkSettingsCardContent>
+              <WorkSettingsCardIcon>
+                <Ionicons name="alert-circle" size={20} color="#FF8C00" />
+              </WorkSettingsCardIcon>
+              <WorkSettingsCardMessage>{t('home.workSettingsNotConfiguredHint')}</WorkSettingsCardMessage>
+            </WorkSettingsCardContent>
+          </WorkSettingsCard>
+        </View>
+      )}
+
       <Modal
         visible={showConfirmModal}
         transparent
@@ -291,7 +318,7 @@ export function HomeScreen() {
         <ConfirmModal>
           <ConfirmModalContent>
             <ConfirmModalTitle>
-              {nextAction === 'clock-out' ? t('home.confirmClockOutTitle') : t('home.confirmClockInTitle')}
+              {nextAction === ClockAction.CLOCK_OUT ? t('home.confirmClockOutTitle') : t('home.confirmClockInTitle')}
             </ConfirmModalTitle>
             <ConfirmModalMessage>
               {getConfirmMessage()}

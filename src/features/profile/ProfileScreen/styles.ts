@@ -87,7 +87,7 @@ export const InfoRow = styled.View<{ isLast?: boolean }>`
   align-items: center;
   padding: ${spacing.sm}px ${spacing.md}px;
   min-height: 48px;
-  border-bottom-width: ${props => (props.isLast ? '0px' : '1px')};
+  border-bottom-width: ${(props: { isLast?: boolean }) => (props.isLast ? '0px' : '1px')};
   border-bottom-color: ${colors.border.light};
   background-color: ${colors.background.primary};
 `;
@@ -95,6 +95,9 @@ export const InfoRow = styled.View<{ isLast?: boolean }>`
 export const InfoLeft = styled.View`
   flex: 1;
   margin-right: ${spacing.md}px;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
 `;
 
 export const InfoLabel = styled.Text`
@@ -113,10 +116,10 @@ export const InfoValue = styled.Text`
 `;
 
 export const InfoValueContainer = styled.View`
-  flex: 1.2;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
+  flex-shrink: 0;
 `;
 
 export const Button = styled.TouchableOpacity`
@@ -165,5 +168,30 @@ export const ChevronIcon = styled.View`
   margin-left: ${spacing.xs}px;
   align-items: center;
   justify-content: center;
+`;
+
+export const Badge = styled.View`
+  background-color: #FFF4E6;
+  border-radius: ${borderRadius.md}px;
+  padding-horizontal: ${spacing.sm}px;
+  padding-vertical: 4px;
+  margin-right: ${spacing.sm}px;
+  flex-direction: row;
+  align-items: center;
+  border-width: 1px;
+  border-color: ${colors.status.warning}40;
+`;
+
+export const BadgeIcon = styled.View`
+  margin-right: 4px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const BadgeText = styled.Text`
+  color: #B8860B;
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.semibold};
+  letter-spacing: 0.3px;
 `;
 

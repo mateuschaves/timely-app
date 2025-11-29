@@ -8,6 +8,7 @@ import { useTranslation, LanguageOption } from '@/i18n';
 import { useAuthContext } from '@/features/auth';
 import { AppStackParamList } from '@/navigation/AppNavigator';
 import { STORAGE_KEYS } from '@/config/storage';
+import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
 import { colors } from '@/theme/colors';
 import {
   Container,
@@ -33,6 +34,9 @@ import {
   EmptyStateText,
   SettingsRow,
   ChevronIcon,
+  Badge,
+  BadgeIcon,
+  BadgeText,
 } from './styles';
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -41,6 +45,7 @@ export function ProfileScreen() {
   const { t } = useTranslation();
   const { user, signOut, fetchUserMe } = useAuthContext();
   const navigation = useNavigation<NavigationProp>();
+  const { hasWorkSettings, canShowCard } = useWorkSettings();
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
 
   useFocusEffect(
@@ -183,6 +188,14 @@ export function ProfileScreen() {
                       <InfoLabel>{t('profile.workSettings')}</InfoLabel>
                     </InfoLeft>
                     <InfoValueContainer>
+                      {canShowCard && !hasWorkSettings && (
+                        <Badge>
+                          <BadgeIcon>
+                            <Ionicons name="alert-circle" size={12} color={colors.status.warning} />
+                          </BadgeIcon>
+                          <BadgeText>{t('profile.workSettingsNotConfigured')}</BadgeText>
+                        </Badge>
+                      )}
                       <ChevronIcon>
                         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
                       </ChevronIcon>

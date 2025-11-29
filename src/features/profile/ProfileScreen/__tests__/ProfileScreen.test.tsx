@@ -57,6 +57,9 @@ jest.mock('react-native', () => ({
 jest.mock('@/features/auth', () => ({
   useAuthContext: jest.fn(),
 }));
+jest.mock('@/features/profile/hooks/useWorkSettings', () => ({
+  useWorkSettings: jest.fn(),
+}));
 jest.mock('@/i18n');
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('@react-navigation/native', () => ({
@@ -66,9 +69,11 @@ jest.mock('@react-navigation/native', () => ({
   useFocusEffect: (callback: () => void) => callback(),
 }));
 
+const { useWorkSettings } = require('@/features/profile/hooks/useWorkSettings');
 const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthContext>;
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
+const mockUseWorkSettings = useWorkSettings as jest.MockedFunction<typeof useWorkSettings>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -117,6 +122,14 @@ describe('ProfileScreen', () => {
       isLoading: false,
       changeLanguage: mockChangeLanguage,
     } as any);
+    mockUseWorkSettings.mockReturnValue({
+      hasWorkSettings: true,
+      isLoading: false,
+      isError: false,
+      error: null,
+      settings: {},
+      canShowCard: true,
+    });
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue('pt-BR');
   });
 
@@ -348,5 +361,67 @@ describe('ProfileScreen', () => {
     const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
 
     expect(getByText('profile.user')).toBeTruthy();
+  });
+
+  describe('Work Settings Badge', () => {
+    it('should show work settings badge when work settings are not configured', () => {
+      mockUseWorkSettings.mockReturnValue({
+        hasWorkSettings: false,
+        isLoading: false,
+        isError: false,
+        error: null,
+        settings: {},
+        canShowCard: true,
+      });
+
+      const { getByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+      expect(getByText('profile.workSettingsNotConfigured')).toBeTruthy();
+    });
+
+    it('should not show work settings badge when work settings are configured', () => {
+      mockUseWorkSettings.mockReturnValue({
+        hasWorkSettings: true,
+        isLoading: false,
+        isError: false,
+        error: null,
+        settings: { workSchedule: { monday: { enabled: true } } },
+        canShowCard: true,
+      });
+
+      const { queryByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+      expect(queryByText('profile.workSettingsNotConfigured')).toBeNull();
+    });
+
+    it('should not show work settings badge when loading', () => {
+      mockUseWorkSettings.mockReturnValue({
+        hasWorkSettings: false,
+        isLoading: true,
+        isError: false,
+        error: null,
+        settings: undefined,
+        canShowCard: false,
+      });
+
+      const { queryByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+      expect(queryByText('profile.workSettingsNotConfigured')).toBeNull();
+    });
+
+    it('should not show work settings badge when there is an error', () => {
+      mockUseWorkSettings.mockReturnValue({
+        hasWorkSettings: false,
+        isLoading: false,
+        isError: true,
+        error: new Error('Network error'),
+        settings: undefined,
+        canShowCard: false,
+      });
+
+      const { queryByText } = render(<ProfileScreen />, { wrapper: createWrapper() });
+
+      expect(queryByText('profile.workSettingsNotConfigured')).toBeNull();
+    });
   });
 });

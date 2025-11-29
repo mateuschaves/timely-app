@@ -47,7 +47,8 @@
         "confirmClockOut": "Do you want to end work at {{time}}?",
         "confirmClockOutTitle": "Confirm End",
         "lastEntry": "Last entry",
-        "lastExit": "Last exit"
+        "lastExit": "Last exit",
+        "workSettingsNotConfiguredHint": "Configure your work hours for more complete reports"
     },
     "history": {
         "title": "Time Clock History",
@@ -99,6 +100,9 @@
         "workSettings": "Work Settings",
         "workSettingsError": "Error saving settings. Please try again.",
         "workSettingsSuccess": "Work settings saved successfully!",
+        "workSettingsNotConfigured": "Not configured",
+        "workSettingsNotConfiguredMessage": "Configure your work hours to get more complete reports of hours worked per month and even overtime.",
+        "workSettingsSetupCta": "Configure Now",
         "languageChangedSuccess": "Language changed successfully!",
         "workAddress": "Work Address",
         "workAddressPlaceholder": "Ex: latitude, longitude",
