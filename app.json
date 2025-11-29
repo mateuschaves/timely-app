@@ -16,7 +16,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.timelyapp",
+      "bundleIdentifier": "com.wazowsky.timelyapp",
       "scheme": "timely",
       "usesAppleSignIn": true,
       "deploymentTarget": "14.0",
