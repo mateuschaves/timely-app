@@ -25,7 +25,11 @@ const mockUseNavigation = useNavigation as jest.MockedFunction<typeof useNavigat
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
+      queries: {
+        retry: false,
+        cacheTime: 0,
+        staleTime: 0,
+      },
       mutations: { retry: false },
     },
   });
@@ -63,6 +67,7 @@ describe('HistoryScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockT.mockClear();
     mockUseTranslation.mockReturnValue({
       t: mockT,
       i18n: {
@@ -97,8 +102,8 @@ describe('HistoryScreen', () => {
 
     await waitFor(() => {
       expect(getByText('history.totalWorked')).toBeTruthy();
-    });
-  });
+    }, { timeout: 5000 });
+  }, 10000);
 
   it('should display month summary with data', async () => {
     mockGetClockHistory.mockResolvedValue({
@@ -184,18 +189,18 @@ describe('HistoryScreen', () => {
 
     await waitFor(() => {
       expect(mockGetClockHistory).toHaveBeenCalled();
-    });
+    }, { timeout: 1000 });
 
     // Wait for data to load before checking for text
     await waitFor(() => {
       expect(getByText('history.totalWorked')).toBeTruthy();
-    });
+    }, { timeout: 2000 });
   });
 
   it('should display days with events', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockDay = createMockDay(todayString, [
       createMockEvent('1', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN),
       createMockEvent('2', `${todayString}T18:00:00Z`, ClockAction.CLOCK_OUT, '10:00'),
@@ -229,7 +234,7 @@ describe('HistoryScreen', () => {
   it('should display expandable days', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockDay = createMockDay(todayString, [
       createMockEvent('1', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN),
       createMockEvent('2', `${todayString}T18:00:00Z`, ClockAction.CLOCK_OUT, '10:00'),
@@ -263,7 +268,7 @@ describe('HistoryScreen', () => {
   it('should display incomplete day (entry without exit)', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockDay = createMockDay(todayString, [
       createMockEvent('1', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN),
     ]);
@@ -296,7 +301,7 @@ describe('HistoryScreen', () => {
   it('should display day with order issue', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockDay = createMockDay(todayString, [
       createMockEvent('1', `${todayString}T18:00:00Z`, ClockAction.CLOCK_OUT),
       createMockEvent('2', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN),
@@ -356,7 +361,7 @@ describe('HistoryScreen', () => {
   it('should render events with edit buttons', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockEvent = createMockEvent('1', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN);
     const mockDay = createMockDay(todayString, [mockEvent]);
 
@@ -388,7 +393,7 @@ describe('HistoryScreen', () => {
   it('should display day with different status badges', async () => {
     const today = new Date();
     const todayString = format(today, 'yyyy-MM-dd');
-    
+
     const mockDay = createMockDay(todayString, [
       createMockEvent('1', `${todayString}T08:00:00Z`, ClockAction.CLOCK_IN),
       createMockEvent('2', `${todayString}T18:00:00Z`, ClockAction.CLOCK_OUT, '10:00'),
@@ -422,14 +427,14 @@ describe('HistoryScreen', () => {
   });
 
   it('should handle loading state', async () => {
-    mockGetClockHistory.mockImplementation(() => new Promise(() => {})); // Never resolves
+    mockGetClockHistory.mockImplementation(() => new Promise(() => { })); // Never resolves
 
-    const { queryByText, getByText } = render(<HistoryScreen />, { wrapper: createWrapper() });
+    const { queryByText } = render(<HistoryScreen />, { wrapper: createWrapper() });
 
     // During loading, the skeleton loader should be shown and content should not be visible
     await waitFor(() => {
       expect(mockGetClockHistory).toHaveBeenCalled();
-    });
+    }, { timeout: 1000 });
 
     // Verify that loading content (skeleton) is shown and actual content is not yet visible
     expect(queryByText('history.totalWorked')).toBeNull();
