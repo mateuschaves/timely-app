@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useState } from 'react';
-import { Animated, Easing, Modal, Platform, View } from 'react-native';
+import { Animated, Easing, Modal, Platform, View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '@/i18n';
@@ -9,8 +9,10 @@ import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from '@react-navigation/native';
+import { useFeedback } from '@/utils/feedback';
+import { LocationCoordinates } from '@/api/types';
 import { colors, spacing } from '@/theme';
-import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
+import { Container, WelcomeCard, WelcomeMessage, StatusCard, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText } from './styles';
 
 
 export function HomeScreen() {
@@ -18,9 +20,11 @@ export function HomeScreen() {
   const { user } = useAuthContext();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
+  const { showError } = useFeedback();
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
-  const { requestLocationPermission } = useLocation();
+  const { requestLocationPermission, error: locationError, isLoading: isLoadingLocation } = useLocation();
+  const [isProcessing, setIsProcessing] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -106,11 +110,12 @@ export function HomeScreen() {
   };
 
   const handleClock = async () => {
-    if (!pendingClockAction) return;
+    if (!pendingClockAction || isProcessing) return;
 
     const now = pendingClockAction;
     setShowConfirmModal(false);
     setPendingClockAction(null);
+    setIsProcessing(true);
 
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -126,16 +131,54 @@ export function HomeScreen() {
     ]).start();
 
     try {
-      await requestLocationPermission();
+      // Solicitar permissão de localização e obter coordenadas (opcional)
+      // Se falhar, permite continuar sem localização já que a API aceita
+      console.log('Solicitando permissão de localização...');
+      let location: LocationCoordinates | null = null;
+
+      try {
+        // Timeout reduzido para 6 segundos (já que useLocation tem timeout de 5s)
+        const locationPromise = requestLocationPermission();
+        const timeoutPromise = new Promise<null>((resolve) => {
+          setTimeout(() => {
+            console.log('Timeout ao obter localização, continuando sem localização');
+            resolve(null);
+          }, 6000); // 6 segundos de timeout (maior que o timeout interno de 5s)
+        });
+
+        location = await Promise.race([locationPromise, timeoutPromise]);
+        console.log('Localização obtida:', location ? 'Sim' : 'Não');
+      } catch (locationError: any) {
+        console.warn('Erro ao obter localização, continuando sem localização:', locationError);
+        // Continua sem localização
+      }
+
+      // Se a localização não foi obtida, apenas avisa mas continua
+      if (!location) {
+        console.log('Continuando sem localização (opcional na API)');
+      }
+
+      console.log('Fazendo clock...', location ? 'com localização' : 'sem localização');
       await clock({
         hour: now,
       }, nextAction as 'clock-in' | 'clock-out');
 
+      console.log('Clock realizado com sucesso');
       // Refetch imediato para atualizar o botão instantaneamente
       await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);
-      throw error;
+      console.error('Detalhes do erro:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+
+      // Mostrar erro ao usuário
+      const errorMessage = error.response?.data?.message || error.message || (nextAction === 'clock-out' ? t('home.clockOutError') : t('home.clockInError')) || 'Erro ao processar ponto. Tente novamente.';
+      showError(errorMessage);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -193,8 +236,9 @@ export function HomeScreen() {
         >
           <ClockButton
             onPress={handlePress}
-            disabled={isClocking}
+            disabled={isClocking || isProcessing}
             activeOpacity={0.8}
+            style={{ opacity: (isClocking || isProcessing) ? 0.7 : 1 }}
           >
             <Animated.View
               style={{
@@ -212,8 +256,28 @@ export function HomeScreen() {
               }}
             />
             <ClockButtonInner>
-              <ClockButtonText>{buttonText}</ClockButtonText>
+              {isClocking || isProcessing ? (
+                <ClockButtonLoadingContainer>
+                  <ActivityIndicator size="large" color={colors.text.inverse} />
+                </ClockButtonLoadingContainer>
+              ) : (
+                <ClockButtonText>{buttonText}</ClockButtonText>
+              )}
             </ClockButtonInner>
+            {(isClocking || isProcessing) && (
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                  borderRadius: 9999,
+                  zIndex: 1,
+                }}
+              />
+            )}
           </ClockButton>
         </Animated.View>
       </ButtonContainer>

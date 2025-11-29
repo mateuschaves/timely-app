@@ -147,6 +147,14 @@ export const ClockButtonText = styled.Text`
   font-weight: ${typography.weights.bold};
   text-align: center;
   flex-wrap: wrap;
+  padding-horizontal: ${spacing.md}px;
+`;
+
+export const ClockButtonLoadingContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 `;
 
 export const ConfirmModal = styled.View`

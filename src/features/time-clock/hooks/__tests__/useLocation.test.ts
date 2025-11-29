@@ -3,6 +3,7 @@ import { renderHook, waitFor, act } from '@testing-library/react-native';
 const mockGetForegroundPermissionsAsync = jest.fn();
 const mockRequestForegroundPermissionsAsync = jest.fn();
 const mockGetCurrentPositionAsync = jest.fn();
+const mockGetLastKnownPositionAsync = jest.fn();
 
 // Mock Platform FIRST - before any imports
 jest.mock('react-native', () => ({
@@ -30,8 +31,14 @@ jest.mock('expo-location', () => ({
   getForegroundPermissionsAsync: (...args: any[]) => mockGetForegroundPermissionsAsync(...args),
   requestForegroundPermissionsAsync: (...args: any[]) => mockRequestForegroundPermissionsAsync(...args),
   getCurrentPositionAsync: (...args: any[]) => mockGetCurrentPositionAsync(...args),
+  getLastKnownPositionAsync: (...args: any[]) => mockGetLastKnownPositionAsync(...args),
   Accuracy: {
+    Lowest: 1,
+    Low: 2,
     Balanced: 6,
+    High: 4,
+    Highest: 5,
+    Navigation: 6,
   },
 }));
 
@@ -44,9 +51,11 @@ describe('useLocation', () => {
     mockGetForegroundPermissionsAsync.mockReset();
     mockRequestForegroundPermissionsAsync.mockReset();
     mockGetCurrentPositionAsync.mockReset();
+    mockGetLastKnownPositionAsync.mockReset();
     
     // Reset mocks to return resolved values by default
     mockGetForegroundPermissionsAsync.mockResolvedValue({ status: 'granted' });
+    mockGetLastKnownPositionAsync.mockRejectedValue(new Error('No last known position')); // Default to no last known position
     mockGetCurrentPositionAsync.mockResolvedValue({
       coords: {
         latitude: -23.5505,
@@ -59,6 +68,7 @@ describe('useLocation', () => {
       },
       timestamp: Date.now(),
     });
+    // Platform.OS is already mocked in jest.mock('react-native')
   });
 
   it('should request location permission and get location successfully', async () => {
