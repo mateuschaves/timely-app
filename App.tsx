@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { View, ActivityIndicator, StyleSheet, Linking as RNLinking } from 'react-native';
+import { StyleSheet, Linking as RNLinking } from 'react-native';
 import * as ExpoLinking from 'expo-linking';
+import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuthContext } from './src/features/auth';
 import { AppNavigator } from './src/navigation/AppNavigator';
@@ -14,6 +15,9 @@ import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
 import './src/config/reactotron.d';
 import './src/i18n/config';
+
+// Previne que a splash screen seja escondida automaticamente
+SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,19 +31,6 @@ const queryClient = new QueryClient({
 if (__DEV__) {
   setupReactotron();
   console.tron?.log('Reactotron configurado');
-
-  queryClient.getQueryCache().subscribe((event) => {
-    if (event?.type === 'updated' && console.tron) {
-      console.tron.display({
-        name: 'React Query',
-        value: {
-          queryKey: event.query.queryKey,
-          state: event.query.state,
-        },
-        preview: `Query: ${JSON.stringify(event.query.queryKey)}`,
-      });
-    }
-  });
 }
 
 // Configuração de linking para navegação (não processa deeplinks de clock)
@@ -218,12 +209,9 @@ function NavigationContent() {
     };
   }, [isAuthenticated, handleDeeplink, navigation]);
 
+  // Não renderiza nada durante o loading - a splash screen fica visível
   if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
-      </View>
-    );
+    return null;
   }
 
   return (
@@ -234,14 +222,20 @@ function NavigationContent() {
 }
 
 function Navigation() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isLoading } = useAuthContext();
+
+  useEffect(() => {
+    // Esconde a splash screen quando os dados do usuário estiverem carregados
+    if (!isLoading) {
+      SplashScreen.hideAsync().catch((error) => {
+        console.warn('Erro ao esconder splash screen:', error);
+      });
+    }
+  }, [isLoading]);
 
   if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007bff" />
-      </View>
-    );
+    // Durante o carregamento, retorna null para manter a splash screen visível
+    return null;
   }
 
   return (
@@ -262,13 +256,3 @@ export default function App() {
     </QueryClientProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-});
-

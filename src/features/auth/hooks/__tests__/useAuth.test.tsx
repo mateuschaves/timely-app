@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { Platform } from 'react-native';
 import { useAuth } from '../useAuth';
-import { saveToken, removeToken } from '@/config/token';
+import { saveToken, removeToken, getToken } from '@/config/token';
 import { STORAGE_KEYS } from '@/config/storage';
 import { signInWithApple } from '@/api/signin-with-apple';
 import { getUserMe } from '@/api/get-user-me';
@@ -37,6 +37,7 @@ const createWrapper = () => {
 const mockSignInWithApple = signInWithApple as jest.MockedFunction<typeof signInWithApple>;
 const mockGetUserMe = getUserMe as jest.MockedFunction<typeof getUserMe>;
 const mockSignInAsync = AppleAuthentication.signInAsync as jest.MockedFunction<typeof AppleAuthentication.signInAsync>;
+const mockGetToken = getToken as jest.MockedFunction<typeof getToken>;
 
 describe('useAuth', () => {
   beforeEach(() => {
@@ -46,6 +47,8 @@ describe('useAuth', () => {
     (AsyncStorage.removeItem as jest.Mock).mockResolvedValue(undefined);
     (saveToken as jest.Mock).mockResolvedValue(undefined);
     (removeToken as jest.Mock).mockResolvedValue(undefined);
+    (getToken as jest.Mock).mockResolvedValue(null);
+    mockGetUserMe.mockClear();
   });
 
   it('should initialize with loading state', () => {
@@ -64,7 +67,16 @@ describe('useAuth', () => {
       appleUserId: 'apple123',
     };
 
+    const apiUser = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+    };
+
+    // Mock token e usuário do servidor
+    (getToken as jest.Mock).mockResolvedValue('valid-token');
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
+    mockGetUserMe.mockResolvedValue(apiUser);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
@@ -72,11 +84,18 @@ describe('useAuth', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.user).toEqual(storedUser);
+    expect(mockGetUserMe).toHaveBeenCalled();
+    expect(result.current.user).toEqual({
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+      appleUserId: 'apple123',
+    });
     expect(result.current.isAuthenticated).toBe(true);
   });
 
   it('should handle no stored user', async () => {
+    (getToken as jest.Mock).mockResolvedValue(null);
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -90,7 +109,7 @@ describe('useAuth', () => {
   });
 
   it('should handle error loading stored user', async () => {
-    (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
+    (getToken as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
@@ -120,6 +139,7 @@ describe('useAuth', () => {
 
     mockSignInAsync.mockResolvedValue(credential as any);
     mockSignInWithApple.mockResolvedValue(apiResponse);
+    (getToken as jest.Mock).mockResolvedValue(null);
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -221,7 +241,15 @@ describe('useAuth', () => {
       appleUserId: 'apple123',
     };
 
+    const apiUser = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+    };
+
+    (getToken as jest.Mock).mockResolvedValue('valid-token');
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
+    mockGetUserMe.mockResolvedValue(apiUser);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
@@ -247,7 +275,15 @@ describe('useAuth', () => {
       appleUserId: 'apple123',
     };
 
+    const apiUser = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+    };
+
+    (getToken as jest.Mock).mockResolvedValue('valid-token');
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
+    mockGetUserMe.mockResolvedValue(apiUser);
     (AsyncStorage.removeItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -271,14 +307,14 @@ describe('useAuth', () => {
       appleUserId: 'apple123',
     };
 
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
-
     const apiUser = {
       id: '123',
       email: 'updated@example.com',
       name: 'Updated User',
     };
 
+    (getToken as jest.Mock).mockResolvedValue(null);
+    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
     mockGetUserMe.mockResolvedValue(apiUser);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -312,6 +348,7 @@ describe('useAuth', () => {
       appleUserId: 'apple123',
     };
 
+    (getToken as jest.Mock).mockResolvedValue(null);
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(storedUser));
     mockGetUserMe.mockRejectedValue(new Error('API error'));
 

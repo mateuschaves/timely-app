@@ -4,7 +4,7 @@ import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/theme';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { updateUserSettings, WorkSchedule } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
 import { useFeedback } from '@/utils/feedback';
@@ -17,8 +17,6 @@ import {
     SettingsCard,
     SettingSection,
     SettingLabel,
-    InputContainer,
-    Input,
     DayRow,
     DayInfo,
     DayName,
@@ -56,7 +54,6 @@ export function WorkSettingsScreen() {
         saturday: { ...defaultSchedule },
         sunday: { ...defaultSchedule },
     });
-    const [isSaving, setIsSaving] = useState(false);
 
     const dayNames = [
         { key: 'monday', label: t('profile.monday') },
@@ -68,9 +65,25 @@ export function WorkSettingsScreen() {
         { key: 'sunday', label: t('profile.sunday') },
     ];
 
-    const { data: settingsData, isLoading: isLoadingSettings } = useQuery({
+    const { data: settingsData } = useQuery({
         queryKey: ['userSettings'],
         queryFn: getUserSettings,
+    });
+
+    const updateSettingsMutation = useMutation({
+        mutationFn: updateUserSettings,
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ['userSettings', 'clockHistory'] });
+            await queryClient.refetchQueries({ queryKey: ['userSettings', 'clockHistory'] });
+            showSuccess(t('profile.workSettingsSuccess'));
+            navigation.goBack();
+        },
+        onError: (error: any) => {
+            Alert.alert(
+                t('common.error'),
+                error.response?.data?.message || t('profile.workSettingsError')
+            );
+        },
     });
 
     useEffect(() => {
@@ -104,72 +117,58 @@ export function WorkSettingsScreen() {
         }
     }, [settingsData]);
 
-    const handleSave = async () => {
-        setIsSaving(true);
+    const handleSave = () => {
         Keyboard.dismiss();
 
-        try {
-            const workSchedule: WorkSchedule = {};
+        const workSchedule: WorkSchedule = {};
 
-            if (days.monday.enabled) {
-                workSchedule.monday = {
-                    start: days.monday.startTime,
-                    end: days.monday.endTime,
-                };
-            }
-            if (days.tuesday.enabled) {
-                workSchedule.tuesday = {
-                    start: days.tuesday.startTime,
-                    end: days.tuesday.endTime,
-                };
-            }
-            if (days.wednesday.enabled) {
-                workSchedule.wednesday = {
-                    start: days.wednesday.startTime,
-                    end: days.wednesday.endTime,
-                };
-            }
-            if (days.thursday.enabled) {
-                workSchedule.thursday = {
-                    start: days.thursday.startTime,
-                    end: days.thursday.endTime,
-                };
-            }
-            if (days.friday.enabled) {
-                workSchedule.friday = {
-                    start: days.friday.startTime,
-                    end: days.friday.endTime,
-                };
-            }
-            if (days.saturday.enabled) {
-                workSchedule.saturday = {
-                    start: days.saturday.startTime,
-                    end: days.saturday.endTime,
-                };
-            }
-            if (days.sunday.enabled) {
-                workSchedule.sunday = {
-                    start: days.sunday.startTime,
-                    end: days.sunday.endTime,
-                };
-            }
-
-            await updateUserSettings({
-                workSchedule,
-                customHolidays: [],
-            });
-
-            queryClient.invalidateQueries({ queryKey: ['userSettings'] });
-            showSuccess(t('profile.workSettingsSuccess'));
-            navigation.goBack();
-        } catch (error: any) {
-            Alert.alert(
-                t('common.error'),
-                error.response?.data?.message || t('profile.workSettingsError')
-            );
-        } finally {
-            setIsSaving(false);
+        if (days.monday.enabled) {
+            workSchedule.monday = {
+                start: days.monday.startTime,
+                end: days.monday.endTime,
+            };
         }
+        if (days.tuesday.enabled) {
+            workSchedule.tuesday = {
+                start: days.tuesday.startTime,
+                end: days.tuesday.endTime,
+            };
+        }
+        if (days.wednesday.enabled) {
+            workSchedule.wednesday = {
+                start: days.wednesday.startTime,
+                end: days.wednesday.endTime,
+            };
+        }
+        if (days.thursday.enabled) {
+            workSchedule.thursday = {
+                start: days.thursday.startTime,
+                end: days.thursday.endTime,
+            };
+        }
+        if (days.friday.enabled) {
+            workSchedule.friday = {
+                start: days.friday.startTime,
+                end: days.friday.endTime,
+            };
+        }
+        if (days.saturday.enabled) {
+            workSchedule.saturday = {
+                start: days.saturday.startTime,
+                end: days.saturday.endTime,
+            };
+        }
+        if (days.sunday.enabled) {
+            workSchedule.sunday = {
+                start: days.sunday.startTime,
+                end: days.sunday.endTime,
+            };
+        }
+
+        updateSettingsMutation.mutate({
+            workSchedule,
+            customHolidays: [],
+        });
     };
 
     const handleTimeChange = (value: string, dayKey: string, type: 'start' | 'end') => {
@@ -279,7 +278,7 @@ export function WorkSettingsScreen() {
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.workHours')}</SettingLabel>
-                            {dayNames.map((day, index) => {
+                            {dayNames.map((day) => {
                                 const daySchedule = days[day.key];
                                 return (
                                     <React.Fragment key={day.key}>
@@ -290,7 +289,7 @@ export function WorkSettingsScreen() {
                                             <Switch
                                                 value={daySchedule.enabled}
                                                 onValueChange={() => handleToggleDay(day.key)}
-                                                disabled={isSaving}
+                                                disabled={updateSettingsMutation.isPending}
                                                 trackColor={{ false: colors.border.medium, true: colors.primary }}
                                                 thumbColor={colors.background.primary}
                                             />
@@ -305,7 +304,7 @@ export function WorkSettingsScreen() {
                                                     placeholderTextColor={colors.text.tertiary}
                                                     keyboardType="number-pad"
                                                     maxLength={5}
-                                                    editable={!isSaving}
+                                                    editable={!updateSettingsMutation.isPending}
                                                 />
                                                 <TimeSeparator>—</TimeSeparator>
                                                 <TimeInput
@@ -316,7 +315,7 @@ export function WorkSettingsScreen() {
                                                     placeholderTextColor={colors.text.tertiary}
                                                     keyboardType="number-pad"
                                                     maxLength={5}
-                                                    editable={!isSaving}
+                                                    editable={!updateSettingsMutation.isPending}
                                                 />
                                             </TimeRow>
                                         )}
@@ -326,8 +325,8 @@ export function WorkSettingsScreen() {
                         </SettingSection>
                     </SettingsCard>
 
-                    <SaveButton onPress={handleSave} disabled={isSaving} activeOpacity={0.7}>
-                        <SaveButtonText>{isSaving ? t('common.loading') : t('common.save')}</SaveButtonText>
+                    <SaveButton onPress={handleSave} disabled={updateSettingsMutation.isPending} activeOpacity={0.7}>
+                        <SaveButtonText>{updateSettingsMutation.isPending ? t('common.loading') : t('common.save')}</SaveButtonText>
                     </SaveButton>
                 </ScrollView>
             </Content>
