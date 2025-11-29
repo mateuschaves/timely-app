@@ -113,7 +113,16 @@
     "thursday": "Donnerstag",
     "friday": "Freitag",
     "saturday": "Samstag",
-    "sunday": "Sonntag"
+    "sunday": "Sonntag",
+    "customHolidays": "Benutzerdefinierte Feiertage",
+    "addHoliday": "Feiertag hinzufügen",
+    "holidayNamePlaceholder": "Name des Feiertags",
+    "holidayDateAndNameRequired": "Datum und Name des Feiertags sind erforderlich",
+    "holidayDateInvalid": "Ungültiges Feiertagsdatum. Verwenden Sie das Format JJJJ-MM-TT",
+    "holidayRemoveConfirm": "Sind Sie sicher, dass Sie diesen Feiertag entfernen möchten?",
+    "noCustomHolidays": "Keine benutzerdefinierten Feiertage registriert",
+    "selectDate": "Datum auswählen",
+    "holidayDate": "Feiertagsdatum"
   },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

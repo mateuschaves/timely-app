@@ -113,7 +113,16 @@
         "thursday": "Thursday",
         "friday": "Friday",
         "saturday": "Saturday",
-        "sunday": "Sunday"
+        "sunday": "Sunday",
+        "customHolidays": "Custom Holidays",
+        "addHoliday": "Add Holiday",
+        "holidayNamePlaceholder": "Holiday name",
+        "holidayDateAndNameRequired": "Date and name of the holiday are required",
+        "holidayDateInvalid": "Invalid holiday date. Use the format YYYY-MM-DD",
+        "holidayRemoveConfirm": "Are you sure you want to remove this holiday?",
+        "noCustomHolidays": "No custom holidays registered",
+        "selectDate": "Select date",
+        "holidayDate": "Holiday date"
     },
     "errors": {
         "generic": "An error occurred. Please try again.",

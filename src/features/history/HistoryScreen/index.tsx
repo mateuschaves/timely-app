@@ -1,13 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { ScrollView, ListRenderItem } from 'react-native';
+import { ListRenderItem } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
-import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, CLOCK_HISTORY_STALE_TIME, GetClockHistoryResponse } from '@/api/get-clock-history';
+import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
 import { ClockAction } from '@/api/types';
-import { colors, spacing } from '@/theme';
+import { colors } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import {
     Container,
@@ -52,7 +52,6 @@ import {
     PeriodSeparatorText,
     EmptyState,
     EmptyStateText,
-    LoadingContainer,
     EventEditButton,
     ListHeaderContainer,
     OrderIssueWarning,
@@ -100,8 +99,6 @@ export function HistoryScreen() {
     const { data, isLoading } = useQuery<GetClockHistoryResponse>({
         queryKey: ['clockHistory', startDate, endDate, deviceTimezone],
         queryFn: () => getClockHistory({ startDate, endDate, timezone: deviceTimezone }),
-        staleTime: CLOCK_HISTORY_STALE_TIME,
-        refetchOnWindowFocus: true,
     });
 
     const dateLocale = getDateLocale(i18n.language);

@@ -113,7 +113,16 @@
     "thursday": "Jeudi",
     "friday": "Vendredi",
     "saturday": "Samedi",
-    "sunday": "Dimanche"
+    "sunday": "Dimanche",
+    "customHolidays": "Jours fériés personnalisés",
+    "addHoliday": "Ajouter un jour férié",
+    "holidayNamePlaceholder": "Nom du jour férié",
+    "holidayDateAndNameRequired": "La date et le nom du jour férié sont requis",
+    "holidayDateInvalid": "Date de jour férié invalide. Utilisez le format AAAA-MM-JJ",
+    "holidayRemoveConfirm": "Êtes-vous sûr de vouloir supprimer ce jour férié ?",
+    "noCustomHolidays": "Aucun jour férié personnalisé enregistré",
+    "selectDate": "Sélectionner la date",
+    "holidayDate": "Date du jour férié"
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",

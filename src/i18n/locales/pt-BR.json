@@ -113,7 +113,16 @@
         "thursday": "Quinta-feira",
         "friday": "Sexta-feira",
         "saturday": "Sábado",
-        "sunday": "Domingo"
+        "sunday": "Domingo",
+        "customHolidays": "Feriados Customizados",
+        "addHoliday": "Adicionar Feriado",
+        "holidayNamePlaceholder": "Nome do feriado",
+        "holidayDateAndNameRequired": "Data e nome do feriado são obrigatórios",
+        "holidayDateInvalid": "Data do feriado inválida. Use o formato YYYY-MM-DD",
+        "holidayRemoveConfirm": "Tem certeza que deseja remover este feriado?",
+        "noCustomHolidays": "Nenhum feriado customizado cadastrado",
+        "selectDate": "Selecionar data",
+        "holidayDate": "Data do feriado"
     },
     "errors": {
         "generic": "Ocorreu um erro. Tente novamente.",

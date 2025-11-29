@@ -1,6 +1,6 @@
 import { apiClient } from '@/config/api';
 import { TimeClockEntry } from '@/features/time-clock/types';
-import { LocationCoordinates, ClockAction } from './types';
+import { LocationCoordinates } from './types';
 
 export interface ClockInRequest {
   hour: string;

@@ -1,7 +1,3 @@
-/**
- * Exportações centralizadas da configuração
- */
-
 export { apiClient, API_BASE_URL, API_TIMEOUT } from './api';
 export { saveToken, getToken, removeToken } from './token';
 export { STORAGE_KEYS } from './storage';
