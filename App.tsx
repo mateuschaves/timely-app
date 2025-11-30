@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { StyleSheet, Linking as RNLinking } from 'react-native';
+import { Linking as RNLinking } from 'react-native';
 import * as ExpoLinking from 'expo-linking';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,7 @@ import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
 import { FeedbackProvider } from './src/utils/feedback';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
+import { useQuickActions } from './src/features/time-clock/hooks/useQuickActions';
 import { useNotifications } from './src/hooks/useNotifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
@@ -48,6 +49,10 @@ const linking = {
     if (url.includes('time=') || url.includes('hour=')) {
       return false;
     }
+    // Se for um deeplink de quick action, não processa aqui (será processado pelo useQuickActions)
+    if (url.includes('quick-action') || url.includes('action=clock')) {
+      return false;
+    }
     return true;
   },
 };
@@ -57,6 +62,7 @@ function NavigationContent() {
   const { handleDeeplink } = useTimeClock();
   const navigation = useNavigation<any>();
   useNotifications();
+  useQuickActions();
 
   const lastProcessedUrl = useRef<string | null>(null);
   const isProcessingRef = useRef(false);

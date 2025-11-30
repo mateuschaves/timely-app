@@ -65,4 +65,18 @@ export const LoadingIndicator = styled(ActivityIndicator).attrs({
   size: 'small',
 })``;
 
+export const TermsText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  color: ${colors.text.secondary};
+  line-height: ${typography.sizes.xs * 1.4}px;
+  text-align: center;
+  margin-top: ${spacing.md}px;
+`;
+
+export const TermsLink = styled.Text`
+  color: ${colors.primary};
+  font-weight: ${typography.weights.semibold};
+  text-decoration-line: underline;
+`;
+
 

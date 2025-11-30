@@ -14,14 +14,32 @@
     "done": "Terminé"
   },
   "auth": {
-    "title": "Timely App",
+    "title": "Timely",
     "subtitle": "Suivi du temps",
     "continueWithApple": "Continuer avec Apple",
     "appleNotAvailable": "La connexion avec Apple n'est disponible que sur iOS.",
     "appleNotAvailableTitle": "Non disponible",
     "loginError": "Erreur de connexion. Veuillez réessayer.",
     "authenticationError": "Impossible d'obtenir les informations d'authentification. Veuillez réessayer.",
-    "tokenError": "Impossible de terminer la connexion. Veuillez réessayer."
+    "tokenError": "Impossible de terminer la connexion. Veuillez réessayer.",
+    "termsOfService": "Conditions d'utilisation",
+    "termsAgreement": "En continuant, vous acceptez les",
+    "termsRequiredTitle": "Conditions d'utilisation",
+    "termsRequired": "Vous devez accepter les conditions d'utilisation pour continuer.",
+    "termsTitle": "Conditions d'utilisation",
+    "termsIntro": "En utilisant cette application, vous acceptez de respecter et d'être lié par les conditions d'utilisation suivantes. Si vous n'acceptez pas ces conditions, n'utilisez pas l'application.",
+    "termsAcceptance": "Acceptation des conditions",
+    "termsAcceptanceText": "En vous connectant à cette application, vous confirmez que vous avez lu, compris et acceptez d'être lié par ces Conditions d'utilisation et la Politique de confidentialité.",
+    "termsAppleEULA": "EULA d'Apple",
+    "termsAppleEULAText": "Cette application est également soumise au Contrat de licence de logiciel utilisateur final d'Apple (EULA). En utilisant cette application sur des appareils Apple, vous acceptez également les conditions d'Apple.",
+    "termsViewAppleEULA": "Voir l'EULA d'Apple",
+    "termsService": "Utilisation du service",
+    "termsServiceText": "Vous acceptez d'utiliser cette application uniquement à des fins légales et conformément à tous les règlements et lois applicables. Vous êtes responsable de la sécurité de votre compte.",
+    "termsPrivacy": "Confidentialité",
+    "termsPrivacyText": "Nous prenons votre confidentialité au sérieux. Toutes les informations collectées sont utilisées exclusivement pour fournir et améliorer nos services. Consultez notre Politique de confidentialité pour plus de détails.",
+    "termsContact": "Contact",
+    "termsContactText": "Si vous avez des questions concernant ces Conditions d'utilisation, contactez-nous via les canaux disponibles dans l'application.",
+    "termsLastUpdated": "Dernière mise à jour : Janvier 2025"
   },
   "navigation": {
     "home": "Accueil",
@@ -46,12 +64,12 @@
     "confirmClockInTitle": "Confirmer le début",
     "confirmClockOut": "Voulez-vous terminer le travail à {{time}} ?",
     "confirmClockOutTitle": "Confirmer la fin",
-        "lastEntry": "Dernière entrée",
-        "lastExit": "Dernière sortie",
-        "workSettingsNotConfiguredHint": "Configurez vos heures de travail pour des rapports plus complets",
-        "locationPermissionRequired": "Autorisez l'accès à la localisation pour enregistrer le pointage avec précision",
-        "hourlyRateNotConfigured": "Configurez votre taux horaire pour des rapports plus complets"
-    },
+    "lastEntry": "Dernière entrée",
+    "lastExit": "Dernière sortie",
+    "workSettingsNotConfiguredHint": "Configurez vos heures de travail pour des rapports plus complets",
+    "locationPermissionRequired": "Autorisez l'accès à la localisation pour enregistrer le pointage avec précision",
+    "hourlyRateNotConfigured": "Configurez votre taux horaire pour des rapports plus complets"
+  },
   "history": {
     "title": "Historique des pointages",
     "empty": "Aucun enregistrement trouvé",
@@ -165,4 +183,3 @@
     "exitBody": "N'oubliez pas d'enregistrer votre sortie."
   }
 }
-

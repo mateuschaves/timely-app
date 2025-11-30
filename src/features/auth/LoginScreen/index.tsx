@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Platform, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuthContext } from '../context/AuthContext';
 import { useTranslation } from '@/i18n';
+import { AuthStackParamList } from '@/navigation/AuthNavigator';
 import {
   Container,
   Content,
@@ -13,10 +16,15 @@ import {
   ButtonText,
   ErrorText,
   LoadingIndicator,
+  TermsText,
+  TermsLink,
 } from './styles';
+
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
 export function LoginScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation<NavigationProp>();
   const { signInWithApple } = useAuthContext();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +72,13 @@ export function LoginScreen() {
             )}
           </AppleButton>
         )}
+
+        <TermsText>
+          {t('auth.termsAgreement')}{' '}
+          <TermsLink onPress={() => navigation.navigate('Terms')}>
+            {t('auth.termsOfService')}
+          </TermsLink>
+        </TermsText>
 
         {Platform.OS !== 'ios' && (
           <Subtitle style={{ marginTop: 20, textAlign: 'center' }}>
