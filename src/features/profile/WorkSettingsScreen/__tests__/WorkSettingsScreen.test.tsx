@@ -25,6 +25,33 @@ jest.mock('react-native', () => ({
   Keyboard: {
     dismiss: jest.fn(),
   },
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+      interpolate: jest.fn(() => ({
+        _value: 0,
+      })),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
   useColorScheme: jest.fn(() => 'light'),
   View: 'View',
   Text: 'Text',
@@ -67,7 +94,14 @@ jest.mock('@/api/update-user-settings', () => ({
   updateUserSettings: (...args: any[]) => mockUpdateUserSettings(...args),
   getUserSettings: (...args: any[]) => mockGetUserSettings(...args),
 }));
-jest.mock('@/utils/feedback');
+jest.mock('@/utils/feedback', () => {
+  const actual = jest.requireActual('@/utils/feedback');
+  return {
+    __esModule: true,
+    ...actual,
+    useFeedback: jest.fn(),
+  };
+});
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     goBack: jest.fn(),
@@ -88,7 +122,7 @@ const createWrapper = () => {
   return createTestWrapper(queryClient);
 };
 
-describe.skip('WorkSettingsScreen', () => {
+describe('WorkSettingsScreen', () => {
   const mockT = jest.fn((key: string) => key);
   const mockShowSuccess = jest.fn();
 

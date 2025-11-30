@@ -88,6 +88,38 @@ const getDateLocale = (language: string) => {
     }
 };
 
+// Helpers extraídos para facilitar testes unitários da lógica de dias
+export function isIncompleteDay(day: ClockHistoryDay): boolean {
+    if (!day.events || day.events.length === 0) return false;
+
+    const lastEvent = day.events[day.events.length - 1];
+    return lastEvent.action === ClockAction.CLOCK_IN;
+}
+
+export function hasOrderIssue(day: ClockHistoryDay): boolean {
+    if (!day.events || day.events.length < 2) return false;
+
+    const firstEvent = day.events[0];
+    const isFirstExit = firstEvent.action === ClockAction.CLOCK_OUT;
+
+    for (let i = 0; i < day.events.length; i++) {
+        const event = day.events[i];
+        if (event.action === ClockAction.CLOCK_OUT) {
+            const nextEvent = day.events[i + 1];
+            if (i === 0 || (nextEvent && nextEvent.action !== ClockAction.CLOCK_IN)) {
+                return true;
+            }
+        }
+    }
+
+    return isFirstExit;
+}
+
+// Helper para gerar o testID do botão de edição (facilita testes unitários)
+export function getEditButtonTestId(eventId: string): string {
+    return `history-edit-button-${eventId}`;
+}
+
 export function HistoryScreen() {
     const { t, i18n } = useTranslation();
     const navigation = useNavigation<any>();
@@ -224,6 +256,7 @@ export function HistoryScreen() {
                         <EventTime>{formattedHour}</EventTime>
                     </EventContent>
                     <EventEditButton
+                        testID={getEditButtonTestId(event.id)}
                         onPress={() => navigation.navigate('EditEvent', { event })}
                         activeOpacity={0.7}
                     >
@@ -250,6 +283,7 @@ export function HistoryScreen() {
                                 <EventTime>{format(parseISO(nextEvent.hour), 'HH:mm', { locale: dateLocale })}</EventTime>
                             </EventContent>
                             <EventEditButton
+                                testID={getEditButtonTestId(nextEvent.id)}
                                 onPress={() => navigation.navigate('EditEvent', { event: nextEvent })}
                                 activeOpacity={0.7}
                             >
@@ -276,39 +310,8 @@ export function HistoryScreen() {
         const dayName = format(date, 'EEEE', { locale: dateLocale });
         const formattedDate = `${dayNumber} ${capitalizeFirstLetter(dayName)}`;
 
-        // Verificar se o dia está incompleto (tem entrada mas não tem saída)
-        const isIncomplete = (() => {
-            if (!item.events || item.events.length === 0) return false;
-
-            // Verificar se o último evento é uma entrada (clock-in)
-            const lastEvent = item.events[item.events.length - 1];
-            const isLastEntry = lastEvent.action === ClockAction.CLOCK_IN;
-
-            return isLastEntry;
-        })();
-
-        // Verificar se há problema de ordem (saída antes de entrada)
-        const hasOrderIssue = (() => {
-            if (!item.events || item.events.length < 2) return false;
-
-            // Verificar se o primeiro evento é uma saída (clock-out)
-            const firstEvent = item.events[0];
-            const isFirstExit = firstEvent.action === ClockAction.CLOCK_OUT;
-
-            // Verificar se há alguma entrada depois de uma saída sem ter uma entrada antes
-            for (let i = 0; i < item.events.length; i++) {
-                const event = item.events[i];
-                if (event.action === ClockAction.CLOCK_OUT) {
-                    // Se a próxima não for uma entrada imediatamente após, ou se for a primeira, há problema
-                    const nextEvent = item.events[i + 1];
-                    if (i === 0 || (nextEvent && nextEvent.action !== ClockAction.CLOCK_IN)) {
-                        return true;
-                    }
-                }
-            }
-
-            return isFirstExit;
-        })();
+        const isIncomplete = isIncompleteDay(item);
+        const hasOrderIssueFlag = hasOrderIssue(item);
 
         // Verificar se o dia é feriado (algum evento tem isHoliday: true)
         const isHoliday = (() => {
@@ -317,8 +320,8 @@ export function HistoryScreen() {
         })();
 
         return (
-            <DayCard incomplete={isIncomplete} hasOrderIssue={hasOrderIssue}>
-                {hasOrderIssue && (
+            <DayCard incomplete={isIncomplete} hasOrderIssue={hasOrderIssueFlag}>
+                {hasOrderIssueFlag && (
                     <OrderIssueWarning>
                         <Ionicons name="warning" size={16} color={theme.status.error} />
                         <OrderIssueText>{t('history.orderIssue')}</OrderIssueText>

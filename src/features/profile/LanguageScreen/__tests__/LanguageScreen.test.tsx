@@ -14,7 +14,14 @@ jest.mock('expo-haptics', () => ({
 }));
 
 jest.mock('@/i18n');
-jest.mock('@/utils/feedback');
+jest.mock('@/utils/feedback', () => {
+  const actual = jest.requireActual('@/utils/feedback');
+  return {
+    __esModule: true,
+    ...actual,
+    useFeedback: jest.fn(),
+  };
+});
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',
 }));
@@ -88,7 +95,7 @@ const createWrapper = () => {
   return createTestWrapper(queryClient);
 };
 
-describe.skip('LanguageScreen', () => {
+describe('LanguageScreen', () => {
   const mockT = jest.fn((key: string) => key);
   const mockChangeLanguage = jest.fn();
   const mockShowSuccess = jest.fn();

@@ -1,10 +1,12 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { QueryClient } from '@tanstack/react-query';
 import { EditNameScreen } from '../index';
 import { useTranslation } from '@/i18n';
 import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
 import { useFeedback } from '@/utils/feedback';
+import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
@@ -42,7 +44,14 @@ jest.mock('@expo/vector-icons', () => ({
 
 jest.mock('@/i18n');
 jest.mock('@/api/update-user-me');
-jest.mock('@/utils/feedback');
+jest.mock('@/utils/feedback', () => {
+  const actual = jest.requireActual('@/utils/feedback');
+  return {
+    __esModule: true,
+    ...actual,
+    useFeedback: jest.fn(),
+  };
+});
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     navigate: jest.fn(),
@@ -130,6 +139,17 @@ const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthC
 const mockUpdateUserMe = updateUserMe as jest.MockedFunction<typeof updateUserMe>;
 const mockUseFeedback = useFeedback as jest.MockedFunction<typeof useFeedback>;
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
+  return createTestWrapper(queryClient);
+};
+
 describe('EditNameScreen', () => {
   const mockT = jest.fn((key: string) => key);
   const mockFetchUserMe = jest.fn();
@@ -168,7 +188,7 @@ describe('EditNameScreen', () => {
   });
 
   it('should render edit name screen', async () => {
-    render(<EditNameScreen />);
+    render(<EditNameScreen />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(mockT).toHaveBeenCalledWith('profile.editName');
@@ -177,7 +197,7 @@ describe('EditNameScreen', () => {
   });
 
   it('should update name input', async () => {
-    const { getByTestId } = render(<EditNameScreen />);
+    const { getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');
@@ -186,12 +206,14 @@ describe('EditNameScreen', () => {
   });
 
   it('should save name successfully', async () => {
-    const { getByText, getByTestId } = render(<EditNameScreen />);
+    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');
 
     const saveButton = getByText('common.save');
+
+    fireEvent.press(saveButton);
 
     // Wait for the async operations to complete
     await waitFor(() => {
@@ -209,7 +231,7 @@ describe('EditNameScreen', () => {
 
   it('should show error when name is empty', async () => {
     const mockAlert = require('react-native').Alert.alert as jest.Mock;
-    const { getByText, getByTestId } = render(<EditNameScreen />);
+    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, '   ');
@@ -229,7 +251,7 @@ describe('EditNameScreen', () => {
       goBack: mockGoBack,
     });
 
-    const { getByText } = render(<EditNameScreen />);
+    const { getByText } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const saveButton = getByText('common.save');
     fireEvent.press(saveButton);
@@ -250,7 +272,7 @@ describe('EditNameScreen', () => {
       },
     });
 
-    const { getByText, getByTestId } = render(<EditNameScreen />);
+    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');
@@ -269,7 +291,7 @@ describe('EditNameScreen', () => {
       message: 'Network Error',
     });
 
-    const { getByText, getByTestId } = render(<EditNameScreen />);
+    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');
@@ -286,7 +308,7 @@ describe('EditNameScreen', () => {
     const mockAlert = require('react-native').Alert.alert as jest.Mock;
     mockUpdateUserMe.mockRejectedValue({});
 
-    const { getByText, UNSAFE_getByType } = render(<EditNameScreen />);
+    const { getByText, UNSAFE_getByType } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = UNSAFE_getByType('TextInput');
     fireEvent.changeText(input, 'New Name');
@@ -300,7 +322,7 @@ describe('EditNameScreen', () => {
   });
 
   it('should update name when user changes', async () => {
-    const { getByTestId, rerender } = render(<EditNameScreen />);
+    const { getByTestId, rerender } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     let input = getByTestId('edit-name-input') as any;
     expect(input.props.value).toBe('Test User');
@@ -333,7 +355,7 @@ describe('EditNameScreen', () => {
       goBack: mockGoBack,
     });
 
-    const { UNSAFE_getAllByType } = render(<EditNameScreen />);
+    const { UNSAFE_getAllByType } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const touchables = UNSAFE_getAllByType('TouchableOpacity');
     const backButton = touchables.find((btn: any) =>
@@ -349,7 +371,7 @@ describe('EditNameScreen', () => {
   it('should disable input when saving', async () => {
     mockUpdateUserMe.mockImplementation(() => new Promise(() => { })); // Never resolves
 
-    const { getByText, getByTestId } = render(<EditNameScreen />);
+    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');

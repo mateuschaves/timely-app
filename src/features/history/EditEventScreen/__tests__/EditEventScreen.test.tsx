@@ -86,7 +86,14 @@ jest.mock('@/api', () => ({
   updateClockEvent: jest.fn(),
   deleteClockEvent: jest.fn(),
 }));
-jest.mock('@/utils/feedback');
+jest.mock('@/utils/feedback', () => {
+  const actual = jest.requireActual('@/utils/feedback');
+  return {
+    __esModule: true,
+    ...actual,
+    useFeedback: jest.fn(),
+  };
+});
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     goBack: jest.fn(),
@@ -118,7 +125,7 @@ const createWrapper = () => {
   return createTestWrapper(queryClient);
 };
 
-describe.skip('EditEventScreen', () => {
+describe('EditEventScreen', () => {
   const mockT = jest.fn((key: string) => key);
   const mockShowSuccess = jest.fn();
   const mockGoBack = jest.fn();
