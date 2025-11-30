@@ -5,10 +5,12 @@ import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
+import * as Localization from 'expo-localization';
 import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
 import { ClockAction } from '@/api/types';
 import { colors } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { capitalizeFirstLetter } from '@/utils/string';
 import {
     Container,
     ScrollContent,
@@ -99,6 +101,7 @@ export function HistoryScreen() {
     const { data, isLoading } = useQuery<GetClockHistoryResponse>({
         queryKey: ['clockHistory', startDate, endDate, deviceTimezone],
         queryFn: () => getClockHistory({ startDate, endDate, timezone: deviceTimezone }),
+        refetchOnWindowFocus: true,
     });
 
     const dateLocale = getDateLocale(i18n.language);
@@ -147,6 +150,20 @@ export function HistoryScreen() {
         return nextMonthStart <= todayStart;
     }, [currentMonth]);
 
+    // Função para formatação monetária
+    const formatCurrency = useMemo(() => {
+        const localeData = Localization.getLocales()[0];
+        const locale = localeData?.languageTag || 'pt-BR';
+        const currencyCode = localeData?.currencyCode || 'BRL';
+        const formatter = new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currencyCode,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+        return (value: number) => formatter.format(value);
+    }, []);
+
     const monthSummary = useMemo(() => {
         if (!data?.summary) {
             return {
@@ -154,16 +171,24 @@ export function HistoryScreen() {
                 totalExpectedHoursFormatted: '0h',
                 hoursDifferenceFormatted: '0h',
                 status: 'exact' as const,
+                totalEarningsFormatted: undefined as string | undefined,
             };
         }
+
+        const totalEarningsFormatted = data?.summary?.totalEarnings !== undefined &&
+            data?.summary?.totalEarnings !== null &&
+            typeof data.summary.totalEarnings === 'number'
+            ? formatCurrency(data.summary.totalEarnings)
+            : undefined;
 
         return {
             totalWorkedHoursFormatted: data?.summary?.totalWorkedHoursFormatted || '0min',
             totalExpectedHoursFormatted: data?.summary?.totalExpectedHoursFormatted || '0h',
             hoursDifferenceFormatted: data?.summary?.hoursDifferenceFormatted || '0h',
             status: data?.summary?.status || 'exact',
+            totalEarningsFormatted,
         };
-    }, [data]);
+    }, [data, formatCurrency]);
 
     const toggleDay = (date: string) => {
         const newExpanded = new Set(expandedDays);
@@ -245,7 +270,7 @@ export function HistoryScreen() {
         const date = parseISO(item.date);
         const dayNumber = format(date, 'dd', { locale: dateLocale });
         const dayName = format(date, 'EEEE', { locale: dateLocale });
-        const formattedDate = `${dayNumber} ${dayName}`;
+        const formattedDate = `${dayNumber} ${capitalizeFirstLetter(dayName)}`;
 
         // Verificar se o dia está incompleto (tem entrada mas não tem saída)
         const isIncomplete = (() => {
@@ -413,6 +438,15 @@ export function HistoryScreen() {
                                         <SummaryDifferenceLabel>{t('history.difference')}</SummaryDifferenceLabel>
                                         <SummaryDifferenceValue status={monthSummary.status}>
                                             {monthSummary.hoursDifferenceFormatted}
+                                        </SummaryDifferenceValue>
+                                    </SummaryDifferenceRow>
+                                )}
+
+                                {monthSummary.totalEarningsFormatted && (
+                                    <SummaryDifferenceRow>
+                                        <SummaryDifferenceLabel>{t('history.totalEarnings')}</SummaryDifferenceLabel>
+                                        <SummaryDifferenceValue status={undefined}>
+                                            {monthSummary.totalEarningsFormatted}
                                         </SummaryDifferenceValue>
                                     </SummaryDifferenceRow>
                                 )}

@@ -7,6 +7,7 @@ export interface UserSettingsResponse {
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
+  hourlyRate?: number;
   createdAt?: string;
   updatedAt?: string;
 }

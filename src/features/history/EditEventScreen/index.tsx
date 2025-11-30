@@ -78,11 +78,10 @@ export function EditEventScreen() {
         ...(event.notes && { notes: event.notes }),
       });
 
-      // Invalidar e refetch imediatamente
-      await queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
-      await queryClient.refetchQueries({ queryKey: ['clockHistory'] });
-      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
-      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['clockHistory', 'lastEvent', 'timeClockEntries'] }),
+        queryClient.refetchQueries({ queryKey: ['clockHistory', 'lastEvent', 'timeClockEntries'] })
+      ]);
 
       showSuccess(t('history.updateEventSuccess'));
       navigation.goBack();

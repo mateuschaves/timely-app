@@ -28,9 +28,11 @@ jest.mock('react-native', () => ({
   Text: 'Text',
   TextInput: 'TextInput',
   TouchableOpacity: 'TouchableOpacity',
+  TouchableWithoutFeedback: 'TouchableWithoutFeedback',
   ScrollView: 'ScrollView',
   Switch: 'Switch',
   ActivityIndicator: 'ActivityIndicator',
+  Modal: 'Modal',
   StyleSheet: {
     create: (styles: any) => styles,
     flatten: (style: any) => {
@@ -41,6 +43,9 @@ jest.mock('react-native', () => ({
       return style;
     },
   },
+}));
+jest.mock('expo-localization', () => ({
+  getLocales: jest.fn(() => [{ languageTag: 'pt-BR', currencyCode: 'BRL' }]),
 }));
 
 jest.mock('@expo/vector-icons', () => ({
@@ -119,7 +124,7 @@ describe('WorkSettingsScreen', () => {
     const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(getByText('profile.monday')).toBeTruthy();
+      expect(getByText('Profile.monday')).toBeTruthy();
     });
 
     // Find the switch for monday (this is a simplified test)
@@ -234,7 +239,7 @@ describe('WorkSettingsScreen', () => {
 
     await waitFor(() => {
       expect(getByText('profile.workSettings')).toBeTruthy();
-      expect(getByText('profile.monday')).toBeTruthy();
+      expect(getByText('Profile.monday')).toBeTruthy();
     });
   });
 

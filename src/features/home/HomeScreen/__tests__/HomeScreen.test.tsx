@@ -8,7 +8,7 @@ import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLastEvent } from '../../hooks/useLastEvent';
 import { useTranslation } from '@/i18n';
 import { FeedbackProvider } from '@/utils/feedback';
-import { useWorkSettings } from '@/features/profile';
+import { useWorkSettings, useHourlyRate } from '@/features/profile';
 
 jest.mock('@/features/auth');
 jest.mock('@/features/time-clock/hooks/useTimeClock');
@@ -16,6 +16,7 @@ jest.mock('@/features/time-clock/hooks/useLocation');
 jest.mock('../../hooks/useLastEvent');
 jest.mock('@/features/profile', () => ({
   useWorkSettings: jest.fn(),
+  useHourlyRate: jest.fn(),
 }));
 jest.mock('@/i18n');
 jest.mock('expo-haptics', () => ({
@@ -23,6 +24,12 @@ jest.mock('expo-haptics', () => ({
   NotificationFeedbackType: {
     Success: 'success',
   },
+}));
+jest.mock('expo-location', () => ({
+  getForegroundPermissionsAsync: jest.fn().mockResolvedValue({
+    status: 'granted',
+    granted: true,
+  }),
 }));
 jest.mock('expo-status-bar', () => ({
   StatusBar: 'StatusBar',
@@ -64,6 +71,7 @@ const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>;
 const mockUseLastEvent = useLastEvent as jest.MockedFunction<typeof useLastEvent>;
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 const mockUseWorkSettings = useWorkSettings as jest.MockedFunction<typeof useWorkSettings>;
+const mockUseHourlyRate = useHourlyRate as jest.MockedFunction<typeof useHourlyRate>;
 
 let testQueryClient: QueryClient;
 
@@ -137,6 +145,14 @@ describe('HomeScreen', () => {
     } as any);
     mockUseWorkSettings.mockReturnValue({
       hasWorkSettings: true,
+      isLoading: false,
+      isError: false,
+      error: null,
+      settings: {},
+      canShowCard: true,
+    });
+    mockUseHourlyRate.mockReturnValue({
+      hasHourlyRate: true,
       isLoading: false,
       isError: false,
       error: null,
@@ -224,6 +240,7 @@ describe('HomeScreen', () => {
     const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
 
     // Create spy after component is rendered to ensure we're spying on the correct queryClient
+    const invalidateQueriesSpy = jest.spyOn(testQueryClient, 'invalidateQueries');
     const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
 
     const button = getByText('home.clockInButton');
@@ -242,10 +259,13 @@ describe('HomeScreen', () => {
       expect(mockClock).toHaveBeenCalled();
     });
 
+    // The refetch now happens in the useTimeClock hook's mutation onSuccess callback
+    // So we verify that clock was called, which triggers the mutation
     await waitFor(() => {
-      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+      expect(mockClock).toHaveBeenCalled();
     });
 
+    invalidateQueriesSpy.mockRestore();
     refetchQueriesSpy.mockRestore();
   });
 
@@ -268,6 +288,7 @@ describe('HomeScreen', () => {
     const { getByText } = render(<HomeScreen />, { wrapper: createWrapper() });
 
     // Create spy after component is rendered to ensure we're spying on the correct queryClient
+    const invalidateQueriesSpy = jest.spyOn(testQueryClient, 'invalidateQueries');
     const refetchQueriesSpy = jest.spyOn(testQueryClient, 'refetchQueries');
 
     const button = getByText('home.clockOutButton');
@@ -286,10 +307,13 @@ describe('HomeScreen', () => {
       expect(mockClock).toHaveBeenCalled();
     });
 
+    // The refetch now happens in the useTimeClock hook's mutation onSuccess callback
+    // So we verify that clock was called, which triggers the mutation
     await waitFor(() => {
-      expect(refetchQueriesSpy).toHaveBeenCalledWith({ queryKey: ['lastEvent'] });
+      expect(mockClock).toHaveBeenCalled();
     });
 
+    invalidateQueriesSpy.mockRestore();
     refetchQueriesSpy.mockRestore();
   });
 

@@ -12,4 +12,5 @@ export * from './update-clock-event';
 export * from './delete-clock-event';
 export * from './update-user-me';
 export * from './update-user-settings';
+export * from './delete-user-me';
 

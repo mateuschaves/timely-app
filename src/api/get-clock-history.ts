@@ -50,6 +50,7 @@ export interface ClockHistoryMonthSummary {
   averageHoursPerDay: number;
   averageHoursPerDayFormatted: string;
   totalDays: number;
+  totalEarnings?: number;
 }
 
 export interface GetClockHistoryResponse {

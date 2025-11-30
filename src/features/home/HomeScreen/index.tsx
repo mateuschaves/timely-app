@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { Animated, Easing, Modal, Platform, View, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -10,11 +10,12 @@ import { useLastEvent } from '../hooks/useLastEvent';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useFeedback } from '@/utils/feedback';
-import { useWorkSettings } from '@/features/profile';
+import { useWorkSettings, useHourlyRate } from '@/features/profile';
 import { LocationCoordinates, ClockAction } from '@/api/types';
 import { colors, spacing } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
-import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage } from './styles';
+import { getForegroundPermissionsAsync } from 'expo-location';
+import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage, WorkSettingsCardCloseButton } from './styles';
 
 
 export function HomeScreen() {
@@ -28,7 +29,11 @@ export function HomeScreen() {
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
   const { requestLocationPermission } = useLocation();
   const { hasWorkSettings, canShowCard } = useWorkSettings();
+  const { hasHourlyRate, canShowCard: canShowHourlyRateCard } = useHourlyRate();
+  const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(null);
+  const [isCheckingLocation, setIsCheckingLocation] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [closedWarnings, setClosedWarnings] = useState<Set<string>>(new Set());
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -89,6 +94,59 @@ export function HomeScreen() {
 
     return () => pulse.stop();
   }, [pulseAnim]);
+
+  // Verificar permissão de localização ao carregar
+  useEffect(() => {
+    const checkLocationPermission = async () => {
+      try {
+        const { status } = await getForegroundPermissionsAsync();
+        setHasLocationPermission(status === 'granted');
+      } catch (error) {
+        console.error('Erro ao verificar permissão de localização:', error);
+        setHasLocationPermission(false);
+      } finally {
+        setIsCheckingLocation(false);
+      }
+    };
+
+    checkLocationPermission();
+  }, []);
+
+  // Verificar novamente quando a tela recebe foco
+  useFocusEffect(
+    useCallback(() => {
+      const checkLocationPermission = async () => {
+        try {
+          const { status } = await getForegroundPermissionsAsync();
+          setHasLocationPermission(status === 'granted');
+        } catch (error) {
+          console.error('Erro ao verificar permissão de localização:', error);
+          setHasLocationPermission(false);
+        } finally {
+          setIsCheckingLocation(false);
+        }
+      };
+
+      checkLocationPermission();
+      
+      // Refazer queries de userSettings quando a tela recebe foco para atualizar os hints
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    }, [queryClient])
+  );
+
+  const handleRequestLocationPermission = async () => {
+    setIsCheckingLocation(true);
+    try {
+      await requestLocationPermission();
+      const { status } = await getForegroundPermissionsAsync();
+      setHasLocationPermission(status === 'granted');
+    } catch (error) {
+      console.error('Erro ao solicitar permissão de localização:', error);
+      setHasLocationPermission(false);
+    } finally {
+      setIsCheckingLocation(false);
+    }
+  };
 
   // Estado para controlar a cor da StatusBar
   const [statusBarColor, setStatusBarColor] = useState<string>(colors.background.secondary);
@@ -168,8 +226,7 @@ export function HomeScreen() {
       }, nextAction);
 
       console.log('Clock realizado com sucesso');
-      // Refetch imediato para atualizar o botão instantaneamente
-      await queryClient.refetchQueries({ queryKey: ['lastEvent'] });
+      // As queries já são invalidadas e refeitas pelo useTimeClock hook
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);
       console.error('Detalhes do erro:', {
@@ -286,28 +343,115 @@ export function HomeScreen() {
         </Animated.View>
       </ButtonContainer>
 
-      {canShowCard && !hasWorkSettings && (
-        <View style={{
-          position: 'absolute',
-          bottom: insets.bottom + 85,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-          paddingHorizontal: spacing.lg,
-        }}>
-          <WorkSettingsCard
-            onPress={() => navigation.navigate('WorkSettings')}
-            activeOpacity={0.7}
-          >
-            <WorkSettingsCardContent>
-              <WorkSettingsCardIcon>
-                <Ionicons name="alert-circle" size={20} color="#FF8C00" />
-              </WorkSettingsCardIcon>
-              <WorkSettingsCardMessage>{t('home.workSettingsNotConfiguredHint')}</WorkSettingsCardMessage>
-            </WorkSettingsCardContent>
-          </WorkSettingsCard>
-        </View>
-      )}
+      {/* Avisos empilhados */}
+      {(() => {
+        const showLocation = !isCheckingLocation && hasLocationPermission === false && !closedWarnings.has('location');
+        const showHourlyRate = canShowHourlyRateCard && !hasHourlyRate && !closedWarnings.has('hourlyRate');
+        const showWorkSettings = canShowCard && !hasWorkSettings && !closedWarnings.has('workSettings');
+
+        if (!showLocation && !showHourlyRate && !showWorkSettings) {
+          return null;
+        }
+
+        let baseOffset = insets.bottom + 10;
+        const locationOffset = baseOffset;
+        const hourlyRateOffset = baseOffset + (showLocation ? 90 : 0);
+        const workSettingsOffset = baseOffset + (showLocation ? 90 : 0) + (showHourlyRate ? 90 : 0);
+
+        const handleCloseWarning = (warningId: string) => {
+          setClosedWarnings(prev => new Set(prev).add(warningId));
+        };
+
+        return (
+          <>
+            {showLocation && (
+              <View style={{
+                position: 'absolute',
+                bottom: locationOffset,
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+                paddingHorizontal: spacing.lg,
+              }}>
+                <WorkSettingsCard
+                  onPress={handleRequestLocationPermission}
+                  activeOpacity={0.7}
+                  disabled={isCheckingLocation}
+                >
+                  <WorkSettingsCardContent>
+                    <WorkSettingsCardIcon>
+                      <Ionicons name="location-outline" size={20} color="#FF8C00" />
+                    </WorkSettingsCardIcon>
+                    <WorkSettingsCardMessage>{t('home.locationPermissionRequired')}</WorkSettingsCardMessage>
+                    <WorkSettingsCardCloseButton
+                      onPress={() => handleCloseWarning('location')}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="close" size={18} color="#8B6914" />
+                    </WorkSettingsCardCloseButton>
+                  </WorkSettingsCardContent>
+                </WorkSettingsCard>
+              </View>
+            )}
+            {showHourlyRate && (
+              <View style={{
+                position: 'absolute',
+                bottom: hourlyRateOffset,
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+                paddingHorizontal: spacing.lg,
+              }}>
+                <WorkSettingsCard
+                  onPress={() => navigation.navigate('WorkSettings')}
+                  activeOpacity={0.7}
+                >
+                  <WorkSettingsCardContent>
+                    <WorkSettingsCardIcon>
+                      <Ionicons name="cash-outline" size={20} color="#FF8C00" />
+                    </WorkSettingsCardIcon>
+                    <WorkSettingsCardMessage>{t('home.hourlyRateNotConfigured')}</WorkSettingsCardMessage>
+                    <WorkSettingsCardCloseButton
+                      onPress={() => handleCloseWarning('hourlyRate')}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="close" size={18} color="#8B6914" />
+                    </WorkSettingsCardCloseButton>
+                  </WorkSettingsCardContent>
+                </WorkSettingsCard>
+              </View>
+            )}
+            {showWorkSettings && (
+              <View style={{
+                position: 'absolute',
+                bottom: workSettingsOffset,
+                left: 0,
+                right: 0,
+                alignItems: 'center',
+                paddingHorizontal: spacing.lg,
+              }}>
+                <WorkSettingsCard
+                  onPress={() => navigation.navigate('WorkSettings')}
+                  activeOpacity={0.7}
+                >
+                  <WorkSettingsCardContent>
+                    <WorkSettingsCardIcon>
+                      <Ionicons name="alert-circle" size={20} color="#FF8C00" />
+                    </WorkSettingsCardIcon>
+                    <WorkSettingsCardMessage>{t('home.workSettingsNotConfiguredHint')}</WorkSettingsCardMessage>
+                    <WorkSettingsCardCloseButton
+                      onPress={() => handleCloseWarning('workSettings')}
+                      activeOpacity={0.7}
+                    >
+                      <Ionicons name="close" size={18} color="#8B6914" />
+                    </WorkSettingsCardCloseButton>
+                  </WorkSettingsCardContent>
+                </WorkSettingsCard>
+              </View>
+            )}
+          </>
+        );
+      })()}
 
       <Modal
         visible={showConfirmModal}

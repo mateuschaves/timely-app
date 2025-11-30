@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,7 +9,8 @@ import { useAuthContext } from '@/features/auth';
 import { AppStackParamList } from '@/navigation/AppNavigator';
 import { STORAGE_KEYS } from '@/config/storage';
 import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
-import { colors } from '@/theme/colors';
+import { colors, spacing } from '@/theme';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Container,
   Content,
@@ -45,11 +46,12 @@ export function ProfileScreen() {
   const { t } = useTranslation();
   const { user, signOut, fetchUserMe } = useAuthContext();
   const navigation = useNavigation<NavigationProp>();
+  const queryClient = useQueryClient();
   const { hasWorkSettings, canShowCard } = useWorkSettings();
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const loadData = async () => {
         try {
           await fetchUserMe();
@@ -65,7 +67,10 @@ export function ProfileScreen() {
         }
       };
       loadData();
-    }, [fetchUserMe])
+      
+      // Invalidar queries de userSettings quando a tela recebe foco para atualizar o badge
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    }, [fetchUserMe, queryClient])
   );
 
   const handleSignOut = () => {
@@ -200,6 +205,22 @@ export function ProfileScreen() {
                         <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
                       </ChevronIcon>
                     </InfoValueContainer>
+                  </SettingsRow>
+                </InfoCard>
+              </Section>
+
+              <Section>
+                <InfoCard>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('PrivacyAndSecurity')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>{t('profile.privacyAndSecurity')}</InfoLabel>
+                    </InfoLeft>
+                    <ChevronIcon>
+                      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                    </ChevronIcon>
                   </SettingsRow>
                 </InfoCard>
               </Section>

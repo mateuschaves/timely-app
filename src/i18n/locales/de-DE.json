@@ -38,18 +38,20 @@
     "clockOutSuccess": "Ausstempeln aufgezeichnet! Bis morgen!",
     "clockInError": "Ups! Einstempeln konnte nicht aufgezeichnet werden. Bitte versuchen Sie es erneut.",
     "clockOutError": "Ups! Ausstempeln konnte nicht aufgezeichnet werden. Bitte versuchen Sie es erneut.",
-    "welcomeMessage": "Willkommen!",
-    "welcomeMessageWithName": "Hallo, {{name}}!",
-    "breakMessage": "Gute Pause!",
-    "breakMessageWithName": "Bis später, {{name}}!",
+    "welcomeMessage": "Bereit zu beginnen?",
+    "welcomeMessageWithName": "Hallo, {{name}}! Bereit zu beginnen?",
+    "breakMessage": "Zeit, die Arbeit zu beenden!",
+    "breakMessageWithName": "Gute Arbeit, {{name}}! Zeit zu beenden.",
     "confirmClockIn": "Möchten Sie die Arbeit um {{time}} beginnen?",
     "confirmClockInTitle": "Beginn bestätigen",
     "confirmClockOut": "Möchten Sie die Arbeit um {{time}} beenden?",
     "confirmClockOutTitle": "Ende bestätigen",
-        "lastEntry": "Letzter Einstempeln",
-        "lastExit": "Letzter Ausstempeln",
-        "workSettingsNotConfiguredHint": "Konfigurieren Sie Ihre Arbeitszeiten für vollständigere Berichte"
-    },
+    "lastEntry": "Letzter Einstempeln",
+    "lastExit": "Letzter Ausstempeln",
+    "workSettingsNotConfiguredHint": "Konfigurieren Sie Ihre Arbeitszeiten für vollständigere Berichte",
+    "locationPermissionRequired": "Erlauben Sie den Zugriff auf den Standort, um die Zeiterfassung genau zu registrieren",
+    "hourlyRateNotConfigured": "Konfigurieren Sie Ihren Stundensatz für vollständigere Berichte"
+  },
   "history": {
     "title": "Zeiterfassungsverlauf",
     "empty": "Keine Einträge gefunden",
@@ -63,6 +65,7 @@
     "totalWorked": "Gesamt gearbeitet",
     "expectedHours": "Erwartete Stunden",
     "difference": "Differenz",
+    "totalEarnings": "Gesamtverdienst",
     "exact": "Genau",
     "interval": "Intervall",
     "editEvent": "Ereignis bearbeiten",
@@ -122,7 +125,29 @@
     "holidayRemoveConfirm": "Sind Sie sicher, dass Sie diesen Feiertag entfernen möchten?",
     "noCustomHolidays": "Keine benutzerdefinierten Feiertage registriert",
     "selectDate": "Datum auswählen",
-    "holidayDate": "Feiertagsdatum"
+    "holidayDate": "Feiertagsdatum",
+    "hourlyRate": "Stundensatz",
+    "hourlyRatePlaceholder": "Ex: 50.00",
+    "privacyAndSecurity": "Datenschutz und Sicherheit",
+    "deleteAccount": "Konto löschen",
+    "deleteAccountTitle": "Mein Konto löschen",
+    "deleteAccountDescription": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten werden dauerhaft entfernt.",
+    "deleteAccountReasonTitle": "Warum löschen Sie Ihr Konto?",
+    "deleteAccountReasonNoLongerNeed": "Ich brauche die App nicht mehr",
+    "deleteAccountReasonFoundBetterApp": "Ich habe eine bessere App gefunden",
+    "deleteAccountReasonTooExpensive": "Zu teuer",
+    "deleteAccountReasonPrivacyConcerns": "Datenschutzbedenken",
+    "deleteAccountReasonTooComplicated": "Zu kompliziert",
+    "deleteAccountReasonOther": "Andere",
+    "deleteAccountReasonRequired": "Bitte wählen Sie einen Grund aus",
+    "deleteAccountCustomReasonPlaceholder": "Beschreiben Sie den Grund...",
+    "deleteAccountCustomReasonRequired": "Bitte beschreiben Sie den Grund",
+    "deleteAccountWarning": "Warnung: Diese Aktion ist dauerhaft und kann nicht rückgängig gemacht werden. Alle Ihre Daten werden gelöscht.",
+    "deleteAccountButton": "Konto dauerhaft löschen",
+    "deleteAccountConfirmTitle": "Löschung bestätigen",
+    "deleteAccountConfirmMessage": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion ist dauerhaft und alle Ihre Daten gehen verloren.",
+    "deleteAccountConfirmButton": "Ja, Konto löschen",
+    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut."
   },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
@@ -140,4 +165,3 @@
     "exitBody": "Vergessen Sie nicht, Ihren Ausstempeln zu erfassen."
   }
 }
-

@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getUserSettings } from '@/api/get-user-settings';
 
 /**
- * Hook para verificar se o usuário tem work settings configurado
- * @returns boolean - true se tiver pelo menos um dia configurado, false caso contrário
+ * Hook para verificar se o usuário tem hourlyRate configurado
+ * @returns boolean - true se tiver hourlyRate configurado, false caso contrário
  */
-export function useWorkSettings() {
+export function useHourlyRate() {
   const { data: settings, isLoading, error, isError } = useQuery({
     queryKey: ['userSettings'],
     queryFn: getUserSettings,
@@ -14,19 +14,17 @@ export function useWorkSettings() {
     refetchOnWindowFocus: true,
   });
 
-  const hasWorkSettings = settings?.workSchedule 
-    ? Object.values(settings.workSchedule).some(Boolean)
-    : false;
+  const hasHourlyRate = settings?.hourlyRate !== undefined && settings?.hourlyRate !== null && settings.hourlyRate > 0;
 
   const canShowCard = !isLoading && !isError && settings !== undefined;
 
   return {
-    hasWorkSettings,
+    hasHourlyRate,
     isLoading,
     isError,
     error,
     settings,
-    canShowCard
+    canShowCard,
   };
 }
 

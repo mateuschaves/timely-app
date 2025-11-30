@@ -92,20 +92,20 @@ export function useAuth() {
           });
         } else {
           // Para outros erros (ex: sem conexão), usa dados salvos localmente como fallback
-          const storedUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
-          if (storedUser) {
-            const user = JSON.parse(storedUser);
-            setAuthState({
-              user,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-          } else {
-            setAuthState({
-              user: null,
-              isAuthenticated: false,
-              isLoading: false,
-            });
+      const storedUser = await AsyncStorage.getItem(STORAGE_KEYS.USER);
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        setAuthState({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        setAuthState({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+        });
           }
         }
       }

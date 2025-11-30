@@ -223,6 +223,17 @@ export const HolidayNameInput = styled.TextInput`
   font-weight: ${typography.weights.regular};
 `;
 
+export const HourlyRateInput = styled.TextInput`
+  width: 100%;
+  background-color: ${colors.background.secondary};
+  border-radius: ${borderRadius.md}px;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  height: 48px;
+  font-size: ${typography.sizes.md}px;
+  color: ${colors.text.primary};
+  font-weight: ${typography.weights.regular};
+`;
+
 export const EmptyHolidaysText = styled.Text`
   font-size: ${typography.sizes.sm}px;
   color: ${colors.text.tertiary};

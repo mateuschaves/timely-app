@@ -257,3 +257,11 @@ export const WorkSettingsCardMessage = styled.Text`
   font-weight: ${typography.weights.semibold};
 `;
 
+export const WorkSettingsCardCloseButton = styled.TouchableOpacity`
+  margin-left: ${spacing.sm}px;
+  padding: ${spacing.xs}px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+`;
+

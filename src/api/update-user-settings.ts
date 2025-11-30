@@ -29,6 +29,7 @@ export interface UpdateUserSettingsRequest {
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
+  hourlyRate?: number;
 }
 
 export interface UpdateUserSettingsResponse {
@@ -36,6 +37,7 @@ export interface UpdateUserSettingsResponse {
   workSchedule: WorkSchedule;
   customHolidays: CustomHoliday[];
   workLocation: WorkLocation;
+  hourlyRate?: number;
 }
 
 export const updateUserSettings = async (

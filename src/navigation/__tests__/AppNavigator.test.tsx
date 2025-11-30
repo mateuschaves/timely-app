@@ -7,6 +7,8 @@ jest.mock('@/features/profile', () => ({
   LanguageScreen: () => null,
   EditNameScreen: () => null,
   WorkSettingsScreen: () => null,
+  PrivacyAndSecurityScreen: () => null,
+  DeleteAccountScreen: () => null,
 }));
 
 jest.mock('@/features/history', () => ({

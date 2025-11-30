@@ -8,8 +8,10 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { updateUserSettings, WorkSchedule, CustomHoliday } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
 import { useFeedback } from '@/utils/feedback';
+import { capitalizeFirstLetter } from '@/utils/string';
 import { format, parseISO, isValid, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
+import * as Localization from 'expo-localization';
 import {
     Container,
     Content,
@@ -52,6 +54,7 @@ import {
     CalendarDay,
     CalendarDayText,
     ModalOverlay,
+    HourlyRateInput,
 } from './styles';
 
 interface DaySchedule {
@@ -89,15 +92,16 @@ export function WorkSettingsScreen() {
     const [editingHolidayOriginal, setEditingHolidayOriginal] = useState<CustomHoliday | null>(null);
     const [showCalendarModal, setShowCalendarModal] = useState(false);
     const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
+    const [hourlyRate, setHourlyRate] = useState<string>('');
 
     const dayNames = [
-        { key: 'monday', label: t('profile.monday') },
-        { key: 'tuesday', label: t('profile.tuesday') },
-        { key: 'wednesday', label: t('profile.wednesday') },
-        { key: 'thursday', label: t('profile.thursday') },
-        { key: 'friday', label: t('profile.friday') },
-        { key: 'saturday', label: t('profile.saturday') },
-        { key: 'sunday', label: t('profile.sunday') },
+        { key: 'monday', label: capitalizeFirstLetter(t('profile.monday')) },
+        { key: 'tuesday', label: capitalizeFirstLetter(t('profile.tuesday')) },
+        { key: 'wednesday', label: capitalizeFirstLetter(t('profile.wednesday')) },
+        { key: 'thursday', label: capitalizeFirstLetter(t('profile.thursday')) },
+        { key: 'friday', label: capitalizeFirstLetter(t('profile.friday')) },
+        { key: 'saturday', label: capitalizeFirstLetter(t('profile.saturday')) },
+        { key: 'sunday', label: capitalizeFirstLetter(t('profile.sunday')) },
     ];
 
     const { data: settingsData } = useQuery({
@@ -108,8 +112,9 @@ export function WorkSettingsScreen() {
     const updateSettingsMutation = useMutation({
         mutationFn: updateUserSettings,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: ['userSettings', 'clockHistory'] });
-            await queryClient.refetchQueries({ queryKey: ['userSettings', 'clockHistory'] });
+            await queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+            await queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+            await queryClient.refetchQueries({ queryKey: ['userSettings'] });
             showSuccess(t('profile.workSettingsSuccess'));
             navigation.goBack();
         },
@@ -120,6 +125,103 @@ export function WorkSettingsScreen() {
             );
         },
     });
+
+    // Funções para formatação monetária
+    const getCurrencyFormatter = useMemo(() => {
+        const localeData = Localization.getLocales()[0];
+        const locale = localeData?.languageTag || 'pt-BR';
+        const currencyCode = localeData?.currencyCode || 'BRL';
+        return new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency: currencyCode,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    }, []);
+
+    const formatCurrency = (value: number | string): string => {
+        if (!value) return '';
+        const numValue = typeof value === 'string' ? parseFloat(value.replace(/[^\d,.-]/g, '').replace(',', '.')) : value;
+        if (isNaN(numValue)) return '';
+        return getCurrencyFormatter.format(numValue);
+    };
+
+    const parseCurrencyValue = (value: string): number | undefined => {
+        if (!value || !value.trim()) return undefined;
+
+        // Remove todos os caracteres não numéricos exceto vírgula e ponto
+        let cleaned = value.replace(/[^\d,.-]/g, '').trim();
+        if (!cleaned) return undefined;
+
+        // Remove múltiplos separadores, mantém apenas o último como decimal
+        const parts = cleaned.split(/[.,]/);
+        if (parts.length > 2) {
+            // Se há mais de 2 partes, os separadores anteriores eram de agrupamento
+            cleaned = parts.slice(0, -1).join('') + '.' + parts[parts.length - 1];
+        } else if (parts.length === 2) {
+            // Tem um separador decimal
+            cleaned = parts[0].replace(/[^\d]/g, '') + '.' + parts[1].replace(/[^\d]/g, '');
+        } else {
+            // Apenas números inteiros
+            cleaned = cleaned.replace(/[^\d]/g, '');
+        }
+
+        const numValue = parseFloat(cleaned);
+        return isNaN(numValue) || numValue < 0 ? undefined : numValue;
+    };
+
+    const handleHourlyRateChange = (value: string) => {
+        // Remove símbolos de moeda formatados, mas mantém apenas números e separadores decimais
+        // Não formata durante a digitação para evitar problemas com o cursor
+        const cleaned = value.replace(/[^\d,.-]/g, '');
+
+        // Se está vazio, limpa o campo
+        if (!cleaned) {
+            setHourlyRate('');
+            return;
+        }
+
+        // Durante a digitação, apenas aceita números e separadores
+        // A formatação completa acontece no onBlur
+        setHourlyRate(cleaned);
+    };
+
+    const handleHourlyRateBlur = () => {
+        if (!hourlyRate || !hourlyRate.trim()) {
+            setHourlyRate('');
+            return;
+        }
+
+        // Remove todos os caracteres não numéricos, exceto vírgula e ponto
+        const numericOnly = hourlyRate.replace(/[^\d,.-]/g, '');
+        if (!numericOnly) {
+            setHourlyRate('');
+            return;
+        }
+
+        // Tenta parsear o valor usando a função de parse
+        const parsed = parseCurrencyValue(hourlyRate);
+
+        // Se não conseguiu parsear, tenta parse simples
+        let numValue = parsed;
+        if (numValue === undefined || isNaN(numValue)) {
+            // Remove todos os caracteres não numéricos e normaliza separador decimal
+            const cleaned = numericOnly.replace(/\./g, '').replace(',', '.');
+            const simpleParsed = parseFloat(cleaned);
+            if (!isNaN(simpleParsed) && simpleParsed >= 0) {
+                numValue = simpleParsed;
+            }
+        }
+
+        // Se conseguiu parsear, formata como moeda
+        if (numValue !== undefined && !isNaN(numValue) && numValue >= 0) {
+            const formatted = formatCurrency(numValue);
+            setHourlyRate(formatted);
+        } else {
+            // Se não conseguiu, limpa o campo
+            setHourlyRate('');
+        }
+    };
 
     useEffect(() => {
         if (settingsData) {
@@ -154,60 +256,70 @@ export function WorkSettingsScreen() {
             if (settingsData.customHolidays) {
                 setCustomHolidays(settingsData.customHolidays);
             }
+
+            // Carregar valor por hora e formatar como moeda
+            if (settingsData.hourlyRate !== undefined && settingsData.hourlyRate !== null) {
+                const formatted = formatCurrency(settingsData.hourlyRate);
+                setHourlyRate(formatted);
+            }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [settingsData]);
 
     const handleSave = () => {
         Keyboard.dismiss();
 
-        const workSchedule: WorkSchedule = {};
+            const workSchedule: WorkSchedule = {};
 
-        if (days.monday.enabled) {
-            workSchedule.monday = {
-                start: days.monday.startTime,
-                end: days.monday.endTime,
-            };
-        }
-        if (days.tuesday.enabled) {
-            workSchedule.tuesday = {
-                start: days.tuesday.startTime,
-                end: days.tuesday.endTime,
-            };
-        }
-        if (days.wednesday.enabled) {
-            workSchedule.wednesday = {
-                start: days.wednesday.startTime,
-                end: days.wednesday.endTime,
-            };
-        }
-        if (days.thursday.enabled) {
-            workSchedule.thursday = {
-                start: days.thursday.startTime,
-                end: days.thursday.endTime,
-            };
-        }
-        if (days.friday.enabled) {
-            workSchedule.friday = {
-                start: days.friday.startTime,
-                end: days.friday.endTime,
-            };
-        }
-        if (days.saturday.enabled) {
-            workSchedule.saturday = {
-                start: days.saturday.startTime,
-                end: days.saturday.endTime,
-            };
-        }
-        if (days.sunday.enabled) {
-            workSchedule.sunday = {
-                start: days.sunday.startTime,
-                end: days.sunday.endTime,
-            };
-        }
+            if (days.monday.enabled) {
+                workSchedule.monday = {
+                    start: days.monday.startTime,
+                    end: days.monday.endTime,
+                };
+            }
+            if (days.tuesday.enabled) {
+                workSchedule.tuesday = {
+                    start: days.tuesday.startTime,
+                    end: days.tuesday.endTime,
+                };
+            }
+            if (days.wednesday.enabled) {
+                workSchedule.wednesday = {
+                    start: days.wednesday.startTime,
+                    end: days.wednesday.endTime,
+                };
+            }
+            if (days.thursday.enabled) {
+                workSchedule.thursday = {
+                    start: days.thursday.startTime,
+                    end: days.thursday.endTime,
+                };
+            }
+            if (days.friday.enabled) {
+                workSchedule.friday = {
+                    start: days.friday.startTime,
+                    end: days.friday.endTime,
+                };
+            }
+            if (days.saturday.enabled) {
+                workSchedule.saturday = {
+                    start: days.saturday.startTime,
+                    end: days.saturday.endTime,
+                };
+            }
+            if (days.sunday.enabled) {
+                workSchedule.sunday = {
+                    start: days.sunday.startTime,
+                    end: days.sunday.endTime,
+                };
+            }
+
+        const hourlyRateValue = parseCurrencyValue(hourlyRate);
 
         updateSettingsMutation.mutate({
-            workSchedule,
+                workSchedule,
             customHolidays: customHolidays,
+            hourlyRate: hourlyRateValue,
         });
     };
 
@@ -544,6 +656,22 @@ export function WorkSettingsScreen() {
                                     </React.Fragment>
                                 );
                             })}
+                        </SettingSection>
+                    </SettingsCard>
+
+                    <SettingsCard>
+                        <SettingSection>
+                            <SettingLabel>{t('profile.hourlyRate')}</SettingLabel>
+                            <HourlyRateInput
+                                value={hourlyRate}
+                                onChangeText={handleHourlyRateChange}
+                                onBlur={handleHourlyRateBlur}
+                                onEndEditing={handleHourlyRateBlur}
+                                placeholder={getCurrencyFormatter.format(0) || t('profile.hourlyRatePlaceholder')}
+                                placeholderTextColor={colors.text.tertiary}
+                                keyboardType="decimal-pad"
+                                editable={!updateSettingsMutation.isPending}
+                            />
                         </SettingSection>
                     </SettingsCard>
 
