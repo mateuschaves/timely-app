@@ -50,7 +50,7 @@ export function useTimeClock() {
     },
   });
 
-  const handleDeeplink = async (url: string, onSuccess?: () => void) => {
+  const handleDeeplink = async (url: string, onSuccess?: () => void, nextAction?: 'clock-in' | 'clock-out') => {
     try {
       const parsed = Linking.parse(url);
       const params = parsed.queryParams as TimeClockDeeplinkParams;
@@ -65,9 +65,20 @@ export function useTimeClock() {
         console.log('Deeplink sem parâmetro time, usando horário atual do dispositivo:', timeParam);
       }
 
-      const action = params.type === 'exit' ? 'clock-out' : 'clock-in';
-      
-      // A API espera 'hour', então convertemos 'time' para 'hour'
+      // Determina a ação: se tiver type no deeplink, usa; senão usa nextAction passado; senão usa clock-in como padrão
+      let action: 'clock-in' | 'clock-out';
+      if (params.type === 'exit') {
+        action = 'clock-out';
+      } else if (params.type === 'entry') {
+        action = 'clock-in';
+      } else if (nextAction) {
+        action = nextAction;
+      } else {
+        // Se não tiver type nem nextAction, usa clock-in como padrão
+        action = 'clock-in';
+      }
+
+      // Prepara os dados da requisição
       const requestData = {
         hour: timeParam,
         ...(params.location && { location: params.location }),
@@ -75,11 +86,9 @@ export function useTimeClock() {
         ...(params.notes && { notes: params.notes }),
       };
 
-      if (action === 'clock-in') {
-        await clockInMutation.mutateAsync(requestData as ClockInRequest);
-      } else {
-        await clockOutMutation.mutateAsync(requestData as ClockOutRequest);
-      }
+      // Usa a função clock com a ação determinada
+      // As funções clockInFn e clockOutFn já gerenciam a localização automaticamente
+      await clock(requestData as ClockRequest, action);
 
       // Chama callback de sucesso se fornecido
       if (onSuccess) {
@@ -127,12 +136,12 @@ export function useTimeClock() {
   });
 
   const clock = async (data: ClockRequest, action?: 'clock-in' | 'clock-out') => {
-    const currentLocation = await getCurrentLocation();
-    
-    return clockMutation.mutateAsync({
-      ...data,
-      ...(currentLocation && { location: currentLocation }),
-    });
+    // Se não tiver ação especificada, usa clock-in como padrão
+    if (action === 'clock-out') {
+      return clockOutFn(data as ClockOutRequest);
+    } else {
+      return clockInFn(data as ClockInRequest);
+    }
   };
 
   return {

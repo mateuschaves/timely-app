@@ -11,6 +11,7 @@ import { AuthNavigator } from './src/navigation/AuthNavigator';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
+import { useLastEvent } from './src/features/home/hooks/useLastEvent';
 import { useNotifications } from './src/hooks/useNotifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
@@ -56,6 +57,7 @@ const linking = {
 function NavigationContent() {
   const { isAuthenticated, isLoading } = useAuthContext();
   const { handleDeeplink } = useTimeClock();
+  const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
   useNotifications();
 
@@ -106,11 +108,19 @@ function NavigationContent() {
       console.log('Deeplink recebido:', processedUrl);
 
       try {
+        // Determina a ação baseada no nextAction se não tiver type no deeplink
+        const parsedUrl = Linking.parse(processedUrl);
+        const params = parsedUrl.queryParams as { type?: string };
+        
+        // Se não tiver type no deeplink, usa nextAction para determinar a ação automaticamente
+        // nextAction já vem no formato 'clock-in' ou 'clock-out' do enum ClockAction
+        const actionToUse = params.type ? undefined : (nextAction as 'clock-in' | 'clock-out' | undefined);
+        
         // Processa o deeplink e navega para History após sucesso
         await handleDeeplink(processedUrl, () => {
           // Navega para a tab History após bater o ponto
           navigation.navigate('Main', { screen: 'History' });
-        });
+        }, actionToUse);
       } catch (error) {
         console.error('Erro ao processar deeplink:', error);
       } finally {
@@ -182,36 +192,41 @@ function NavigationContent() {
             return;
           }
 
-          // Valida se o parâmetro time tem um valor válido
-          try {
-            const parsed = Linking.parse(initialUrl);
-            const params = parsed.queryParams as { time?: string };
+          // Se for timely://clock, não precisa validar time aqui (será adicionado no processDeeplink)
+          const isClockDeeplink = initialUrl === 'timely://clock' || initialUrl.startsWith('timely://clock?');
+          
+          if (!isClockDeeplink) {
+            // Valida se o parâmetro time tem um valor válido apenas para URLs que não são timely://clock
+            try {
+              const parsed = Linking.parse(initialUrl);
+              const params = parsed.queryParams as { time?: string };
 
-            if (!params.time || params.time.trim() === '') {
-              console.log('Parâmetro time está vazio ou inválido, ignorando:', initialUrl);
+              if (!params.time || params.time.trim() === '') {
+                console.log('Parâmetro time está vazio ou inválido, ignorando:', initialUrl);
+                return;
+              }
+
+              // Valida se é uma data válida
+              const timeDate = new Date(params.time);
+              if (isNaN(timeDate.getTime())) {
+                console.log('Parâmetro time não é uma data válida, ignorando:', initialUrl);
+                return;
+              }
+            } catch (parseError) {
+              console.error('Erro ao parsear URL do deeplink:', parseError);
               return;
             }
-
-            // Valida se é uma data válida
-            const timeDate = new Date(params.time);
-            if (isNaN(timeDate.getTime())) {
-              console.log('Parâmetro time não é uma data válida, ignorando:', initialUrl);
-              return;
-            }
-
-            console.log('App aberto via deeplink com time válido:', initialUrl);
-
-            // Salva a URL processada no AsyncStorage antes de processar
-            await AsyncStorage.setItem(STORAGE_KEYS.LAST_PROCESSED_DEEPLINK, initialUrl);
-
-            // Pequeno delay para garantir que o app está totalmente inicializado
-            setTimeout(() => {
-              processDeeplink(initialUrl);
-            }, 500);
-          } catch (parseError) {
-            console.error('Erro ao parsear URL do deeplink:', parseError);
-            return;
           }
+
+          console.log('App aberto via deeplink:', initialUrl);
+
+          // Salva a URL processada no AsyncStorage antes de processar
+          await AsyncStorage.setItem(STORAGE_KEYS.LAST_PROCESSED_DEEPLINK, initialUrl);
+
+          // Pequeno delay para garantir que o app está totalmente inicializado
+          setTimeout(() => {
+            processDeeplink(initialUrl);
+          }, 500);
         } catch (error) {
           console.error('Erro ao verificar initial URL:', error);
         }
