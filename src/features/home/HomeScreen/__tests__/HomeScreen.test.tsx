@@ -36,6 +36,7 @@ jest.mock('expo-status-bar', () => ({
 }));
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: ({ children }: { children: any }) => children,
+  SafeAreaView: 'SafeAreaView',
   useSafeAreaInsets: () => ({
     top: 44,
     bottom: 34,

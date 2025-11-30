@@ -1,12 +1,27 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Platform, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { LoginScreen } from '../index';
 import { useAuthContext } from '../../context/AuthContext';
 import { useTranslation } from '@/i18n';
 
 jest.mock('../../context/AuthContext');
 jest.mock('@/i18n');
+
+const mockNavigate = jest.fn();
+const mockGoBack = jest.fn();
+
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
+  return {
+    ...actualNav,
+    useNavigation: jest.fn(() => ({
+      navigate: mockNavigate,
+      goBack: mockGoBack,
+    })),
+  };
+});
 jest.mock('react-native', () => {
   return {
     Platform: {
@@ -35,6 +50,14 @@ jest.mock('react-native', () => {
 
 const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthContext>;
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
+
+const createWrapper = () => {
+  return ({ children }: { children: React.ReactNode }) => (
+    <NavigationContainer>
+      {children}
+    </NavigationContainer>
+  );
+};
 
 describe('LoginScreen', () => {
   const mockSignInWithApple = jest.fn();

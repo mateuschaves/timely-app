@@ -5,6 +5,7 @@ import { AuthNavigator } from '../AuthNavigator';
 
 jest.mock('@/features/auth', () => ({
   LoginScreen: () => null,
+  TermsScreen: () => null,
 }));
 
 describe('AuthNavigator', () => {
