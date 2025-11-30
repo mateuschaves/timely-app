@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,7 +9,7 @@ import { useAuthContext } from '@/features/auth';
 import { AppStackParamList } from '@/navigation/AppNavigator';
 import { STORAGE_KEYS } from '@/config/storage';
 import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
-import { useTheme, ThemeMode } from '@/theme/context/ThemeContext';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Container,
@@ -24,7 +24,6 @@ import {
   UserEmail,
   Section,
   InfoCard,
-  InfoRow,
   InfoLeft,
   InfoLabel,
   InfoValueContainer,
@@ -68,7 +67,7 @@ export function ProfileScreen() {
         }
       };
       loadData();
-      
+
       // Invalidar queries de userSettings quando a tela recebe foco para atualizar o badge
       queryClient.invalidateQueries({ queryKey: ['userSettings'] });
     }, [fetchUserMe, queryClient])
