@@ -96,7 +96,8 @@
     "deleteEventConfirm": "Êtes-vous sûr de vouloir supprimer cet événement ?",
     "deleteEventError": "Erreur lors de la suppression de l'événement. Veuillez réessayer.",
     "deleteEventSuccess": "Événement supprimé avec succès !",
-    "orderIssue": "Les événements de ce jour sont dans le désordre. Veuillez vérifier les heures."
+    "orderIssue": "Les événements de ce jour sont dans le désordre. Veuillez vérifier les heures.",
+    "holiday": "Jour férié"
   },
   "profile": {
     "title": "Profil",

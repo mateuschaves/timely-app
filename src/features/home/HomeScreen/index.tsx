@@ -150,20 +150,16 @@ export function HomeScreen() {
     }
   };
 
-  // Estado para controlar a cor da StatusBar
-  const [statusBarColor, setStatusBarColor] = useState<string>(theme.background.primary);
-
-  // Configurar StatusBar para corresponder ao background
-  useFocusEffect(
-    React.useCallback(() => {
-      setStatusBarColor(theme.background.primary);
-
-      return () => {
-        // Restaurar StatusBar padrão ao sair da tela
-        setStatusBarColor(theme.background.primary);
-      };
-    }, [theme])
-  );
+  // Determinar a cor e o estilo da StatusBar baseado no tema
+  // A cor deve ser igual ao background.secondary (mesma do WelcomeCard) para continuidade visual
+  // Tema claro: #f5f5f5 (cinza claro), Tema escuro: #1e1e1e (cinza escuro)
+  const statusBarColor = useMemo(() => theme.background.secondary, [theme.background.secondary]);
+  
+  // No modo escuro (background escuro #1e1e1e), usa 'light' (texto claro)
+  // No modo claro (background claro #f5f5f5), usa 'dark' (texto escuro)
+  const statusBarStyle = useMemo(() => {
+    return colorScheme === 'dark' ? 'light' : 'dark';
+  }, [colorScheme]);
 
   const handlePress = () => {
     if (isClocking) return;
@@ -265,7 +261,7 @@ export function HomeScreen() {
 
   return (
     <Container>
-      <StatusBar style="dark" backgroundColor={statusBarColor} />
+      <StatusBar style={statusBarStyle} backgroundColor={statusBarColor} />
       {Platform.OS === 'ios' && (
         <View
           style={{

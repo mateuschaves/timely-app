@@ -29,6 +29,7 @@ import {
     DaysList,
     DayCard,
     DayHeader,
+    DayDateContainer,
     DayDate,
     DayHeaderRight,
     DayTotalHoursBadge,
@@ -58,6 +59,8 @@ import {
     ListHeaderContainer,
     OrderIssueWarning,
     OrderIssueText,
+    HolidayBadge,
+    HolidayBadgeText,
 } from './styles';
 import { HistorySkeletonLoader } from './SkeletonLoader';
 
@@ -307,6 +310,12 @@ export function HistoryScreen() {
             return isFirstExit;
         })();
 
+        // Verificar se o dia é feriado (algum evento tem isHoliday: true)
+        const isHoliday = (() => {
+            if (!item.events || item.events.length === 0) return false;
+            return item.events.some(event => event.isHoliday === true);
+        })();
+
         return (
             <DayCard incomplete={isIncomplete} hasOrderIssue={hasOrderIssue}>
                 {hasOrderIssue && (
@@ -316,7 +325,15 @@ export function HistoryScreen() {
                     </OrderIssueWarning>
                 )}
                 <DayHeader onPress={() => toggleDay(item.date)} activeOpacity={0.7}>
-                    <DayDate>{formattedDate}</DayDate>
+                    <DayDateContainer>
+                        <DayDate>{formattedDate}</DayDate>
+                        {isHoliday && (
+                            <HolidayBadge>
+                                <Ionicons name="calendar" size={12} color={theme.status.warning} />
+                                <HolidayBadgeText>{t('history.holiday')}</HolidayBadgeText>
+                            </HolidayBadge>
+                        )}
+                    </DayDateContainer>
                     <DayHeaderRight>
                         <DayTotalHoursBadge>
                             <DayTotalHours>{item.totalWorkedTime || '00:00'}</DayTotalHours>

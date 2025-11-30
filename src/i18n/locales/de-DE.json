@@ -96,7 +96,8 @@
     "deleteEventConfirm": "Sind Sie sicher, dass Sie dieses Ereignis löschen möchten?",
     "deleteEventError": "Fehler beim Löschen des Ereignisses. Bitte versuchen Sie es erneut.",
     "deleteEventSuccess": "Ereignis erfolgreich gelöscht!",
-    "orderIssue": "Die Ereignisse dieses Tages sind nicht in der richtigen Reihenfolge. Bitte überprüfen Sie die Zeiten."
+    "orderIssue": "Die Ereignisse dieses Tages sind nicht in der richtigen Reihenfolge. Bitte überprüfen Sie die Zeiten.",
+    "holiday": "Feiertag"
   },
   "profile": {
     "title": "Profil",

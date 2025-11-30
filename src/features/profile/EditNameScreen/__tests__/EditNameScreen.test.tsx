@@ -134,6 +134,8 @@ describe('EditNameScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock AsyncStorage to resolve immediately for theme initialization
+    (require('@react-native-async-storage/async-storage').default.getItem as jest.Mock).mockResolvedValue(null);
     mockUseTranslation.mockReturnValue({
       t: mockT,
       i18n: {
@@ -165,9 +167,11 @@ describe('EditNameScreen', () => {
   it('should render edit name screen', async () => {
     const { getByText, getByPlaceholderText } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
+    // Wait for component to fully render
     await waitFor(() => {
       expect(getByText('profile.editName')).toBeTruthy();
-    });
+    }, { timeout: 3000 });
+
     expect(getByPlaceholderText('profile.name')).toBeTruthy();
   });
 
@@ -332,10 +336,10 @@ describe('EditNameScreen', () => {
     const { UNSAFE_getAllByType } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const touchables = UNSAFE_getAllByType('TouchableOpacity');
-    const backButton = touchables.find((btn: any) => 
+    const backButton = touchables.find((btn: any) =>
       btn.props.onPress && btn.props.children?.props?.name === 'arrow-back'
     );
-    
+
     if (backButton) {
       fireEvent.press(backButton);
       expect(mockGoBack).toHaveBeenCalled();
@@ -343,7 +347,7 @@ describe('EditNameScreen', () => {
   });
 
   it('should disable input when saving', async () => {
-    mockUpdateUserMe.mockImplementation(() => new Promise(() => {})); // Never resolves
+    mockUpdateUserMe.mockImplementation(() => new Promise(() => { })); // Never resolves
 
     const { getByText, getByPlaceholderText } = render(<EditNameScreen />, { wrapper: createWrapper() });
 

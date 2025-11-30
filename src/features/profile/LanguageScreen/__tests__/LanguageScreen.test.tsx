@@ -15,8 +15,57 @@ jest.mock('expo-haptics', () => ({
 
 jest.mock('@/i18n');
 jest.mock('@/utils/feedback');
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+}));
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaView: 'SafeAreaView',
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'ios',
+    select: jest.fn(),
+  },
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
   useColorScheme: jest.fn(() => 'light'),
+  View: 'View',
+  Text: 'Text',
+  TouchableOpacity: 'TouchableOpacity',
+  ScrollView: 'ScrollView',
+  StyleSheet: {
+    create: (styles: any) => styles,
+    flatten: (style: any) => {
+      if (!style) return {};
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style.filter(Boolean));
+      }
+      return style;
+    },
+  },
 }));
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
@@ -46,6 +95,8 @@ describe('LanguageScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Mock AsyncStorage to resolve immediately for theme initialization
+    (require('@react-native-async-storage/async-storage').default.getItem as jest.Mock).mockResolvedValue(null);
     mockUseTranslation.mockReturnValue({
       t: mockT,
       i18n: {

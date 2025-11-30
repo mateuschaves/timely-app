@@ -370,11 +370,17 @@ export const DayHeader = styled.TouchableOpacity`
   border-bottom-color: ${({ theme }) => theme.border.light};
 `;
 
+export const DayDateContainer = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
 export const DayDate = styled.Text`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   color: ${({ theme }) => theme.text.primary};
-  flex: 1;
 `;
 
 export const DayHeaderRight = styled.View`
@@ -550,5 +556,21 @@ export const OrderIssueText = styled.Text`
   font-weight: ${typography.weights.medium};
   color: ${({ theme }) => theme.status.error};
   flex: 1;
+`;
+
+export const HolidayBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${({ theme }) => theme.status.warning}20;
+  padding: ${spacing.xs}px ${spacing.sm}px;
+  border-radius: ${borderRadius.sm}px;
+  margin-left: ${spacing.sm}px;
+  gap: ${spacing.xs / 2}px;
+`;
+
+export const HolidayBadgeText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.status.warning};
 `;
 

@@ -96,7 +96,8 @@
         "deleteEventConfirm": "Tem certeza que deseja excluir este evento?",
         "deleteEventError": "Erro ao excluir evento. Tente novamente.",
         "deleteEventSuccess": "Evento excluído com sucesso!",
-        "orderIssue": "Os eventos deste dia estão fora de ordem. Verifique os horários."
+        "orderIssue": "Os eventos deste dia estão fora de ordem. Verifique os horários.",
+        "holiday": "Feriado"
     },
     "profile": {
         "title": "Perfil",

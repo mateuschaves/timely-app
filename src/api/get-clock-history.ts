@@ -21,6 +21,7 @@ export interface ClockHistoryEvent {
   };
   photoUrl?: string | null;
   notes?: string | null;
+  isHoliday?: boolean;
   createdAt: string;
   updatedAt: string;
 }

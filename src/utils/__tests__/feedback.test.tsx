@@ -10,6 +10,10 @@ jest.mock('expo-haptics', () => ({
     Success: 'success',
   },
 }));
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaView: 'SafeAreaView',
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 jest.mock('react-native', () => ({
   Animated: {
     Value: jest.fn((value: number) => ({
@@ -34,6 +38,8 @@ jest.mock('react-native', () => ({
         if (callback) callback();
       }),
     })),
+    View: 'View',
+    Text: 'Text',
   },
   View: 'View',
   Text: 'Text',
@@ -43,6 +49,13 @@ jest.mock('react-native', () => ({
   useColorScheme: jest.fn(() => 'light'),
   StyleSheet: {
     create: (styles: any) => styles,
+    flatten: (style: any) => {
+      if (!style) return {};
+      if (Array.isArray(style)) {
+        return Object.assign({}, ...style.filter(Boolean));
+      }
+      return style;
+    },
   },
 }));
 
