@@ -45,8 +45,8 @@ const linking = {
   },
   // Filtra apenas URLs de navegação, não deeplinks de clock
   filter: (url: string) => {
-    // Se for um deeplink de clock (tem parâmetro time ou hour), não processa aqui
-    if (url.includes('time=') || url.includes('hour=')) {
+    // Se for um deeplink de clock (tem parâmetro time, hour ou é timely://clock), não processa aqui
+    if (url.includes('time=') || url.includes('hour=') || url === 'timely://clock' || url.startsWith('timely://clock?')) {
       return false;
     }
     return true;
@@ -67,30 +67,47 @@ function NavigationContent() {
     if (!isAuthenticated) return;
 
     const processDeeplink = async (url: string) => {
-      // Verifica se a URL é válida e contém parâmetro time
-      if (!url || !url.includes('time=')) {
-        console.log('URL não contém parâmetro time, ignorando:', url);
+      // Verifica se a URL é válida
+      if (!url) {
+        console.log('URL inválida, ignorando:', url);
+        return;
+      }
+
+      // Se for timely://clock (sem parâmetros), adiciona o horário atual do dispositivo
+      let processedUrl = url;
+      if (url === 'timely://clock' || url.startsWith('timely://clock?')) {
+        const currentTime = new Date().toISOString();
+        // Se já tiver query params, adiciona time=, senão cria novo
+        if (url.includes('?')) {
+          processedUrl = `${url}&time=${encodeURIComponent(currentTime)}`;
+        } else {
+          processedUrl = `timely://clock?time=${encodeURIComponent(currentTime)}`;
+        }
+        console.log('Deeplink timely://clock detectado, usando horário atual:', processedUrl);
+      } else if (!url.includes('time=') && !url.includes('hour=')) {
+        // Se não for timely://clock e não tiver time/hour, ignora
+        console.log('URL não contém parâmetro time ou hour, ignorando:', url);
         return;
       }
 
       // Evita processar a mesma URL múltiplas vezes
-      if (lastProcessedUrl.current === url) {
-        console.log('Deeplink já foi processado, ignorando:', url);
+      if (lastProcessedUrl.current === processedUrl) {
+        console.log('Deeplink já foi processado, ignorando:', processedUrl);
         return;
       }
 
       if (isProcessingRef.current) {
-        console.log('Deeplink já está sendo processado, ignorando:', url);
+        console.log('Deeplink já está sendo processado, ignorando:', processedUrl);
         return;
       }
 
       isProcessingRef.current = true;
-      lastProcessedUrl.current = url;
-      console.log('Deeplink recebido com parâmetro time:', url);
+      lastProcessedUrl.current = processedUrl;
+      console.log('Deeplink recebido:', processedUrl);
 
       try {
         // Processa o deeplink e navega para History após sucesso
-        await handleDeeplink(url, () => {
+        await handleDeeplink(processedUrl, () => {
           // Navega para a tab History após bater o ponto
           navigation.navigate('Main', { screen: 'History' });
         });
@@ -124,8 +141,8 @@ function NavigationContent() {
     // Listener para deeplinks recebidos enquanto o app está rodando
     // Este listener só é acionado quando o app recebe um deeplink enquanto está aberto
     const subscription = Linking.addEventListener('url', async (event: { url: string }) => {
-      // Verifica se é um deeplink válido de clock com parâmetro time
-      if (event.url && event.url.includes('time=')) {
+      // Verifica se é um deeplink válido de clock (com time ou timely://clock)
+      if (event.url && (event.url.includes('time=') || event.url.includes('hour=') || event.url === 'timely://clock' || event.url.startsWith('timely://clock?'))) {
         // Só processa se não for a mesma URL que já foi processada
         if (event.url !== lastProcessedUrl.current) {
           // Limpa o AsyncStorage para permitir processar este novo deeplink
@@ -145,14 +162,15 @@ function NavigationContent() {
         try {
           const initialUrl = await Linking.getInitialURL();
 
-          // Valida se a URL existe e contém o parâmetro time
+          // Valida se a URL existe
           if (!initialUrl) {
             return; // Não foi aberto via deeplink
           }
 
-          // Verifica se contém o parâmetro time
-          if (!initialUrl.includes('time=')) {
-            console.log('Initial URL não contém parâmetro time, ignorando:', initialUrl);
+          // Se for timely://clock, será processado e terá time adicionado
+          // Se não for timely://clock e não tiver time/hour, ignora
+          if (initialUrl !== 'timely://clock' && !initialUrl.startsWith('timely://clock?') && !initialUrl.includes('time=') && !initialUrl.includes('hour=')) {
+            console.log('Initial URL não é um deeplink de clock válido, ignorando:', initialUrl);
             return;
           }
 

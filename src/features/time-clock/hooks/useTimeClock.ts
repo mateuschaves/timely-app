@@ -56,11 +56,13 @@ export function useTimeClock() {
       const params = parsed.queryParams as TimeClockDeeplinkParams;
 
       // Usa 'time' como parâmetro principal, com fallback para 'hour' (compatibilidade)
-      const timeParam = params.time || params.hour;
+      // Se não tiver time nem hour, usa o horário atual do dispositivo
+      let timeParam = params.time || params.hour;
       
       if (!timeParam) {
-        console.log('Deeplink não contém parâmetro time ou hour');
-        return;
+        // Se não tiver parâmetro time, usa o horário atual do dispositivo
+        timeParam = new Date().toISOString();
+        console.log('Deeplink sem parâmetro time, usando horário atual do dispositivo:', timeParam);
       }
 
       const action = params.type === 'exit' ? 'clock-out' : 'clock-in';
