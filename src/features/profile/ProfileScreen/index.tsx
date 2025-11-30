@@ -9,7 +9,7 @@ import { useAuthContext } from '@/features/auth';
 import { AppStackParamList } from '@/navigation/AppNavigator';
 import { STORAGE_KEYS } from '@/config/storage';
 import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
-import { colors, spacing } from '@/theme';
+import { useTheme, ThemeMode } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Container,
@@ -48,6 +48,7 @@ export function ProfileScreen() {
   const navigation = useNavigation<NavigationProp>();
   const queryClient = useQueryClient();
   const { hasWorkSettings, canShowCard } = useWorkSettings();
+  const { theme, themeMode } = useTheme();
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
 
   useFocusEffect(
@@ -110,6 +111,19 @@ export function ProfileScreen() {
     }
   };
 
+  const getAppearanceDisplayName = (): string => {
+    switch (themeMode) {
+      case 'system':
+        return t('profile.appearanceSystem');
+      case 'light':
+        return t('profile.appearanceLight');
+      case 'dark':
+        return t('profile.appearanceDark');
+      default:
+        return t('profile.appearanceSystem');
+    }
+  };
+
   return (
     <Container>
       <ScrollContent>
@@ -121,7 +135,7 @@ export function ProfileScreen() {
                   <AvatarText>{getInitials(user.name)}</AvatarText>
                 ) : (
                   <AvatarIcon>
-                    <Ionicons name="person" size={48} color={colors.text.inverse} />
+                    <Ionicons name="person" size={48} color={theme.text.inverse} />
                   </AvatarIcon>
                 )}
               </Avatar>
@@ -143,6 +157,7 @@ export function ProfileScreen() {
 
           {user ? (
             <>
+              {/* Informações da Conta */}
               <Section>
                 <InfoCard>
                   {user.name && (
@@ -156,7 +171,7 @@ export function ProfileScreen() {
                       <InfoValueContainer>
                         <InfoValue>{user.name}</InfoValue>
                         <ChevronIcon>
-                          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                          <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
                         </ChevronIcon>
                       </InfoValueContainer>
                     </SettingsRow>
@@ -164,6 +179,7 @@ export function ProfileScreen() {
                 </InfoCard>
               </Section>
 
+              {/* Configurações do Aplicativo */}
               <Section>
                 <InfoCard>
                   <SettingsRow
@@ -176,13 +192,28 @@ export function ProfileScreen() {
                     <InfoValueContainer>
                       <InfoValue>{getLanguageDisplayName(currentLanguage)}</InfoValue>
                       <ChevronIcon>
-                        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                        <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
+                      </ChevronIcon>
+                    </InfoValueContainer>
+                  </SettingsRow>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('Appearance')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>{t('profile.appearance')}</InfoLabel>
+                    </InfoLeft>
+                    <InfoValueContainer>
+                      <InfoValue>{getAppearanceDisplayName()}</InfoValue>
+                      <ChevronIcon>
+                        <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
                       </ChevronIcon>
                     </InfoValueContainer>
                   </SettingsRow>
                 </InfoCard>
               </Section>
 
+              {/* Configurações de Trabalho */}
               <Section>
                 <InfoCard>
                   <SettingsRow
@@ -196,19 +227,20 @@ export function ProfileScreen() {
                       {canShowCard && !hasWorkSettings && (
                         <Badge>
                           <BadgeIcon>
-                            <Ionicons name="alert-circle" size={12} color={colors.status.warning} />
+                            <Ionicons name="alert-circle" size={12} color={theme.status.warning} />
                           </BadgeIcon>
                           <BadgeText>{t('profile.workSettingsNotConfigured')}</BadgeText>
                         </Badge>
                       )}
                       <ChevronIcon>
-                        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                        <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
                       </ChevronIcon>
                     </InfoValueContainer>
                   </SettingsRow>
                 </InfoCard>
               </Section>
 
+              {/* Privacidade e Segurança */}
               <Section>
                 <InfoCard>
                   <SettingsRow
@@ -219,7 +251,7 @@ export function ProfileScreen() {
                       <InfoLabel>{t('profile.privacyAndSecurity')}</InfoLabel>
                     </InfoLeft>
                     <ChevronIcon>
-                      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                      <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
                     </ChevronIcon>
                   </SettingsRow>
                 </InfoCard>

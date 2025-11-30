@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { Animated, View, Text, StyleSheet, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { colors, spacing, typography, borderRadius } from '@/theme';
+import { spacing, typography, borderRadius } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 
 type FeedbackType = 'success' | 'error' | 'info';
 
@@ -18,6 +19,7 @@ interface FeedbackProviderProps {
 }
 
 export function FeedbackProvider({ children }: FeedbackProviderProps) {
+    const { theme } = useTheme();
     const [message, setMessage] = useState<string | null>(null);
     const [type, setType] = useState<FeedbackType>('success');
     const [fadeAnim] = useState(new Animated.Value(0));
@@ -84,15 +86,45 @@ export function FeedbackProvider({ children }: FeedbackProviderProps) {
     const getBackgroundColor = () => {
         switch (type) {
             case 'success':
-                return colors.status.success;
+                return theme.status.success;
             case 'error':
-                return colors.status.error;
+                return theme.status.error;
             case 'info':
-                return colors.primary;
+                return theme.primary;
             default:
-                return colors.status.success;
+                return theme.status.success;
         }
     };
+
+    const styles = StyleSheet.create({
+        container: {
+            position: 'absolute',
+            bottom: 100,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+            zIndex: 9999,
+            pointerEvents: 'none',
+        },
+        toast: {
+            paddingHorizontal: spacing.lg,
+            paddingVertical: spacing.md,
+            borderRadius: borderRadius.lg,
+            maxWidth: '90%',
+            shadowOffset: {
+                width: 0,
+                height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+        },
+        message: {
+            fontSize: typography.sizes.md,
+            fontWeight: typography.weights.medium,
+            textAlign: 'center',
+        },
+    });
 
     return (
         <FeedbackContext.Provider value={{ showSuccess, showError, showInfo }}>
@@ -107,8 +139,14 @@ export function FeedbackProvider({ children }: FeedbackProviderProps) {
                         },
                     ]}
                 >
-                    <View style={[styles.toast, { backgroundColor: getBackgroundColor() }]}>
-                        <Text style={styles.message}>{message}</Text>
+                    <View style={[
+                        styles.toast, 
+                        { 
+                            backgroundColor: getBackgroundColor(),
+                            shadowColor: theme.primary,
+                        }
+                    ]}>
+                        <Text style={[styles.message, { color: theme.text.inverse }]}>{message}</Text>
                     </View>
                 </Animated.View>
             )}
@@ -123,36 +161,4 @@ export function useFeedback() {
     }
     return context;
 }
-
-const styles = StyleSheet.create({
-    container: {
-        position: 'absolute',
-        bottom: 100,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        zIndex: 9999,
-        pointerEvents: 'none',
-    },
-    toast: {
-        paddingHorizontal: spacing.lg,
-        paddingVertical: spacing.md,
-        borderRadius: borderRadius.lg,
-        maxWidth: '90%',
-        shadowColor: colors.primary,
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    message: {
-        color: colors.text.inverse,
-        fontSize: typography.sizes.md,
-        fontWeight: typography.weights.medium,
-        textAlign: 'center',
-    },
-});
 

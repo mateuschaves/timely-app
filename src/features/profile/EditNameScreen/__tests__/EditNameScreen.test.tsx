@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { EditNameScreen } from '../index';
 import { useTranslation } from '@/i18n';
 import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
 import { useFeedback } from '@/utils/feedback';
+import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
@@ -19,6 +20,38 @@ jest.mock('@/features/auth', () => ({
   useAuthContext: jest.fn(),
 }));
 
+
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+}));
+
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaView: 'SafeAreaView',
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock('@/i18n');
+jest.mock('@/api/update-user-me');
+jest.mock('@/utils/feedback');
+jest.mock('@react-navigation/native', () => ({
+  useNavigation: () => ({
+    navigate: jest.fn(),
+    goBack: jest.fn(),
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+  }),
+  useFocusEffect: (callback: () => void | (() => void)) => {
+    const React = require('react');
+    React.useEffect(() => {
+      const cleanup = callback();
+      return () => {
+        if (typeof cleanup === 'function') {
+          cleanup();
+        }
+      };
+    }, []);
+  },
+}));
 // Mock react-native - must include ActivityIndicator for styled-components
 jest.mock('react-native', () => ({
   Platform: {
@@ -31,6 +64,31 @@ jest.mock('react-native', () => ({
   Keyboard: {
     dismiss: jest.fn(),
   },
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
+  useColorScheme: jest.fn(() => 'light'),
   View: 'View',
   Text: 'Text',
   TextInput: 'TextInput',
@@ -48,23 +106,9 @@ jest.mock('react-native', () => ({
     },
   },
 }));
-
+jest.mock('@react-native-async-storage/async-storage');
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',
-}));
-
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: 'SafeAreaView',
-  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
-}));
-
-jest.mock('@/i18n');
-jest.mock('@/api/update-user-me');
-jest.mock('@/utils/feedback');
-jest.mock('@react-navigation/native', () => ({
-  useNavigation: () => ({
-    goBack: jest.fn(),
-  }),
 }));
 
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
@@ -80,9 +124,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return createTestWrapper(queryClient);
 };
 
 describe('EditNameScreen', () => {
@@ -120,10 +162,12 @@ describe('EditNameScreen', () => {
     } as any);
   });
 
-  it('should render edit name screen', () => {
+  it('should render edit name screen', async () => {
     const { getByText, getByPlaceholderText } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
-    expect(getByText('profile.editName')).toBeTruthy();
+    await waitFor(() => {
+      expect(getByText('profile.editName')).toBeTruthy();
+    });
     expect(getByPlaceholderText('profile.name')).toBeTruthy();
   });
 

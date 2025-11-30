@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { useFeedback } from '@/utils/feedback';
 import {
     Container,
@@ -24,6 +24,7 @@ export function EditNameScreen() {
     const navigation = useNavigation();
     const { user, fetchUserMe } = useAuthContext();
     const { showSuccess } = useFeedback();
+    const { theme } = useTheme();
     const [name, setName] = useState(user?.name || '');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -70,7 +71,7 @@ export function EditNameScreen() {
         <Container>
             <Header>
                 <BackButton onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+                    <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
                 </BackButton>
                 <HeaderTitle>{t('profile.editName')}</HeaderTitle>
             </Header>
@@ -80,7 +81,7 @@ export function EditNameScreen() {
                         value={name}
                         onChangeText={setName}
                         placeholder={t('profile.name')}
-                        placeholderTextColor={colors.text.tertiary}
+                        placeholderTextColor={theme.text.tertiary}
                         autoFocus
                         editable={!isSaving}
                     />

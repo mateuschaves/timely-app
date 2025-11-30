@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { HomeScreen } from '../index';
 import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
@@ -19,6 +19,33 @@ jest.mock('@/features/profile', () => ({
   useHourlyRate: jest.fn(),
 }));
 jest.mock('@/i18n');
+jest.mock('react-native', () => ({
+  useColorScheme: jest.fn(() => 'light'),
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
+}));
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
   NotificationFeedbackType: {
@@ -86,13 +113,8 @@ const createWrapper = () => {
 
   const { SafeAreaProvider } = require('react-native-safe-area-context');
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <SafeAreaProvider>
-      <QueryClientProvider client={testQueryClient}>
-        <FeedbackProvider>{children}</FeedbackProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
-  );
+  const { createTestWrapper } = require('@/utils/test-helpers');
+  return createTestWrapper(testQueryClient);
 };
 
 describe('HomeScreen', () => {

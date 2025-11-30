@@ -1,11 +1,11 @@
 import styled from 'styled-components/native';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { spacing, borderRadius, typography } from '@/theme';
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
-  background-color: ${colors.background.secondary};
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const ScrollContent = styled(ScrollView)`
@@ -29,19 +29,19 @@ export const AvatarContainer = styled.View`
   margin-bottom: ${spacing.lg}px;
 `;
 
-export const Avatar = styled.View`
+export const Avatar = styled.View<{ theme: any }>`
   width: 120px;
   height: 120px;
   border-radius: ${borderRadius.round}px;
-  background-color: ${colors.primary};
+  background-color: ${({ theme }) => theme.primary};
   align-items: center;
   justify-content: center;
 `;
 
-export const AvatarText = styled.Text`
+export const AvatarText = styled.Text<{ theme: any }>`
   font-size: 42px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.inverse};
+  color: ${({ theme }) => theme.text.inverse};
   letter-spacing: 1.5px;
 `;
 
@@ -50,18 +50,18 @@ export const AvatarIcon = styled.View`
   justify-content: center;
 `;
 
-export const UserName = styled.Text`
+export const UserName = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   margin-bottom: ${spacing.xs}px;
   text-align: center;
   letter-spacing: -0.3px;
 `;
 
-export const UserEmail = styled.Text`
+export const UserEmail = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.sm}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   text-align: center;
   letter-spacing: 0.1px;
 `;
@@ -70,26 +70,26 @@ export const Section = styled.View`
   margin-bottom: ${spacing.lg}px;
 `;
 
-export const InfoCard = styled.View`
-  background-color: ${colors.background.primary};
+export const InfoCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary};
   border-radius: ${borderRadius.lg}px;
   overflow: hidden;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
+  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
+  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
+  elevation: ${({ theme }) => theme.shadows.sm.elevation};
 `;
 
-export const InfoRow = styled.View<{ isLast?: boolean }>`
+export const InfoRow = styled.View<{ isLast?: boolean; theme: any }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: ${spacing.sm}px ${spacing.md}px;
   min-height: 48px;
   border-bottom-width: ${(props: { isLast?: boolean }) => (props.isLast ? '0px' : '1px')};
-  border-bottom-color: ${colors.border.light};
-  background-color: ${colors.background.primary};
+  border-bottom-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2a2a2a' : theme.border.light};
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary};
 `;
 
 export const InfoLeft = styled.View`
@@ -100,16 +100,16 @@ export const InfoLeft = styled.View`
   flex-wrap: wrap;
 `;
 
-export const InfoLabel = styled.Text`
+export const InfoLabel = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
   line-height: 22px;
 `;
 
-export const InfoValue = styled.Text`
+export const InfoValue = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   font-weight: ${typography.weights.regular};
   flex-shrink: 1;
   line-height: 22px;
@@ -122,22 +122,22 @@ export const InfoValueContainer = styled.View`
   flex-shrink: 0;
 `;
 
-export const Button = styled.TouchableOpacity`
-  background-color: ${colors.background.primary};
+export const Button = styled.TouchableOpacity<{ theme: any }>`
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
   justify-content: center;
   margin-top: ${spacing.sm}px;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
+  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
+  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
+  elevation: ${({ theme }) => theme.shadows.sm.elevation};
 `;
 
-export const ButtonText = styled.Text`
-  color: ${colors.status.error};
+export const ButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.status.error};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.medium};
   letter-spacing: 0.1px;
@@ -149,9 +149,9 @@ export const EmptyState = styled.View`
   padding: 80px ${spacing.lg}px;
 `;
 
-export const EmptyStateText = styled.Text`
+export const EmptyStateText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.tertiary};
+  color: ${({ theme }) => theme.text.tertiary};
   text-align: center;
   line-height: 24px;
 `;
@@ -170,8 +170,8 @@ export const ChevronIcon = styled.View`
   justify-content: center;
 `;
 
-export const Badge = styled.View`
-  background-color: #FFF4E6;
+export const Badge = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.status.warning}1A;
   border-radius: ${borderRadius.md}px;
   padding-horizontal: ${spacing.sm}px;
   padding-vertical: 4px;
@@ -179,7 +179,7 @@ export const Badge = styled.View`
   flex-direction: row;
   align-items: center;
   border-width: 1px;
-  border-color: ${colors.status.warning}40;
+  border-color: ${({ theme }) => theme.status.warning}40;
 `;
 
 export const BadgeIcon = styled.View`
@@ -188,8 +188,8 @@ export const BadgeIcon = styled.View`
   justify-content: center;
 `;
 
-export const BadgeText = styled.Text`
-  color: #B8860B;
+export const BadgeText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.status.warningDark || '#B8860B'};
   font-size: ${typography.sizes.xs}px;
   font-weight: ${typography.weights.semibold};
   letter-spacing: 0.3px;

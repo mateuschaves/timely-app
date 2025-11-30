@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { spacing, borderRadius, typography } from '@/theme';
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
-  background-color: ${colors.background.secondary};
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const Header = styled.View`
@@ -22,10 +22,10 @@ export const BackButton = styled.TouchableOpacity`
   z-index: 1;
 `;
 
-export const HeaderTitle = styled.Text`
+export const HeaderTitle = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   flex: 1;
   text-align: center;
 `;
@@ -39,26 +39,28 @@ export const InputContainer = styled.View`
   margin-bottom: ${spacing.lg}px;
 `;
 
-export const InputLabel = styled.Text`
+export const InputLabel = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.medium};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const Input = styled.TextInput`
-  background-color: ${colors.background.primary};
+export const Input = styled.TextInput<{ theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.primary)};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
   min-height: 48px;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.light};
+  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
+  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
+  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
+  elevation: ${({ theme }) => theme.shadows.sm.elevation};
 `;
 
 export const ButtonContainer = styled.View`
@@ -66,8 +68,8 @@ export const ButtonContainer = styled.View`
   margin-top: ${spacing.xl}px;
 `;
 
-export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean }>`
-  background-color: ${colors.primary};
+export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.primary)};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
@@ -76,15 +78,15 @@ export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean }>`
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
-export const SaveButtonText = styled.Text`
-  color: ${colors.text.inverse};
+export const SaveButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => (theme.colorScheme === 'dark' ? theme.text.primary : theme.text.inverse)};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   letter-spacing: 0.1px;
 `;
 
-export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean }>`
-  background-color: ${colors.status.error};
+export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
+  background-color: ${({ theme }) => theme.status.error};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
@@ -93,8 +95,8 @@ export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean }>`
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
-export const DeleteButtonText = styled.Text`
-  color: ${colors.text.inverse};
+export const DeleteButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.text.inverse};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   letter-spacing: 0.1px;

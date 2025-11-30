@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuthContext } from '@/features/auth';
 import { deleteUserMe, DeleteUserMeRequest } from '@/api/delete-user-me';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import {
     Container,
     Content,
@@ -40,6 +40,7 @@ export function DeleteAccountScreen() {
     const { t } = useTranslation();
     const navigation = useNavigation();
     const { signOut } = useAuthContext();
+    const { theme } = useTheme();
     const [selectedReason, setSelectedReason] = useState<DeleteReason | null>(null);
     const [customReason, setCustomReason] = useState('');
     const [isDeleting, setIsDeleting] = useState(false);
@@ -108,7 +109,7 @@ export function DeleteAccountScreen() {
         <Container>
             <Header>
                 <BackButton onPress={() => navigation.goBack()} disabled={isDeleting}>
-                    <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+                    <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
                 </BackButton>
                 <HeaderTitle>{t('profile.deleteAccount')}</HeaderTitle>
             </Header>
@@ -151,7 +152,7 @@ export function DeleteAccountScreen() {
                                     value={customReason}
                                     onChangeText={setCustomReason}
                                     placeholder={t('profile.deleteAccountCustomReasonPlaceholder')}
-                                    placeholderTextColor={colors.text.tertiary}
+                                    placeholderTextColor={theme.text.tertiary}
                                     multiline
                                     numberOfLines={4}
                                     editable={!isDeleting}

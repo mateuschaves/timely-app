@@ -1,22 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native';
-import { colors, spacing, borderRadius } from '@/theme';
+import { spacing, borderRadius } from '@/theme';
 
 // Componente base de skeleton com animação shimmer
-const SkeletonBase = styled.View`
-  background-color: ${colors.background.secondary};
+const SkeletonBase = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary};
   border-radius: ${borderRadius.sm}px;
   overflow: hidden;
 `;
 
-const ShimmerOverlay = styled(Animated.View)`
+const ShimmerOverlay = styled(Animated.View)<{ theme: any }>`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.6)'};
 `;
 
 interface SkeletonProps {
@@ -64,14 +64,14 @@ export const Skeleton: React.FC<SkeletonProps> = ({ width = '100%', height = 20,
 };
 
 // Container para o skeleton do resumo do mês
-export const SkeletonMonthSummaryCard = styled.View`
-  background-color: ${colors.background.primary};
+export const SkeletonMonthSummaryCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
   margin-bottom: ${spacing.lg}px;
   margin-top: 0px;
   border-width: 1px;
-  border-color: ${colors.border.light};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const SkeletonSummaryRow = styled.View`
@@ -86,31 +86,31 @@ export const SkeletonSummaryItem = styled.View`
   align-items: center;
 `;
 
-export const SkeletonSummaryDivider = styled.View`
+export const SkeletonSummaryDivider = styled.View<{ theme: any }>`
   width: 1px;
   height: 40px;
-  background-color: ${colors.border.light};
+  background-color: ${({ theme }) => theme.border.light};
   margin: 0 ${spacing.md}px;
 `;
 
-export const SkeletonDifferenceRow = styled.View`
+export const SkeletonDifferenceRow = styled.View<{ theme: any }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding-top: ${spacing.md}px;
   margin-top: ${spacing.md}px;
   border-top-width: 1px;
-  border-top-color: ${colors.border.light};
+  border-top-color: ${({ theme }) => theme.border.light};
 `;
 
 // Container para o skeleton do card de dia
-export const SkeletonDayCard = styled.View`
-  background-color: ${colors.background.primary};
+export const SkeletonDayCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
   margin-bottom: ${spacing.lg}px;
   border-width: 1px;
-  border-color: ${colors.border.light};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const SkeletonDayHeader = styled.View`

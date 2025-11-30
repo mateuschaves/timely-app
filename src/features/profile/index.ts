@@ -1,5 +1,6 @@
 export { ProfileScreen } from './ProfileScreen';
 export { LanguageScreen } from './LanguageScreen';
+export { AppearanceScreen } from './AppearanceScreen';
 export { EditNameScreen } from './EditNameScreen';
 export { WorkSettingsScreen } from './WorkSettingsScreen';
 export { PrivacyAndSecurityScreen } from './PrivacyAndSecurityScreen';

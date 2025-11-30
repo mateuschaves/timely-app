@@ -3,8 +3,12 @@ import { render } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { BottomTabNavigator } from '../BottomTabNavigator';
 import { useTranslation } from '@/i18n';
+import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('@/i18n');
+jest.mock('react-native', () => ({
+  useColorScheme: jest.fn(() => 'light'),
+}));
 jest.mock('@/features/home', () => ({
   HomeScreen: () => null,
 }));
@@ -30,10 +34,13 @@ describe('BottomTabNavigator', () => {
   });
 
   it('should render bottom tab navigator', () => {
+    const TestWrapper = createTestWrapper();
     const { UNSAFE_root } = render(
-      <NavigationContainer>
-        <BottomTabNavigator />
-      </NavigationContainer>
+      <TestWrapper>
+        <NavigationContainer>
+          <BottomTabNavigator />
+        </NavigationContainer>
+      </TestWrapper>
     );
 
     expect(UNSAFE_root).toBeTruthy();

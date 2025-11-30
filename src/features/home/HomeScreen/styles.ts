@@ -1,26 +1,26 @@
 import styled from 'styled-components/native';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { spacing, borderRadius, typography } from '@/theme';
 
-export const Container = styled.SafeAreaView`
+export const Container = styled.SafeAreaView<{ theme: any }>`
   flex: 1;
   align-items: center;
   justify-content: center;
   padding: ${spacing.lg}px;
   padding-bottom: 200px;
   padding-top: ${spacing.md}px;
-  background-color: ${colors.background.primary};
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const Title = styled.Text`
+export const Title = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.xxl}px;
   font-weight: ${typography.weights.bold};
   margin-bottom: ${spacing.sm}px;
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
 `;
 
-export const Subtitle = styled.Text`
+export const Subtitle = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   margin-bottom: ${spacing.xxl}px;
 `;
 
@@ -29,18 +29,18 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export const Button = styled.TouchableOpacity<ButtonProps>`
+export const Button = styled.TouchableOpacity<ButtonProps & { theme: any }>`
   width: 100%;
   padding: ${spacing.md}px;
   border-radius: ${borderRadius.md}px;
   margin-bottom: ${spacing.sm}px;
   background-color: ${props => {
     if (props.variant === 'outline') return 'transparent';
-    if (props.variant === 'secondary') return colors.text.tertiary;
-    return colors.primary;
+    if (props.variant === 'secondary') return props.theme.text.tertiary;
+    return props.theme.primary;
   }};
   border-width: ${props => (props.variant === 'outline' ? '2px' : '0px')};
-  border-color: ${props => (props.variant === 'outline' ? colors.primary : 'transparent')};
+  border-color: ${props => (props.variant === 'outline' ? props.theme.primary : 'transparent')};
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
@@ -48,19 +48,19 @@ interface ButtonTextProps {
   variant?: 'primary' | 'outline' | 'secondary';
 }
 
-export const ButtonText = styled.Text<ButtonTextProps>`
+export const ButtonText = styled.Text<ButtonTextProps & { theme: any }>`
   color: ${props => {
-    if (props.variant === 'outline') return colors.primary;
-    return colors.text.inverse;
+    if (props.variant === 'outline') return props.theme.primary;
+    return props.theme.text.inverse;
   }};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   text-align: center;
 `;
 
-export const DeeplinkMessage = styled.Text`
-  background-color: ${colors.status.success}20;
-  color: ${colors.status.success};
+export const DeeplinkMessage = styled.Text<{ theme: any }>`
+  background-color: ${({ theme }) => theme.status.success}20;
+  color: ${({ theme }) => theme.status.success};
   padding: ${spacing.sm}px;
   border-radius: ${borderRadius.md}px;
   margin-bottom: ${spacing.lg}px;
@@ -68,11 +68,11 @@ export const DeeplinkMessage = styled.Text`
   text-align: center;
   width: 100%;
   border-width: 1px;
-  border-color: ${colors.status.success}40;
+  border-color: ${({ theme }) => theme.status.success}40;
 `;
 
-export const WelcomeCard = styled.View`
-  background-color: ${colors.background.secondary};
+export const WelcomeCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
   margin-bottom: ${spacing.xl}px;
@@ -80,16 +80,16 @@ export const WelcomeCard = styled.View`
   align-items: center;
 `;
 
-export const WelcomeMessage = styled.Text`
+export const WelcomeMessage = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.xl}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   text-align: center;
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const StatusCard = styled.View`
-  background-color: ${colors.background.secondary};
+export const StatusCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.lg}px;
   margin-bottom: ${spacing.xl}px;
@@ -97,23 +97,23 @@ export const StatusCard = styled.View`
   align-items: center;
 `;
 
-export const StatusMessage = styled.Text`
+export const StatusMessage = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.medium};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   text-align: center;
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const LastEventInfo = styled.Text`
+export const LastEventInfo = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.sm}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   text-align: center;
 `;
 
-export const LastEventTime = styled.Text`
+export const LastEventTime = styled.Text<{ theme: any }>`
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
 `;
 
 export const ButtonContainer = styled.View`
@@ -123,11 +123,11 @@ export const ButtonContainer = styled.View`
   flex: 1;
 `;
 
-export const ClockButton = styled.TouchableOpacity`
+export const ClockButton = styled.TouchableOpacity<{ theme: any }>`
   width: 240px;
   height: 240px;
   border-radius: ${borderRadius.round}px;
-  background-color: ${colors.primary};
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.primary};
   align-items: center;
   justify-content: center;
   position: relative;
@@ -141,8 +141,8 @@ export const ClockButtonInner = styled.View`
   width: 100%;
 `;
 
-export const ClockButtonText = styled.Text`
-  color: ${colors.text.inverse};
+export const ClockButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.colorScheme === 'dark' ? theme.text.primary : theme.text.inverse};
   font-size: ${typography.sizes.xl}px;
   font-weight: ${typography.weights.bold};
   text-align: center;
@@ -157,33 +157,33 @@ export const ClockButtonLoadingContainer = styled.View`
   height: 100%;
 `;
 
-export const ConfirmModal = styled.View`
+export const ConfirmModal = styled.View<{ theme: any }>`
   flex: 1;
-  background-color: ${colors.background.tertiary}80;
+  background-color: ${({ theme }) => theme.background.tertiary}80;
   justify-content: center;
   align-items: center;
   padding: ${spacing.lg}px;
 `;
 
-export const ConfirmModalContent = styled.View`
-  background-color: ${colors.background.primary};
+export const ConfirmModalContent = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.xl}px;
   width: 100%;
   max-width: 400px;
 `;
 
-export const ConfirmModalTitle = styled.Text`
+export const ConfirmModalTitle = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.xl}px;
   font-weight: ${typography.weights.bold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   margin-bottom: ${spacing.md}px;
   text-align: center;
 `;
 
-export const ConfirmModalMessage = styled.Text`
+export const ConfirmModalMessage = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   margin-bottom: ${spacing.xl}px;
   text-align: center;
 `;
@@ -194,40 +194,40 @@ export const ConfirmModalActions = styled.View`
   align-items: center;
 `;
 
-export const ConfirmButton = styled.TouchableOpacity`
-  background-color: ${colors.primary};
+export const ConfirmButton = styled.TouchableOpacity<{ theme: any }>`
+  background-color: ${({ theme }) => theme.primary};
   padding: ${spacing.md}px ${spacing.xl}px;
   border-radius: ${borderRadius.md}px;
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
-export const CancelButton = styled.TouchableOpacity`
-  background-color: ${colors.background.secondary};
+export const CancelButton = styled.TouchableOpacity<{ theme: any }>`
+  background-color: ${({ theme }) => theme.background.secondary};
   padding: ${spacing.md}px ${spacing.xl}px;
   border-radius: ${borderRadius.md}px;
 `;
 
-export const ConfirmButtonText = styled.Text`
-  color: ${colors.text.inverse};
+export const ConfirmButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.text.inverse};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   text-align: center;
 `;
 
-export const CancelButtonText = styled.Text`
-  color: ${colors.text.primary};
+export const CancelButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.text.primary};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   text-align: center;
 `;
 
-export const WorkSettingsCard = styled.TouchableOpacity`
-  background-color: #FFF8DC;
+export const WorkSettingsCard = styled.TouchableOpacity<{ theme: any }>`
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2A2415' : '#FFF8DC'};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   border-width: 1.5px;
-  border-color: ${colors.status.warning}60;
-  shadow-color: ${colors.status.warning}30;
+  border-color: ${({ theme }) => theme.status.warning}60;
+  shadow-color: ${({ theme }) => theme.status.warning}30;
   shadow-offset: 0px 2px;
   shadow-opacity: 0.2;
   shadow-radius: 4px;
@@ -249,9 +249,9 @@ export const WorkSettingsCardIcon = styled.View`
   flex-shrink: 0;
 `;
 
-export const WorkSettingsCardMessage = styled.Text`
+export const WorkSettingsCardMessage = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.sm}px;
-  color: #8B6914;
+  color: ${({ theme }) => theme.status.warningDark || '#8B6914'};
   flex: 1;
   line-height: 18px;
   font-weight: ${typography.weights.semibold};
@@ -264,4 +264,3 @@ export const WorkSettingsCardCloseButton = styled.TouchableOpacity`
   justify-content: center;
   flex-shrink: 0;
 `;
-

@@ -28,22 +28,7 @@
     },
     "plugins": [
       "expo-apple-authentication",
-      "expo-localization",
-      [
-        "expo-quick-actions",
-        {
-          "ios": {
-            "shortcuts": [
-              {
-                "type": "com.wazowsky.timelyapp.clock",
-                "title": "Bater Ponto",
-                "subtitle": "Registrar entrada ou saída",
-                "icon": "clock.fill"
-              }
-            ]
-          }
-        }
-      ]
+      "expo-localization"
     ],
     "android": {
       "adaptiveIcon": {

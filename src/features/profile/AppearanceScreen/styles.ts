@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { spacing, borderRadius, typography } from '@/theme';
+import { spacing, borderRadius, typography, shadows } from '@/theme';
 
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
@@ -36,11 +36,11 @@ export const Content = styled.View`
 `;
 
 export const Section = styled.View`
-  margin-bottom: ${spacing.xl}px;
+  margin-bottom: ${spacing.lg}px;
 `;
 
 export const InfoCard = styled.View<{ theme: any }>`
-  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.primary};
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary};
   border-radius: ${borderRadius.lg}px;
   overflow: hidden;
   shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
@@ -52,9 +52,9 @@ export const InfoCard = styled.View<{ theme: any }>`
 
 export const SettingsRow = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: center;
   justify-content: space-between;
-  padding: ${spacing.md}px ${spacing.lg}px;
+  align-items: center;
+  padding: ${spacing.sm}px ${spacing.md}px;
   min-height: 48px;
 `;
 
@@ -65,11 +65,26 @@ export const InfoLeft = styled.View`
 
 export const InfoLabel = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.regular};
   color: ${({ theme }) => theme.text.primary};
+  font-weight: ${typography.weights.regular};
+  line-height: 22px;
 `;
 
-export const ChevronIcon = styled.View`
-  margin-left: ${spacing.xs}px;
+export const InfoValueContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
+export const InfoValue = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.md}px;
+  color: ${({ theme }) => theme.text.secondary};
+  font-weight: ${typography.weights.regular};
+  flex-shrink: 1;
+  line-height: 22px;
+`;
+
+export const CheckIcon = styled.View`
+  align-items: center;
+  justify-content: center;
+`;

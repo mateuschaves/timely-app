@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { HistoryScreen } from '../index';
+import { createTestWrapper } from '@/utils/test-helpers';
 import { useTranslation } from '@/i18n';
 import { getClockHistory } from '@/api/get-clock-history';
 import { useNavigation } from '@react-navigation/native';
@@ -9,6 +10,33 @@ import { ClockAction } from '@/api/types';
 import { format, parseISO } from 'date-fns';
 
 jest.mock('@/i18n');
+jest.mock('react-native', () => ({
+  useColorScheme: jest.fn(() => 'light'),
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
+}));
 jest.mock('@/api/get-clock-history');
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
@@ -34,9 +62,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return createTestWrapper(queryClient);
 };
 
 describe('HistoryScreen', () => {

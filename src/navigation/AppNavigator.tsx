@@ -1,12 +1,13 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabNavigator } from './BottomTabNavigator';
-import { LanguageScreen, EditNameScreen, WorkSettingsScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
+import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
 import { EditEventScreen } from '@/features/history';
 
 export type AppStackParamList = {
   Main: undefined;
   Language: undefined;
+  Appearance: undefined;
   EditName: undefined;
   WorkSettings: undefined;
   PrivacyAndSecurity: undefined;
@@ -27,6 +28,14 @@ export function AppNavigator() {
       <Stack.Screen 
         name="Language" 
         component={LanguageScreen}
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen 
+        name="Appearance" 
+        component={AppearanceScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',

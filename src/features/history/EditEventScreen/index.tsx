@@ -3,7 +3,7 @@ import { Alert, Keyboard } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
 import { updateClockEvent, deleteClockEvent } from '@/api';
 import { ClockHistoryEvent } from '@/api/get-clock-history';
@@ -39,6 +39,7 @@ export function EditEventScreen() {
   const route = useRoute<EditEventRouteProp>();
   const queryClient = useQueryClient();
   const { showSuccess } = useFeedback();
+  const { theme, colorScheme } = useTheme();
   const { event } = route.params;
 
   const [date, setDate] = useState('');
@@ -141,7 +142,7 @@ export function EditEventScreen() {
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
         <HeaderTitle>{t('history.editEvent')}</HeaderTitle>
       </Header>
@@ -152,7 +153,7 @@ export function EditEventScreen() {
             value={date}
             onChangeText={setDate}
             placeholder="2024-07-16"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor={theme.text.tertiary}
             editable={!isSaving && !isDeleting}
           />
         </InputContainer>
@@ -163,7 +164,7 @@ export function EditEventScreen() {
             value={time}
             onChangeText={setTime}
             placeholder="08:00"
-            placeholderTextColor={colors.text.tertiary}
+            placeholderTextColor={theme.text.tertiary}
             editable={!isSaving && !isDeleting}
           />
         </InputContainer>

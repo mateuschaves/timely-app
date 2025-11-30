@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { spacing, borderRadius, typography } from '@/theme';
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
-  background-color: ${colors.background.secondary};
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const Header = styled.View`
@@ -23,10 +23,10 @@ export const BackButton = styled.TouchableOpacity<{ disabled?: boolean }>`
   opacity: ${props => (props.disabled ? 0.5 : 1)};
 `;
 
-export const HeaderTitle = styled.Text`
+export const HeaderTitle = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   flex: 1;
   text-align: center;
 `;
@@ -44,31 +44,31 @@ export const Section = styled.View`
   margin-bottom: ${spacing.xl}px;
 `;
 
-export const SectionTitle = styled.Text`
+export const SectionTitle = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const SectionDescription = styled.Text`
+export const SectionDescription = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.regular};
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   line-height: ${typography.sizes.md * 1.5}px;
   margin-bottom: ${spacing.md}px;
 `;
 
-export const ReasonOption = styled.TouchableOpacity<{ disabled?: boolean }>`
-  background-color: ${colors.background.primary};
+export const ReasonOption = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.md}px;
   margin-bottom: ${spacing.sm}px;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
+  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
+  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
+  elevation: ${({ theme }) => theme.shadows.sm.elevation};
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
@@ -82,7 +82,7 @@ export const RadioButton = styled.View`
   height: 24px;
   border-radius: 12px;
   border-width: 2px;
-  border-color: ${colors.primary};
+  border-color: ${({ theme }) => theme.primary};
   margin-right: ${spacing.md}px;
   align-items: center;
   justify-content: center;
@@ -92,13 +92,13 @@ export const RadioButtonSelected = styled.View`
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  background-color: ${colors.primary};
+  background-color: ${({ theme }) => theme.primary};
 `;
 
-export const ReasonOptionText = styled.Text`
+export const ReasonOptionText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.regular};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   flex: 1;
 `;
 
@@ -107,29 +107,29 @@ export const CustomReasonContainer = styled.View`
   margin-left: ${spacing.xl + spacing.md}px;
 `;
 
-export const CustomReasonInput = styled.TextInput`
-  background-color: ${colors.background.primary};
+export const CustomReasonInput = styled.TextInput<{ theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
   min-height: 100px;
   border-width: 1px;
-  border-color: ${colors.border.light};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
-export const WarningText = styled.Text`
+export const WarningText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.sm}px;
   font-weight: ${typography.weights.medium};
-  color: ${colors.status.error};
+  color: ${({ theme }) => theme.status.error};
   text-align: center;
   margin-bottom: ${spacing.lg}px;
   line-height: ${typography.sizes.sm * 1.5}px;
 `;
 
-export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean }>`
-  background-color: ${colors.status.error};
+export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
+  background-color: ${({ theme }) => theme.status.error};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px ${spacing.lg}px;
   align-items: center;
@@ -139,8 +139,8 @@ export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean }>`
   margin-bottom: ${spacing.xl}px;
 `;
 
-export const DeleteButtonText = styled.Text`
-  color: ${colors.text.inverse};
+export const DeleteButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.text.inverse};
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
   letter-spacing: 0.1px;

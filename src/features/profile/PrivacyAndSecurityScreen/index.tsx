@@ -3,7 +3,7 @@ import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { AppStackParamList } from '@/navigation/AppNavigator';
 import {
   Container,
@@ -24,12 +24,13 @@ type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
 export function PrivacyAndSecurityScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
+  const { theme } = useTheme();
 
   return (
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
         <HeaderTitle>{t('profile.privacyAndSecurity')}</HeaderTitle>
       </Header>
@@ -41,12 +42,12 @@ export function PrivacyAndSecurityScreen() {
               activeOpacity={0.7}
             >
               <InfoLeft>
-                <InfoLabel style={{ color: colors.status.error }}>
+                <InfoLabel style={{ color: theme.status.error }}>
                   {t('profile.deleteAccount')}
                 </InfoLabel>
               </InfoLeft>
               <ChevronIcon>
-                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
               </ChevronIcon>
             </SettingsRow>
           </InfoCard>

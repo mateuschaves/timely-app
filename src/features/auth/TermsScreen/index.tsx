@@ -4,7 +4,7 @@ import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { AuthStackParamList } from '@/navigation/AuthNavigator';
 import {
   Container,
@@ -28,6 +28,7 @@ const APPLE_EULA_URL = 'https://www.apple.com/legal/internet-services/itunes/dev
 export function TermsScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
+  const { theme } = useTheme();
 
   const handleOpenAppleEULA = async () => {
     try {
@@ -44,7 +45,7 @@ export function TermsScreen() {
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
         <HeaderTitle>{t('auth.termsOfService')}</HeaderTitle>
       </Header>

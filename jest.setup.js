@@ -128,6 +128,7 @@ jest.mock('expo-localization', () => ({
 
 // Mock React Native modules
 // Note: NativeAnimatedHelper is not needed for testing
+// Note: useColorScheme should be mocked in individual test files if needed
 
 // Mock console.tron for Reactotron
 global.console.tron = {

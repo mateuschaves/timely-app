@@ -1,10 +1,10 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, borderRadius, typography, shadows } from '@/theme';
+import { spacing, borderRadius, typography } from '@/theme';
 
-export const Container = styled(SafeAreaView)`
+export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
-  background-color: ${colors.background.secondary};
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const Header = styled.View`
@@ -25,7 +25,7 @@ export const BackButton = styled.TouchableOpacity`
 export const HeaderTitle = styled.Text`
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   flex: 1;
   text-align: center;
 `;
@@ -40,14 +40,14 @@ export const Section = styled.View`
 `;
 
 export const InfoCard = styled.View`
-  background-color: ${colors.background.primary};
+  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${borderRadius.lg}px;
   overflow: hidden;
-  shadow-color: ${shadows.sm.shadowColor};
-  shadow-offset: ${shadows.sm.shadowOffset.width}px ${shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${shadows.sm.shadowOpacity};
-  shadow-radius: ${shadows.sm.shadowRadius}px;
-  elevation: ${shadows.sm.elevation};
+  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
+  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
+  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
+  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
+  elevation: ${({ theme }) => theme.shadows.sm.elevation};
 `;
 
 export const SettingsRow = styled.TouchableOpacity`
@@ -65,7 +65,7 @@ export const InfoLeft = styled.View`
 
 export const InfoLabel = styled.Text`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.primary};
+  color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
   line-height: 22px;
 `;
@@ -78,7 +78,7 @@ export const InfoValueContainer = styled.View`
 
 export const InfoValue = styled.Text`
   font-size: ${typography.sizes.md}px;
-  color: ${colors.text.secondary};
+  color: ${({ theme }) => theme.text.secondary};
   font-weight: ${typography.weights.regular};
   flex-shrink: 1;
   line-height: 22px;

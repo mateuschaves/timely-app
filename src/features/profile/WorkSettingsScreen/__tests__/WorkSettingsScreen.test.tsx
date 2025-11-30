@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { WorkSettingsScreen } from '../index';
+import { createTestWrapper } from '@/utils/test-helpers';
 import { useTranslation } from '@/i18n';
 import { updateUserSettings, getUserSettings } from '@/api/update-user-settings';
 import { useFeedback } from '@/utils/feedback';
@@ -24,6 +25,7 @@ jest.mock('react-native', () => ({
   Keyboard: {
     dismiss: jest.fn(),
   },
+  useColorScheme: jest.fn(() => 'light'),
   View: 'View',
   Text: 'Text',
   TextInput: 'TextInput',
@@ -83,9 +85,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return createTestWrapper(queryClient);
 };
 
 describe('WorkSettingsScreen', () => {

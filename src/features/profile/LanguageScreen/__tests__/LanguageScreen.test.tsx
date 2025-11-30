@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { LanguageScreen } from '../index';
+import { createTestWrapper } from '@/utils/test-helpers';
 import { useTranslation, useLanguage } from '@/i18n';
 import { useFeedback } from '@/utils/feedback';
 
@@ -14,6 +15,9 @@ jest.mock('expo-haptics', () => ({
 
 jest.mock('@/i18n');
 jest.mock('@/utils/feedback');
+jest.mock('react-native', () => ({
+  useColorScheme: jest.fn(() => 'light'),
+}));
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     goBack: jest.fn(),
@@ -32,9 +36,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return createTestWrapper(queryClient);
 };
 
 describe('LanguageScreen', () => {

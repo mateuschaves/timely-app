@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from '@/i18n';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { HomeScreen } from '@/features/home';
 import { HistoryScreen } from '@/features/history';
 import { ProfileScreen } from '@/features/profile';
@@ -17,15 +17,16 @@ const Tab = createBottomTabNavigator<BottomTabParamList>();
 
 export function BottomTabNavigator() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.tabBar.activeTint,
-        tabBarInactiveTintColor: colors.tabBar.inactiveTint,
+        tabBarActiveTintColor: theme.tabBar.activeTint,
+        tabBarInactiveTintColor: theme.tabBar.inactiveTint,
         tabBarStyle: {
-          backgroundColor: colors.tabBar.background,
+          backgroundColor: theme.tabBar.background,
           borderTopWidth: 0,
         },
       }}

@@ -2,6 +2,7 @@ import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { FeedbackProvider, useFeedback } from '../feedback';
 import * as Haptics from 'expo-haptics';
+import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
@@ -9,10 +10,50 @@ jest.mock('expo-haptics', () => ({
     Success: 'success',
   },
 }));
+jest.mock('react-native', () => ({
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
+  View: 'View',
+  Text: 'Text',
+  Platform: {
+    OS: 'ios',
+  },
+  useColorScheme: jest.fn(() => 'light'),
+  StyleSheet: {
+    create: (styles: any) => styles,
+  },
+}));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <FeedbackProvider>{children}</FeedbackProvider>
-);
+const wrapper = ({ children }: { children: React.ReactNode }) => {
+  const TestWrapper = createTestWrapper();
+  return (
+    <TestWrapper>
+      <FeedbackProvider>{children}</FeedbackProvider>
+    </TestWrapper>
+  );
+};
 
 describe('FeedbackProvider', () => {
   beforeEach(() => {

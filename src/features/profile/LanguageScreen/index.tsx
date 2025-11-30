@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation, useLanguage, LanguageOption } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { useFeedback } from '@/utils/feedback';
 import {
   Container,
@@ -25,6 +25,7 @@ export function LanguageScreen() {
   const navigation = useNavigation();
   const { currentLanguage, changeLanguage } = useLanguage();
   const { showSuccess } = useFeedback();
+  const { theme } = useTheme();
 
   const languages: { value: LanguageOption; label: string }[] = [
     { value: 'system', label: t('profile.languageSystem') },
@@ -45,7 +46,7 @@ export function LanguageScreen() {
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
         <HeaderTitle>{t('profile.language')}</HeaderTitle>
       </Header>
@@ -59,7 +60,7 @@ export function LanguageScreen() {
                 activeOpacity={0.7}
                 style={{
                   borderBottomWidth: index < languages.length - 1 ? 1 : 0,
-                  borderBottomColor: colors.border.light,
+                  borderBottomColor: theme.border.light,
                 }}
               >
                 <InfoLeft>
@@ -68,7 +69,7 @@ export function LanguageScreen() {
                 <InfoValueContainer>
                   {currentLanguage === lang.value && (
                     <CheckIcon>
-                      <Ionicons name="checkmark" size={20} color={colors.primary} />
+                      <Ionicons name="checkmark" size={20} color={theme.primary} />
                     </CheckIcon>
                   )}
                 </InfoValueContainer>

@@ -8,7 +8,7 @@ import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
 import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
 import { ClockAction } from '@/api/types';
-import { colors } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { capitalizeFirstLetter } from '@/utils/string';
 import {
@@ -88,6 +88,7 @@ const getDateLocale = (language: string) => {
 export function HistoryScreen() {
     const { t, i18n } = useTranslation();
     const navigation = useNavigation<any>();
+    const { theme } = useTheme();
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
 
@@ -223,7 +224,7 @@ export function HistoryScreen() {
                         onPress={() => navigation.navigate('EditEvent', { event })}
                         activeOpacity={0.7}
                     >
-                        <Ionicons name="create-outline" size={20} color={colors.text.secondary} />
+                        <Ionicons name="create-outline" size={20} color={theme.text.secondary} />
                     </EventEditButton>
                 </EventRow>
 
@@ -249,7 +250,7 @@ export function HistoryScreen() {
                                 onPress={() => navigation.navigate('EditEvent', { event: nextEvent })}
                                 activeOpacity={0.7}
                             >
-                                <Ionicons name="create-outline" size={20} color={colors.text.secondary} />
+                                <Ionicons name="create-outline" size={20} color={theme.text.secondary} />
                             </EventEditButton>
                         </EventRow>
                     </>
@@ -310,7 +311,7 @@ export function HistoryScreen() {
             <DayCard incomplete={isIncomplete} hasOrderIssue={hasOrderIssue}>
                 {hasOrderIssue && (
                     <OrderIssueWarning>
-                        <Ionicons name="warning" size={16} color={colors.status.error} />
+                        <Ionicons name="warning" size={16} color={theme.status.error} />
                         <OrderIssueText>{t('history.orderIssue')}</OrderIssueText>
                     </OrderIssueWarning>
                 )}
@@ -337,7 +338,7 @@ export function HistoryScreen() {
                                 <Ionicons
                                     name={isExpanded ? "chevron-up" : "chevron-down"}
                                     size={20}
-                                    color={colors.text.secondary}
+                                    color={theme.text.secondary}
                                 />
                             </DayExpandIcon>
                         )}
@@ -385,7 +386,7 @@ export function HistoryScreen() {
         <Container>
             <MonthNavigation>
                 <MonthNavigationButton onPress={handlePreviousMonth} activeOpacity={0.7}>
-                    <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
+                    <Ionicons name="chevron-back" size={24} color={theme.text.primary} />
                 </MonthNavigationButton>
 
                 <MonthNavigationText>{currentMonthFormatted}</MonthNavigationText>
@@ -398,7 +399,7 @@ export function HistoryScreen() {
                     <Ionicons
                         name="chevron-forward"
                         size={24}
-                        color={canGoNextMonth ? colors.text.primary : colors.text.tertiary}
+                        color={canGoNextMonth ? theme.text.primary : theme.text.tertiary}
                     />
                 </MonthNavigationButton>
             </MonthNavigation>

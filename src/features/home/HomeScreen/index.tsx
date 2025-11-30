@@ -12,7 +12,8 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useFeedback } from '@/utils/feedback';
 import { useWorkSettings, useHourlyRate } from '@/features/profile';
 import { LocationCoordinates, ClockAction } from '@/api/types';
-import { colors, spacing } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
+import { spacing } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { getForegroundPermissionsAsync } from 'expo-location';
 import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage, WorkSettingsCardCloseButton } from './styles';
@@ -25,6 +26,7 @@ export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
   const { showError } = useFeedback();
+  const { theme, colorScheme } = useTheme();
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
   const { requestLocationPermission } = useLocation();
@@ -128,7 +130,7 @@ export function HomeScreen() {
       };
 
       checkLocationPermission();
-      
+
       // Refazer queries de userSettings quando a tela recebe foco para atualizar os hints
       queryClient.invalidateQueries({ queryKey: ['userSettings'] });
     }, [queryClient])
@@ -149,18 +151,18 @@ export function HomeScreen() {
   };
 
   // Estado para controlar a cor da StatusBar
-  const [statusBarColor, setStatusBarColor] = useState<string>(colors.background.secondary);
+  const [statusBarColor, setStatusBarColor] = useState<string>(theme.background.primary);
 
-  // Configurar StatusBar para corresponder ao background do WelcomeCard
+  // Configurar StatusBar para corresponder ao background
   useFocusEffect(
     React.useCallback(() => {
-      setStatusBarColor(colors.background.secondary);
+      setStatusBarColor(theme.background.primary);
 
       return () => {
         // Restaurar StatusBar padrão ao sair da tela
-        setStatusBarColor(colors.background.primary);
+        setStatusBarColor(theme.background.primary);
       };
-    }, [])
+    }, [theme])
   );
 
   const handlePress = () => {
@@ -308,7 +310,7 @@ export function HomeScreen() {
                 height: '100%',
                 borderRadius: 9999,
                 borderWidth: 2,
-                borderColor: colors.primary,
+                borderColor: colorScheme === 'dark' ? '#2a2a2a' : theme.primary,
                 opacity: pulseAnim.interpolate({
                   inputRange: [1, 1.2],
                   outputRange: [0.3, 0],
@@ -319,7 +321,7 @@ export function HomeScreen() {
             <ClockButtonInner>
               {isClocking || isProcessing ? (
                 <ClockButtonLoadingContainer>
-                  <ActivityIndicator size="large" color={colors.text.inverse} />
+                  <ActivityIndicator size="large" color={colorScheme === 'dark' ? theme.text.primary : theme.text.inverse} />
                 </ClockButtonLoadingContainer>
               ) : (
                 <ClockButtonText>{buttonText}</ClockButtonText>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { EditEventScreen } from '../index';
+import { createTestWrapper } from '@/utils/test-helpers';
 import { useTranslation } from '@/i18n';
 import { updateClockEvent, deleteClockEvent } from '@/api';
 import { useFeedback } from '@/utils/feedback';
@@ -29,6 +30,31 @@ jest.mock('react-native', () => ({
   Keyboard: {
     dismiss: jest.fn(),
   },
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+  },
+  useColorScheme: jest.fn(() => 'light'),
   View: 'View',
   Text: 'Text',
   TextInput: 'TextInput',
@@ -89,9 +115,7 @@ const createWrapper = () => {
     },
   });
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  return createTestWrapper(queryClient);
 };
 
 describe('EditEventScreen', () => {

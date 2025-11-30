@@ -1,10 +1,11 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Platform, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationContainer } from '@react-navigation/native';
 import { LoginScreen } from '../index';
 import { useAuthContext } from '../../context/AuthContext';
 import { useTranslation } from '@/i18n';
+import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('../../context/AuthContext');
 jest.mock('@/i18n');
@@ -31,6 +32,7 @@ jest.mock('react-native', () => {
     Alert: {
       alert: jest.fn(),
     },
+    useColorScheme: jest.fn(() => 'light'),
     View: 'View',
     Text: 'Text',
     TouchableOpacity: 'TouchableOpacity',
@@ -52,11 +54,16 @@ const mockUseAuthContext = useAuthContext as jest.MockedFunction<typeof useAuthC
 const mockUseTranslation = useTranslation as jest.MockedFunction<typeof useTranslation>;
 
 const createWrapper = () => {
-  return ({ children }: { children: React.ReactNode }) => (
-    <NavigationContainer>
-      {children}
-    </NavigationContainer>
-  );
+  return ({ children }: { children: React.ReactNode }) => {
+    const TestWrapper = createTestWrapper();
+    return (
+      <TestWrapper>
+        <NavigationContainer>
+          {children}
+        </NavigationContainer>
+      </TestWrapper>
+    );
+  };
 };
 
 describe('LoginScreen', () => {

@@ -3,7 +3,8 @@ import { Alert, Keyboard, ScrollView, Switch, Modal, TouchableWithoutFeedback } 
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing } from '@/theme';
+import { useTheme } from '@/theme/context/ThemeContext';
+import { spacing } from '@/theme';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { updateUserSettings, WorkSchedule, CustomHoliday } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
@@ -75,6 +76,7 @@ export function WorkSettingsScreen() {
     const navigation = useNavigation();
     const queryClient = useQueryClient();
     const { showSuccess } = useFeedback();
+    const { theme } = useTheme();
     const [days, setDays] = useState<Record<string, DaySchedule>>({
         monday: { ...defaultSchedule },
         tuesday: { ...defaultSchedule },
@@ -603,7 +605,7 @@ export function WorkSettingsScreen() {
         <Container>
             <Header>
                 <BackButton onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+                    <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
                 </BackButton>
                 <HeaderTitle>{t('profile.workSettings')}</HeaderTitle>
             </Header>
@@ -624,8 +626,8 @@ export function WorkSettingsScreen() {
                                                 value={daySchedule.enabled}
                                                 onValueChange={() => handleToggleDay(day.key)}
                                                 disabled={updateSettingsMutation.isPending}
-                                                trackColor={{ false: colors.border.medium, true: colors.primary }}
-                                                thumbColor={colors.background.primary}
+                                                trackColor={{ false: theme.border.medium, true: theme.primary }}
+                                                thumbColor={theme.background.primary}
                                             />
                                         </DayRow>
                                         {daySchedule.enabled && (
@@ -635,7 +637,7 @@ export function WorkSettingsScreen() {
                                                     onChangeText={(value: string) => handleTimeChange(value, day.key, 'start')}
                                                     onBlur={() => handleTimeBlur(day.key, 'start')}
                                                     placeholder="09:00"
-                                                    placeholderTextColor={colors.text.tertiary}
+                                                    placeholderTextColor={theme.text.tertiary}
                                                     keyboardType="number-pad"
                                                     maxLength={5}
                                                     editable={!updateSettingsMutation.isPending}
@@ -646,7 +648,7 @@ export function WorkSettingsScreen() {
                                                     onChangeText={(value: string) => handleTimeChange(value, day.key, 'end')}
                                                     onBlur={() => handleTimeBlur(day.key, 'end')}
                                                     placeholder="18:00"
-                                                    placeholderTextColor={colors.text.tertiary}
+                                                    placeholderTextColor={theme.text.tertiary}
                                                     keyboardType="number-pad"
                                                     maxLength={5}
                                                     editable={!updateSettingsMutation.isPending}
@@ -668,7 +670,7 @@ export function WorkSettingsScreen() {
                                 onBlur={handleHourlyRateBlur}
                                 onEndEditing={handleHourlyRateBlur}
                                 placeholder={getCurrencyFormatter.format(0) || t('profile.hourlyRatePlaceholder')}
-                                placeholderTextColor={colors.text.tertiary}
+                                placeholderTextColor={theme.text.tertiary}
                                 keyboardType="decimal-pad"
                                 editable={!updateSettingsMutation.isPending}
                             />
@@ -697,13 +699,13 @@ export function WorkSettingsScreen() {
                                                 onPress={() => handleEditHoliday(index)}
                                                 disabled={updateSettingsMutation.isPending || isAddingHoliday}
                                             >
-                                                <Ionicons name="create-outline" size={20} color={colors.primary} />
+                                                <Ionicons name="create-outline" size={20} color={theme.primary} />
                                             </HolidayActionButton>
                                             <HolidayActionButton
                                                 onPress={() => handleRemoveHoliday(index)}
                                                 disabled={updateSettingsMutation.isPending || isAddingHoliday}
                                             >
-                                                <Ionicons name="trash-outline" size={20} color={colors.status.error} />
+                                                <Ionicons name="trash-outline" size={20} color={theme.status.error} />
                                             </HolidayActionButton>
                                         </HolidayActions>
                                     </HolidayRow>
@@ -739,7 +741,7 @@ export function WorkSettingsScreen() {
                                                 <Ionicons
                                                     name="calendar-outline"
                                                     size={20}
-                                                    color={colors.text.secondary}
+                                                    color={theme.text.secondary}
                                                 />
                                             </DatePickerButtonContent>
                                         </DatePickerButton>
@@ -747,7 +749,7 @@ export function WorkSettingsScreen() {
                                             value={newHolidayName}
                                             onChangeText={setNewHolidayName}
                                             placeholder={t('profile.holidayNamePlaceholder')}
-                                            placeholderTextColor={colors.text.tertiary}
+                                            placeholderTextColor={theme.text.tertiary}
                                             editable={!updateSettingsMutation.isPending}
                                         />
                                     </HolidayInputRow>
@@ -756,13 +758,13 @@ export function WorkSettingsScreen() {
                                             onPress={handleCancelHoliday}
                                             disabled={updateSettingsMutation.isPending}
                                         >
-                                            <Ionicons name="close-circle-outline" size={24} color={colors.text.secondary} />
+                                            <Ionicons name="close-circle-outline" size={24} color={theme.text.secondary} />
                                         </HolidayActionButton>
                                         <HolidayActionButton
                                             onPress={handleSaveHoliday}
                                             disabled={updateSettingsMutation.isPending}
                                         >
-                                            <Ionicons name="checkmark-circle-outline" size={24} color={colors.primary} />
+                                            <Ionicons name="checkmark-circle-outline" size={24} color={theme.primary} />
                                         </HolidayActionButton>
                                     </HolidayActions>
                                 </React.Fragment>
@@ -773,7 +775,7 @@ export function WorkSettingsScreen() {
                                     disabled={updateSettingsMutation.isPending}
                                     activeOpacity={0.7}
                                 >
-                                    <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
+                                    <Ionicons name="add-circle-outline" size={20} color={theme.primary} />
                                     <AddHolidayButtonText>{t('profile.addHoliday')}</AddHolidayButtonText>
                                 </AddHolidayButton>
                             )}
@@ -800,7 +802,7 @@ export function WorkSettingsScreen() {
                                         onPress={() => setCalendarMonth(subMonths(calendarMonth, 1))}
                                         activeOpacity={0.7}
                                     >
-                                        <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
+                                        <Ionicons name="chevron-back" size={24} color={theme.text.primary} />
                                     </CalendarNavButton>
                                     <CalendarMonthYear>
                                         {format(calendarMonth, 'MMMM yyyy', { locale: dateLocale })}
@@ -809,7 +811,7 @@ export function WorkSettingsScreen() {
                                         onPress={() => setCalendarMonth(addMonths(calendarMonth, 1))}
                                         activeOpacity={0.7}
                                     >
-                                        <Ionicons name="chevron-forward" size={24} color={colors.text.primary} />
+                                        <Ionicons name="chevron-forward" size={24} color={theme.text.primary} />
                                     </CalendarNavButton>
                                 </CalendarHeader>
                                 <CalendarWeekDays>
