@@ -78,6 +78,7 @@ export function EditNameScreen() {
             <Content>
                 <InputContainer>
                     <Input
+                        testID="edit-name-input"
                         value={name}
                         onChangeText={setName}
                         placeholder={t('profile.name')}
@@ -86,7 +87,7 @@ export function EditNameScreen() {
                         editable={!isSaving}
                     />
                 </InputContainer>
-                <SaveButton onPress={handleSave} disabled={isSaving} activeOpacity={0.7}>
+                <SaveButton testID="edit-name-save-button" onPress={handleSave} disabled={isSaving} activeOpacity={0.7}>
                     <SaveButtonText>{isSaving ? t('common.loading') : t('common.save')}</SaveButtonText>
                 </SaveButton>
             </Content>
