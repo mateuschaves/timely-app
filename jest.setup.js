@@ -126,9 +126,35 @@ jest.mock('expo-localization', () => ({
   locale: 'pt-BR',
 }));
 
+// Mock react-native-safe-area-context globally
+jest.mock('react-native-safe-area-context', () => {
+  const React = require('react');
+  const mockInsets = { top: 0, bottom: 0, left: 0, right: 0 };
+  const mockFrame = { x: 0, y: 0, width: 375, height: 812 };
+  const mockContext = React.createContext ? React.createContext(mockInsets) : {
+    Provider: ({ children }) => children,
+    Consumer: ({ children }) => children(mockInsets),
+  };
+  // SafeAreaView needs to be a string 'View' for styled-components to work
+  // styled-components will treat it as a View component
+  return {
+    SafeAreaProvider: ({ children }) => children,
+    SafeAreaView: 'View',
+    useSafeAreaInsets: () => mockInsets,
+    useSafeAreaFrame: () => mockFrame,
+    SafeAreaContext: mockContext,
+    SafeAreaInsetsContext: mockContext,
+    initialWindowMetrics: {
+      insets: mockInsets,
+      frame: mockFrame,
+    },
+  };
+});
+
 // Mock React Native modules
 // Note: NativeAnimatedHelper is not needed for testing
 // Note: useColorScheme should be mocked in individual test files if needed
+// Note: BackHandler should be mocked in individual test files that use NavigationContainer
 
 // Mock console.tron for Reactotron
 global.console.tron = {

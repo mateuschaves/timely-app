@@ -116,8 +116,11 @@ describe('useTimeClock', () => {
 
     const callArgs = (mockClockOut as jest.Mock).mock.calls[0][0];
     expect(callArgs.hour).toBe('2024-01-01T18:00:00Z');
-    // handleDeeplink doesn't add location automatically if not in params
-    expect(callArgs.location).toBeUndefined();
+    // handleDeeplink now adds location automatically via clockOutFn
+    expect(callArgs.location).toEqual({
+      type: 'Point',
+      coordinates: [-46.6333, -23.5505],
+    });
   });
 
   it('should handle deeplink with location', async () => {
@@ -161,14 +164,22 @@ describe('useTimeClock', () => {
       },
     } as any);
 
+    mockClockIn.mockResolvedValue({} as any);
+
     const { result } = renderHook(() => useTimeClock(), { wrapper: createWrapper() });
 
     await act(async () => {
       await result.current.handleDeeplink(url);
     });
 
-    expect(mockClockIn).not.toHaveBeenCalled();
-    expect(mockClockOut).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(mockClockIn).toHaveBeenCalled();
+    });
+
+    // Should use current time when time parameter is missing
+    const callArgs = (mockClockIn as jest.Mock).mock.calls[0][0];
+    expect(callArgs.hour).toBeDefined();
+    expect(typeof callArgs.hour).toBe('string');
   });
 
   it('should call onSuccess callback after deeplink', async () => {
@@ -243,7 +254,7 @@ describe('useTimeClock', () => {
   });
 
   it('should clock with action and location', async () => {
-    mockClock.mockResolvedValue({} as any);
+    mockClockIn.mockResolvedValue({} as any);
 
     const { result } = renderHook(() => useTimeClock(), { wrapper: createWrapper() });
 
@@ -257,10 +268,10 @@ describe('useTimeClock', () => {
     });
 
     await waitFor(() => {
-      expect(mockClock).toHaveBeenCalled();
+      expect(mockClockIn).toHaveBeenCalled();
     });
 
-    const callArgs = (mockClock as jest.Mock).mock.calls[0][0];
+    const callArgs = (mockClockIn as jest.Mock).mock.calls[0][0];
     expect(callArgs.hour).toBe('2024-01-01T10:00:00Z');
     expect(callArgs.location).toEqual({
       type: 'Point',

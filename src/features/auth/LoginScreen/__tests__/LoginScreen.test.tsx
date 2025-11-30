@@ -9,14 +9,24 @@ import { createTestWrapper } from '@/utils/test-helpers';
 
 jest.mock('../../context/AuthContext');
 jest.mock('@/i18n');
+jest.mock('expo-apple-authentication', () => ({
+  isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+  signInAsync: jest.fn(() => Promise.resolve({})),
+}));
+jest.mock('expo-haptics', () => ({
+  notificationAsync: jest.fn(),
+  NotificationFeedbackType: {
+    Success: 'success',
+  },
+}));
 
 const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 
 jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
+  const React = require('react');
   return {
-    ...actualNav,
+    NavigationContainer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
     useNavigation: jest.fn(() => ({
       navigate: mockNavigate,
       goBack: mockGoBack,
@@ -33,10 +43,39 @@ jest.mock('react-native', () => {
       alert: jest.fn(),
     },
     useColorScheme: jest.fn(() => 'light'),
+    BackHandler: {
+      addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+      removeEventListener: jest.fn(),
+    },
     View: 'View',
     Text: 'Text',
     TouchableOpacity: 'TouchableOpacity',
     ActivityIndicator: 'ActivityIndicator',
+    Animated: {
+      Value: jest.fn((value: number) => ({
+        _value: value,
+        setValue: jest.fn(),
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        stopAnimation: jest.fn(),
+      })),
+      timing: jest.fn(() => ({
+        start: jest.fn((callback?: () => void) => {
+          if (callback) callback();
+        }),
+      })),
+      spring: jest.fn(() => ({
+        start: jest.fn((callback?: () => void) => {
+          if (callback) callback();
+        }),
+      })),
+      parallel: jest.fn(() => ({
+        start: jest.fn((callback?: () => void) => {
+          if (callback) callback();
+        }),
+      })),
+      View: 'View',
+    },
     StyleSheet: {
       create: (styles: any) => styles,
       flatten: (style: any) => {
@@ -90,7 +129,7 @@ describe('LoginScreen', () => {
   });
 
   it('should render login screen correctly', () => {
-    const { getByText } = render(<LoginScreen />);
+    const { getByText } = render(<LoginScreen />, { wrapper: createWrapper() });
 
     expect(getByText('auth.title')).toBeTruthy();
     expect(getByText('auth.subtitle')).toBeTruthy();
@@ -100,7 +139,7 @@ describe('LoginScreen', () => {
     Platform.OS = 'ios';
     mockSignInWithApple.mockResolvedValue({});
 
-    const { getByText } = render(<LoginScreen />);
+    const { getByText } = render(<LoginScreen />, { wrapper: createWrapper() });
     const button = getByText('auth.continueWithApple');
 
     fireEvent.press(button);
@@ -115,7 +154,7 @@ describe('LoginScreen', () => {
     const error = new Error('Login failed');
     mockSignInWithApple.mockRejectedValue(error);
 
-    const { getByText, queryByText } = render(<LoginScreen />);
+    const { getByText, queryByText } = render(<LoginScreen />, { wrapper: createWrapper() });
     const button = getByText('auth.continueWithApple');
 
     fireEvent.press(button);
@@ -128,7 +167,7 @@ describe('LoginScreen', () => {
   it('should show alert on non-iOS platforms', () => {
     Platform.OS = 'android';
 
-    render(<LoginScreen />);
+    render(<LoginScreen />, { wrapper: createWrapper() });
 
     // The component should show a message for non-iOS platforms
     expect(mockT).toHaveBeenCalledWith('auth.appleNotAvailable');

@@ -19,15 +19,40 @@ jest.mock('@/features/profile', () => ({
   useHourlyRate: jest.fn(),
 }));
 jest.mock('@/i18n');
-jest.mock('react-native', () => ({
-  useColorScheme: jest.fn(() => 'light'),
-  Animated: {
+jest.mock('@expo/vector-icons', () => ({
+  Ionicons: 'Ionicons',
+}));
+jest.mock('react-native', () => {
+  const React = require('react');
+  return {
+    useColorScheme: jest.fn(() => 'light'),
+    Platform: {
+      OS: 'ios',
+      select: jest.fn(),
+    },
+    View: 'View',
+    Text: 'Text',
+    ScrollView: 'ScrollView',
+    TouchableOpacity: 'TouchableOpacity',
+    ActivityIndicator: 'ActivityIndicator',
+    // Modal should only render children when visible is true
+    Modal: ({ visible, children }: { visible: boolean; children: React.ReactNode }) =>
+      visible ? <>{children}</> : null,
+    StatusBar: 'StatusBar',
+    Animated: {
     Value: jest.fn((value: number) => ({
       _value: value,
       setValue: jest.fn(),
       addListener: jest.fn(),
       removeListener: jest.fn(),
       stopAnimation: jest.fn(),
+      interpolate: jest.fn((config: any) => {
+        const mockAnimated = jest.fn(() => ({
+          _value: 0,
+        }));
+        mockAnimated._value = 0;
+        return mockAnimated;
+      }),
     })),
     timing: jest.fn(() => ({
       start: jest.fn((callback?: () => void) => {
@@ -44,8 +69,34 @@ jest.mock('react-native', () => ({
         if (callback) callback();
       }),
     })),
-  },
-}));
+    loop: jest.fn((animation: any) => ({
+      start: jest.fn(),
+      stop: jest.fn(),
+    })),
+    sequence: jest.fn((animations: any[]) => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+      View: 'View',
+    },
+    Easing: {
+      out: jest.fn((easing: any) => easing),
+      in: jest.fn((easing: any) => easing),
+      ease: jest.fn(),
+    },
+    StyleSheet: {
+      create: (styles: any) => styles,
+      flatten: (style: any) => {
+        if (!style) return {};
+        if (Array.isArray(style)) {
+          return Object.assign({}, ...style.filter(Boolean));
+        }
+        return style;
+      },
+    },
+  };
+});
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
   NotificationFeedbackType: {
@@ -61,16 +112,19 @@ jest.mock('expo-location', () => ({
 jest.mock('expo-status-bar', () => ({
   StatusBar: 'StatusBar',
 }));
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaProvider: ({ children }: { children: any }) => children,
-  SafeAreaView: 'SafeAreaView',
-  useSafeAreaInsets: () => ({
-    top: 44,
-    bottom: 34,
-    left: 0,
-    right: 0,
-  }),
-}));
+jest.mock('react-native-safe-area-context', () => {
+  const React = require('react');
+  return {
+    SafeAreaProvider: ({ children }: { children: any }) => children,
+    SafeAreaView: ({ children }: { children: any }) => children,
+    useSafeAreaInsets: () => ({
+      top: 44,
+      bottom: 34,
+      left: 0,
+      right: 0,
+    }),
+  };
+});
 jest.mock('@react-navigation/native', () => {
   const React = require('react');
   return {

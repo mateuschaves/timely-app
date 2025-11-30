@@ -1,9 +1,18 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { NavigationContainer } from '@react-navigation/native';
 import { AppNavigator } from '../AppNavigator';
 import { createTestWrapper } from '@/utils/test-helpers';
 
+jest.mock('@react-navigation/native', () => {
+  const React = require('react');
+  return {
+    NavigationContainer: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+    useNavigation: () => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+    }),
+  };
+});
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
   NotificationFeedbackType: {
@@ -25,7 +34,36 @@ jest.mock('react-native', () => ({
     OS: 'ios',
     select: jest.fn(),
   },
+  BackHandler: {
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeEventListener: jest.fn(),
+  },
   useColorScheme: jest.fn(() => 'light'),
+  Animated: {
+    Value: jest.fn((value: number) => ({
+      _value: value,
+      setValue: jest.fn(),
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      stopAnimation: jest.fn(),
+    })),
+    timing: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    spring: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    parallel: jest.fn(() => ({
+      start: jest.fn((callback?: () => void) => {
+        if (callback) callback();
+      }),
+    })),
+    View: 'View',
+  },
   View: 'View',
   Text: 'Text',
   StyleSheet: {
@@ -61,9 +99,7 @@ describe('AppNavigator', () => {
     const TestWrapper = createTestWrapper();
     const { UNSAFE_root } = render(
       <TestWrapper>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+        <AppNavigator />
       </TestWrapper>
     );
 
