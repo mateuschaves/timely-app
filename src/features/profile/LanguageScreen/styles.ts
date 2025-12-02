@@ -40,7 +40,7 @@ export const Section = styled.View`
 `;
 
 export const InfoCard = styled.View`
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary)};
   border-radius: ${borderRadius.lg}px;
   overflow: hidden;
   shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};

@@ -6,9 +6,10 @@ export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: ${spacing.lg}px;
-  padding-bottom: 200px;
   padding-top: ${spacing.md}px;
+  padding-bottom: 200px;
+  padding-left: 0px;
+  padding-right: 0px;
   background-color: ${({ theme }) => theme.background.primary};
 `;
 

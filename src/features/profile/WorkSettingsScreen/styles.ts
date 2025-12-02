@@ -36,7 +36,7 @@ export const Content = styled.View`
 `;
 
 export const SettingsCard = styled.View<{ theme: any }>`
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.primary)};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary)};
   border-radius: ${borderRadius.lg}px;
   padding: ${spacing.md}px;
   margin-bottom: ${spacing.lg}px;
@@ -49,6 +49,12 @@ export const SettingsCard = styled.View<{ theme: any }>`
 
 export const SettingSection = styled.View`
   margin-bottom: ${spacing.sm}px;
+`;
+
+export const SectionDivider = styled.View<{ theme: any }>`
+  height: 1px;
+  background-color: ${({ theme }) => theme.border.light};
+  margin: ${spacing.md}px 0;
 `;
 
 export const SettingLabel = styled.Text<{ theme: any }>`
@@ -106,7 +112,7 @@ export const TimeRow = styled.View`
 
 export const TimeInput = styled.TextInput<{ theme: any }>`
   flex: 1;
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.sm}px ${spacing.md}px;
   min-height: 48px;
@@ -114,12 +120,22 @@ export const TimeInput = styled.TextInput<{ theme: any }>`
   color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.semibold};
   text-align: center;
+  border-width: ${({ theme }) => (theme.colorScheme === 'dark' ? '0px' : '1px')};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const TimeSeparator = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.lg}px;
   color: ${({ theme }) => theme.text.secondary};
   font-weight: ${typography.weights.medium};
+`;
+
+export const TimeHint = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.xs}px;
+  color: ${({ theme }) => theme.text.secondary};
+  text-align: center;
+  margin-top: ${spacing.xs}px;
+  margin-left: ${spacing.md}px;
 `;
 
 export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
@@ -203,35 +219,41 @@ export const HolidayInputRow = styled.View`
 
 export const HolidayDateInput = styled.TextInput<{ theme: any }>`
   width: 100%;
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.sm}px ${spacing.md}px;
   height: 48px;
   font-size: ${typography.sizes.md}px;
   color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
+  border-width: ${({ theme }) => (theme.colorScheme === 'dark' ? '0px' : '1px')};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const HolidayNameInput = styled.TextInput<{ theme: any }>`
   width: 100%;
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.sm}px ${spacing.md}px;
   height: 48px;
   font-size: ${typography.sizes.md}px;
   color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
+  border-width: ${({ theme }) => (theme.colorScheme === 'dark' ? '0px' : '1px')};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const HourlyRateInput = styled.TextInput<{ theme: any }>`
   width: 100%;
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.primary)};
   border-radius: ${borderRadius.md}px;
   padding: ${spacing.sm}px ${spacing.md}px;
   height: 48px;
   font-size: ${typography.sizes.md}px;
   color: ${({ theme }) => theme.text.primary};
   font-weight: ${typography.weights.regular};
+  border-width: ${({ theme }) => (theme.colorScheme === 'dark' ? '0px' : '1px')};
+  border-color: ${({ theme }) => theme.border.light};
 `;
 
 export const EmptyHolidaysText = styled.Text<{ theme: any }>`
@@ -348,5 +370,39 @@ export const ModalOverlay = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.lg}px;
+`;
+
+export const TimePickerModal = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.primary)};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.xl}px;
+  width: 100%;
+  max-width: 340px;
+  align-items: center;
+  overflow: hidden;
+  border-width: ${({ theme }) => (theme.colorScheme === 'dark' ? '1px' : '1px')};
+  border-color: ${({ theme }) => (theme.colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : theme.border.light)};
+  shadow-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#000000' : theme.shadows.md.shadowColor)};
+  shadow-offset: 0px 4px;
+  shadow-opacity: ${({ theme }) => (theme.colorScheme === 'dark' ? 0.8 : theme.shadows.md.shadowOpacity)};
+  shadow-radius: ${({ theme }) => (theme.colorScheme === 'dark' ? 12 : theme.shadows.md.shadowRadius)}px;
+  elevation: ${({ theme }) => (theme.colorScheme === 'dark' ? 8 : theme.shadows.md.elevation)};
+`;
+
+export const TimePickerTitle = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.xl}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.text.primary};
+  margin-bottom: ${spacing.lg}px;
+  text-align: center;
+`;
+
+export const TimePickerWrapper = styled.View<{ theme: any }>`
+  background-color: transparent;
+  border-radius: ${borderRadius.md}px;
+  overflow: hidden;
+  width: 100%;
+  align-items: center;
+  padding: ${spacing.sm}px 0;
 `;
 

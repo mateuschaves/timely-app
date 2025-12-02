@@ -6,7 +6,6 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
-  padding-bottom: 100px;
 `;
 
 export const FilterContainer = styled.View`
@@ -338,7 +337,7 @@ export const DaysList = styled(FlatList)`
   flex: 1;
   padding-horizontal: ${spacing.md}px;
   padding-top: 0px;
-  padding-bottom: ${spacing.md}px;
+  padding-bottom: 0px;
 `;
 
 interface DayCardProps {

@@ -8,6 +8,8 @@ export interface UserSettingsResponse {
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
   hourlyRate?: number;
+  lunchBreakMinutes?: number;
+  timeFormat12h?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
