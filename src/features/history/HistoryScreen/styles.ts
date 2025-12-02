@@ -300,6 +300,13 @@ export const SummaryItemValue = styled.Text`
   text-align: center;
 `;
 
+export const SummaryItemValueSmall = styled.Text`
+  font-size: ${typography.sizes.xl}px;
+  font-weight: ${typography.weights.bold};
+  color: ${({ theme }) => theme.text.primary};
+  text-align: center;
+`;
+
 export const SummaryDifferenceRow = styled.View`
   flex-direction: row;
   justify-content: space-between;

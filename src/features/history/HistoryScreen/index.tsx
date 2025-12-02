@@ -23,6 +23,7 @@ import {
     SummaryDivider,
     SummaryItemLabel,
     SummaryItemValue,
+    SummaryItemValueSmall,
     SummaryDifferenceRow,
     SummaryDifferenceLabel,
     SummaryDifferenceValue,
@@ -439,7 +440,7 @@ export function HistoryScreen() {
                             <MonthSummaryCard>
                                 <SummaryMainRow>
                                     <SummaryMainItem>
-                                        <SummaryItemValue>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValue>
+                                        <SummaryItemValueSmall>{monthSummary.totalWorkedHoursFormatted}</SummaryItemValueSmall>
                                         <SummaryItemLabel>{t('history.totalWorked')}</SummaryItemLabel>
                                     </SummaryMainItem>
 
@@ -447,7 +448,7 @@ export function HistoryScreen() {
                                         <>
                                             <SummaryDivider />
                                             <SummaryMainItem>
-                                                <SummaryItemValue>{monthSummary.totalExpectedHoursFormatted}</SummaryItemValue>
+                                                <SummaryItemValueSmall>{monthSummary.totalExpectedHoursFormatted}</SummaryItemValueSmall>
                                                 <SummaryItemLabel>{t('history.expectedHours')}</SummaryItemLabel>
                                             </SummaryMainItem>
                                         </>
