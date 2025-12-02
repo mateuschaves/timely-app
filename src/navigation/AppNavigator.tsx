@@ -25,56 +25,56 @@ export function AppNavigator() {
       }}
     >
       <Stack.Screen name="Main" component={BottomTabNavigator} />
-      <Stack.Screen 
-        name="Language" 
+      <Stack.Screen
+        name="Language"
         component={LanguageScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="Appearance" 
+      <Stack.Screen
+        name="Appearance"
         component={AppearanceScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="EditName" 
+      <Stack.Screen
+        name="EditName"
         component={EditNameScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="WorkSettings" 
+      <Stack.Screen
+        name="WorkSettings"
         component={WorkSettingsScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="PrivacyAndSecurity" 
+      <Stack.Screen
+        name="PrivacyAndSecurity"
         component={PrivacyAndSecurityScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="DeleteAccount" 
+      <Stack.Screen
+        name="DeleteAccount"
         component={DeleteAccountScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
         }}
       />
-      <Stack.Screen 
-        name="EditEvent" 
+      <Stack.Screen
+        name="EditEvent"
         component={EditEventScreen}
         options={{
           presentation: 'card',

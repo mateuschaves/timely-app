@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Alert, Keyboard, ScrollView, Switch, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Alert, Keyboard, ScrollView, Switch, Modal, TouchableWithoutFeedback, TouchableOpacity, Platform, View } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
-import { spacing } from '@/theme';
+import { borderRadius, spacing } from '@/theme';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { updateUserSettings, WorkSchedule, CustomHoliday } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
@@ -13,6 +13,7 @@ import { capitalizeFirstLetter } from '@/utils/string';
 import { format, parseISO, isValid, startOfMonth, endOfMonth, eachDayOfInterval, startOfWeek, endOfWeek, isSameMonth, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
     Container,
     Content,
@@ -28,6 +29,10 @@ import {
     TimeRow,
     TimeInput,
     TimeSeparator,
+    TimeHint,
+    SectionDivider,
+    TimePickerTitle,
+    TimePickerWrapper,
     SaveButton,
     SaveButtonText,
     HolidayRow,
@@ -56,6 +61,7 @@ import {
     CalendarDayText,
     ModalOverlay,
     HourlyRateInput,
+    TimePickerModal,
 } from './styles';
 
 interface DaySchedule {
@@ -76,7 +82,7 @@ export function WorkSettingsScreen() {
     const navigation = useNavigation();
     const queryClient = useQueryClient();
     const { showSuccess } = useFeedback();
-    const { theme } = useTheme();
+    const { theme, colorScheme } = useTheme();
     const [days, setDays] = useState<Record<string, DaySchedule>>({
         monday: { ...defaultSchedule },
         tuesday: { ...defaultSchedule },
@@ -95,6 +101,8 @@ export function WorkSettingsScreen() {
     const [showCalendarModal, setShowCalendarModal] = useState(false);
     const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
     const [hourlyRate, setHourlyRate] = useState<string>('');
+    const [lunchBreakMinutes, setLunchBreakMinutes] = useState<string>('');
+    const [timeFormat12h, setTimeFormat12h] = useState<boolean | null>(null); // null = usar detecção automática
 
     const dayNames = [
         { key: 'monday', label: capitalizeFirstLetter(t('profile.monday')) },
@@ -127,6 +135,117 @@ export function WorkSettingsScreen() {
             );
         },
     });
+
+    // Função para detectar automaticamente se o dispositivo/locale usa formato de 12h (AM/PM)
+    const detectAuto12HourFormat = useMemo(() => {
+        try {
+            const localeData = Localization.getLocales()[0];
+            const locale = localeData?.languageTag || i18n.language || 'pt-BR';
+            const formatter = new Intl.DateTimeFormat(locale, { hour: 'numeric' });
+            const options: any = formatter.resolvedOptions?.() || {};
+            if (typeof options.hour12 === 'boolean') {
+                return options.hour12;
+            }
+        } catch {
+            // Ignora erro e usa fallback baseado no idioma
+        }
+        return i18n.language?.startsWith('en');
+    }, [i18n.language]);
+
+    // Usar preferência salva ou detecção automática
+    const is12HourFormat = timeFormat12h !== null ? timeFormat12h : detectAuto12HourFormat;
+
+    // Determinar locale para DateTimePicker no iOS (para controlar formato 12/24h)
+    const getPickerLocale = useMemo(() => {
+        if (Platform.OS !== 'ios') {
+            return undefined; // Android usa is24Hour
+        }
+        // No iOS, usar locale que force o formato desejado
+        // Locales que usam 12h: en-US, en-CA, etc.
+        // Locales que usam 24h: en-GB, pt-BR, de-DE, fr-FR, etc.
+        if (is12HourFormat) {
+            return 'en-US'; // Força formato 12h
+        } else {
+            return 'en-GB'; // Força formato 24h
+        }
+    }, [is12HourFormat]);
+
+    const formatTimeForDisplay = useCallback((time24: string): string => {
+        if (!time24 || time24.length < 4) return time24;
+        if (!is12HourFormat) return time24;
+
+        const [hoursStr, minutesStr = '00'] = time24.split(':');
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        if (isNaN(hours) || isNaN(minutes)) return time24;
+
+        const localeData = Localization.getLocales()[0];
+        const locale = localeData?.languageTag || (i18n.language?.startsWith('en') ? 'en-US' : i18n.language || 'pt-BR');
+
+        const date = new Date();
+        date.setHours(hours, minutes, 0, 0);
+        return date.toLocaleTimeString(locale, {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        });
+    }, [is12HourFormat, i18n.language]);
+
+    // Estado para o time picker nativo
+    const [timePickerState, setTimePickerState] = useState<{
+        dayKey: string | null;
+        type: 'start' | 'end' | null;
+    }>({
+        dayKey: null,
+        type: null,
+    });
+
+    const openTimePicker = (dayKey: string, type: 'start' | 'end') => {
+        console.log('openTimePicker called:', dayKey, type);
+        setTimePickerState({ dayKey, type });
+    };
+
+    const getPickerInitialDate = () => {
+        if (!timePickerState.dayKey || !timePickerState.type) {
+            return new Date();
+        }
+        const daySchedule = days[timePickerState.dayKey];
+        const time24 = timePickerState.type === 'start' ? daySchedule.startTime : daySchedule.endTime;
+        const [hoursStr = '09', minutesStr = '00'] = (time24 && time24.includes(':')) ? time24.split(':') : (
+            timePickerState.type === 'start' ? ['09', '00'] : ['18', '00']
+        );
+        const hours = parseInt(hoursStr, 10);
+        const minutes = parseInt(minutesStr, 10);
+        const date = new Date();
+        if (!isNaN(hours)) date.setHours(hours);
+        if (!isNaN(minutes)) date.setMinutes(minutes);
+        date.setSeconds(0, 0);
+        return date;
+    };
+
+    const handleTimePicked = (event: any, date?: Date) => {
+        // Android: fecha ao cancelar
+        if (event?.type === 'dismissed') {
+            setTimePickerState({ dayKey: null, type: null });
+            return;
+        }
+
+        // iOS/Android: enquanto o usuário está girando o spinner, vamos atualizando o horário,
+        // mas só fechamos automaticamente no Android (para manter o comportamento de diálogo).
+        if (!date || !timePickerState.dayKey || !timePickerState.type) {
+            return;
+        }
+
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const value24 = `${hours}:${minutes}`;
+
+        handleTimeChange(value24, timePickerState.dayKey, timePickerState.type);
+
+        if (Platform.OS === 'android') {
+            setTimePickerState({ dayKey: null, type: null });
+        }
+    };
 
     // Funções para formatação monetária
     const getCurrencyFormatter = useMemo(() => {
@@ -264,6 +383,16 @@ export function WorkSettingsScreen() {
                 const formatted = formatCurrency(settingsData.hourlyRate);
                 setHourlyRate(formatted);
             }
+
+            // Carregar minutos de almoço
+            if (settingsData.lunchBreakMinutes !== undefined && settingsData.lunchBreakMinutes !== null) {
+                setLunchBreakMinutes(String(settingsData.lunchBreakMinutes));
+            }
+
+            // Carregar preferência de formato de hora (null = usar detecção automática)
+            if (settingsData.timeFormat12h !== undefined) {
+                setTimeFormat12h(settingsData.timeFormat12h);
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [settingsData]);
@@ -271,57 +400,59 @@ export function WorkSettingsScreen() {
     const handleSave = () => {
         Keyboard.dismiss();
 
-            const workSchedule: WorkSchedule = {};
+        const workSchedule: WorkSchedule = {};
 
-            if (days.monday.enabled) {
-                workSchedule.monday = {
-                    start: days.monday.startTime,
-                    end: days.monday.endTime,
-                };
-            }
-            if (days.tuesday.enabled) {
-                workSchedule.tuesday = {
-                    start: days.tuesday.startTime,
-                    end: days.tuesday.endTime,
-                };
-            }
-            if (days.wednesday.enabled) {
-                workSchedule.wednesday = {
-                    start: days.wednesday.startTime,
-                    end: days.wednesday.endTime,
-                };
-            }
-            if (days.thursday.enabled) {
-                workSchedule.thursday = {
-                    start: days.thursday.startTime,
-                    end: days.thursday.endTime,
-                };
-            }
-            if (days.friday.enabled) {
-                workSchedule.friday = {
-                    start: days.friday.startTime,
-                    end: days.friday.endTime,
-                };
-            }
-            if (days.saturday.enabled) {
-                workSchedule.saturday = {
-                    start: days.saturday.startTime,
-                    end: days.saturday.endTime,
-                };
-            }
-            if (days.sunday.enabled) {
-                workSchedule.sunday = {
-                    start: days.sunday.startTime,
-                    end: days.sunday.endTime,
-                };
-            }
+        if (days.monday.enabled) {
+            workSchedule.monday = {
+                start: days.monday.startTime,
+                end: days.monday.endTime,
+            };
+        }
+        if (days.tuesday.enabled) {
+            workSchedule.tuesday = {
+                start: days.tuesday.startTime,
+                end: days.tuesday.endTime,
+            };
+        }
+        if (days.wednesday.enabled) {
+            workSchedule.wednesday = {
+                start: days.wednesday.startTime,
+                end: days.wednesday.endTime,
+            };
+        }
+        if (days.thursday.enabled) {
+            workSchedule.thursday = {
+                start: days.thursday.startTime,
+                end: days.thursday.endTime,
+            };
+        }
+        if (days.friday.enabled) {
+            workSchedule.friday = {
+                start: days.friday.startTime,
+                end: days.friday.endTime,
+            };
+        }
+        if (days.saturday.enabled) {
+            workSchedule.saturday = {
+                start: days.saturday.startTime,
+                end: days.saturday.endTime,
+            };
+        }
+        if (days.sunday.enabled) {
+            workSchedule.sunday = {
+                start: days.sunday.startTime,
+                end: days.sunday.endTime,
+            };
+        }
 
         const hourlyRateValue = parseCurrencyValue(hourlyRate);
+        const lunchBreakMinutesValue = lunchBreakMinutes.trim() ? parseInt(lunchBreakMinutes.trim(), 10) : undefined;
 
         updateSettingsMutation.mutate({
-                workSchedule,
+            workSchedule,
             customHolidays: customHolidays,
             hourlyRate: hourlyRateValue,
+            lunchBreakMinutes: lunchBreakMinutesValue && !isNaN(lunchBreakMinutesValue) && lunchBreakMinutesValue >= 0 ? lunchBreakMinutesValue : undefined,
         });
     };
 
@@ -611,6 +742,7 @@ export function WorkSettingsScreen() {
             </Header>
             <Content>
                 <ScrollView showsVerticalScrollIndicator={false}>
+                    {/* Seção: Horários de Trabalho */}
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.workHours')}</SettingLabel>
@@ -631,36 +763,100 @@ export function WorkSettingsScreen() {
                                             />
                                         </DayRow>
                                         {daySchedule.enabled && (
-                                            <TimeRow>
-                                                <TimeInput
-                                                    value={daySchedule.startTime}
-                                                    onChangeText={(value: string) => handleTimeChange(value, day.key, 'start')}
-                                                    onBlur={() => handleTimeBlur(day.key, 'start')}
-                                                    placeholder="09:00"
-                                                    placeholderTextColor={theme.text.tertiary}
-                                                    keyboardType="number-pad"
-                                                    maxLength={5}
-                                                    editable={!updateSettingsMutation.isPending}
-                                                />
-                                                <TimeSeparator>—</TimeSeparator>
-                                                <TimeInput
-                                                    value={daySchedule.endTime}
-                                                    onChangeText={(value: string) => handleTimeChange(value, day.key, 'end')}
-                                                    onBlur={() => handleTimeBlur(day.key, 'end')}
-                                                    placeholder="18:00"
-                                                    placeholderTextColor={theme.text.tertiary}
-                                                    keyboardType="number-pad"
-                                                    maxLength={5}
-                                                    editable={!updateSettingsMutation.isPending}
-                                                />
-                                            </TimeRow>
+                                            <>
+                                                <TimeRow>
+                                                    <TouchableOpacity
+                                                        style={{ flex: 1 }}
+                                                        activeOpacity={0.7}
+                                                        onPress={() => {
+                                                            console.log('TouchableOpacity pressed for start time');
+                                                            Keyboard.dismiss();
+                                                            openTimePicker(day.key, 'start');
+                                                        }}
+                                                        disabled={updateSettingsMutation.isPending}
+                                                    >
+                                                        <TimeInput
+                                                            value={formatTimeForDisplay(daySchedule.startTime)}
+                                                            placeholder={is12HourFormat ? '9:00 AM' : '09:00'}
+                                                            placeholderTextColor={theme.text.tertiary}
+                                                            keyboardType="number-pad"
+                                                            maxLength={5}
+                                                            editable={false}
+                                                            pointerEvents="none"
+                                                            selectTextOnFocus={false}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    <TimeSeparator>—</TimeSeparator>
+                                                    <TouchableOpacity
+                                                        style={{ flex: 1 }}
+                                                        activeOpacity={0.7}
+                                                        onPress={() => {
+                                                            console.log('TouchableOpacity pressed for end time');
+                                                            Keyboard.dismiss();
+                                                            openTimePicker(day.key, 'end');
+                                                        }}
+                                                        disabled={updateSettingsMutation.isPending}
+                                                    >
+                                                        <TimeInput
+                                                            value={formatTimeForDisplay(daySchedule.endTime)}
+                                                            placeholder={is12HourFormat ? '6:00 PM' : '18:00'}
+                                                            placeholderTextColor={theme.text.tertiary}
+                                                            keyboardType="number-pad"
+                                                            maxLength={5}
+                                                            editable={false}
+                                                            pointerEvents="none"
+                                                            selectTextOnFocus={false}
+                                                        />
+                                                    </TouchableOpacity>
+                                                </TimeRow>
+                                                {is12HourFormat && (
+                                                    <TimeHint>
+                                                        {formatTimeForDisplay(daySchedule.startTime)} — {formatTimeForDisplay(daySchedule.endTime)}
+                                                    </TimeHint>
+                                                )}
+                                            </>
                                         )}
                                     </React.Fragment>
                                 );
                             })}
                         </SettingSection>
+
+                        <SectionDivider />
+
+                        <SettingSection>
+                            <DayRow>
+                                <DayInfo>
+                                    <DayName>{t('profile.timeFormat12h')}</DayName>
+                                </DayInfo>
+                                <Switch
+                                    value={is12HourFormat}
+                                    onValueChange={(value) => setTimeFormat12h(value)}
+                                    disabled={updateSettingsMutation.isPending}
+                                    trackColor={{ false: theme.border.medium, true: theme.primary }}
+                                    thumbColor={theme.background.primary}
+                                />
+                            </DayRow>
+                        </SettingSection>
+
+                        <SectionDivider />
+
+                        <SettingSection>
+                            <SettingLabel>{t('profile.lunchBreakMinutes')}</SettingLabel>
+                            <HourlyRateInput
+                                value={lunchBreakMinutes}
+                                onChangeText={(value: string) => {
+                                    const numbers = value.replace(/[^0-9]/g, '');
+                                    setLunchBreakMinutes(numbers);
+                                }}
+                                placeholder={t('profile.lunchBreakMinutesPlaceholder')}
+                                placeholderTextColor={theme.text.tertiary}
+                                keyboardType="number-pad"
+                                editable={!updateSettingsMutation.isPending}
+                            />
+                        </SettingSection>
                     </SettingsCard>
 
+                    {/* Seção: Configurações Financeiras */}
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.hourlyRate')}</SettingLabel>
@@ -677,6 +873,7 @@ export function WorkSettingsScreen() {
                         </SettingSection>
                     </SettingsCard>
 
+                    {/* Seção: Feriados */}
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.customHolidays')}</SettingLabel>
@@ -787,6 +984,63 @@ export function WorkSettingsScreen() {
                     </SaveButton>
                 </ScrollView>
             </Content>
+            <Modal
+                visible={!!(timePickerState.dayKey && timePickerState.type)}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setTimePickerState({ dayKey: null, type: null })}
+            >
+                <TouchableWithoutFeedback onPress={() => setTimePickerState({ dayKey: null, type: null })}>
+                    <ModalOverlay>
+                        <TouchableWithoutFeedback>
+                            <TimePickerModal>
+                                {timePickerState.dayKey && timePickerState.type && (
+                                    <>
+                                        <TimePickerTitle>
+                                            {dayNames.find(d => d.key === timePickerState.dayKey)?.label || ''}
+                                        </TimePickerTitle>
+                                        <TimePickerWrapper>
+                                            <DateTimePicker
+                                                value={getPickerInitialDate()}
+                                                mode="time"
+                                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                                is24Hour={!is12HourFormat}
+                                                locale={getPickerLocale}
+                                                onChange={handleTimePicked}
+                                                textColor={colorScheme === 'dark' ? '#FFFFFF' : '#000000'}
+                                                themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                }}
+                                            />
+                                        </TimePickerWrapper>
+                                        {Platform.OS === 'ios' && (
+                                            <TouchableOpacity
+                                                onPress={() => setTimePickerState({ dayKey: null, type: null })}
+                                                style={{
+                                                    marginTop: spacing.lg,
+                                                    paddingHorizontal: spacing.xl,
+                                                    paddingVertical: spacing.md,
+                                                    backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : theme.primary,
+                                                    borderRadius: borderRadius.md,
+                                                    width: '100%',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    borderWidth: colorScheme === 'dark' ? 1 : 0,
+                                                    borderColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                                                }}
+                                                activeOpacity={0.7}
+                                            >
+                                                <SaveButtonText>{t('common.done')}</SaveButtonText>
+                                            </TouchableOpacity>
+                                        )}
+                                    </>
+                                )}
+                            </TimePickerModal>
+                        </TouchableWithoutFeedback>
+                    </ModalOverlay>
+                </TouchableWithoutFeedback>
+            </Modal>
             <Modal
                 visible={showCalendarModal}
                 transparent

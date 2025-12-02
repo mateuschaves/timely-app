@@ -27,6 +27,7 @@ module.exports = {
     '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^expo/src/winter/runtime\\.native$': '<rootDir>/__mocks__/expo-winter-runtime.js',
     '^expo$': '<rootDir>/__mocks__/expo.js',
+    '^@react-native-community/datetimepicker$': '<rootDir>/__mocks__/react-native-datetimepicker.js',
   },
   testMatch: [
     '**/__tests__/**/*.(ts|tsx|js)',

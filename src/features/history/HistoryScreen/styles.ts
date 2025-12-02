@@ -6,7 +6,6 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
-  padding-bottom: 100px;
 `;
 
 export const FilterContainer = styled.View`
@@ -301,6 +300,13 @@ export const SummaryItemValue = styled.Text`
   text-align: center;
 `;
 
+export const SummaryItemValueSmall = styled.Text`
+  font-size: ${typography.sizes.xl}px;
+  font-weight: ${typography.weights.bold};
+  color: ${({ theme }) => theme.text.primary};
+  text-align: center;
+`;
+
 export const SummaryDifferenceRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
@@ -338,7 +344,7 @@ export const DaysList = styled(FlatList)`
   flex: 1;
   padding-horizontal: ${spacing.md}px;
   padding-top: 0px;
-  padding-bottom: ${spacing.md}px;
+  padding-bottom: 0px;
 `;
 
 interface DayCardProps {

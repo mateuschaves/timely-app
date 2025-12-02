@@ -30,6 +30,7 @@ export interface UpdateUserSettingsRequest {
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
   hourlyRate?: number;
+  lunchBreakMinutes?: number;
 }
 
 export interface UpdateUserSettingsResponse {
@@ -38,6 +39,7 @@ export interface UpdateUserSettingsResponse {
   customHolidays: CustomHoliday[];
   workLocation: WorkLocation;
   hourlyRate?: number;
+  lunchBreakMinutes?: number;
 }
 
 export const updateUserSettings = async (

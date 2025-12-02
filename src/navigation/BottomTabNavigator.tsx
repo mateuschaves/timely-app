@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from '@/i18n';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { HomeScreen } from '@/features/home';
@@ -18,6 +19,7 @@ const Tab = createBottomTabNavigator<BottomTabParamList>();
 export function BottomTabNavigator() {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -27,7 +29,8 @@ export function BottomTabNavigator() {
         tabBarInactiveTintColor: theme.tabBar.inactiveTint,
         tabBarStyle: {
           backgroundColor: theme.tabBar.background,
-          borderTopWidth: 0,
+          paddingTop: 2,
+          paddingBottom: insets.bottom || 4,
         },
       }}
     >

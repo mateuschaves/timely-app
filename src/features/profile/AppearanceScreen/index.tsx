@@ -57,7 +57,7 @@ export function AppearanceScreen() {
                                 activeOpacity={0.7}
                                 style={{
                                     borderBottomWidth: index < themes.length - 1 ? 1 : 0,
-                                    borderBottomColor: theme.colorScheme === 'dark' ? '#2a2a2a' : theme.border.light,
+                                    borderBottomColor: theme.border.light,
                                 }}
                             >
                                 <InfoLeft>
