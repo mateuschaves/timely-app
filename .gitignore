@@ -53,6 +53,10 @@ fastlane/test_output
 dist/
 web-build/
 
+# Coverage
+coverage/
+*.lcov
+
 
 
 

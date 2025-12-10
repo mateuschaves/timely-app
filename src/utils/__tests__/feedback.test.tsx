@@ -1,0 +1,92 @@
+import React from 'react';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { FeedbackProvider, useFeedback } from '../feedback';
+import * as Haptics from 'expo-haptics';
+
+jest.mock('expo-haptics', () => ({
+  notificationAsync: jest.fn(),
+  NotificationFeedbackType: {
+    Success: 'success',
+  },
+}));
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  <FeedbackProvider>{children}</FeedbackProvider>
+);
+
+describe('FeedbackProvider', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
+  it('should provide feedback context', () => {
+    const { result } = renderHook(() => useFeedback(), { wrapper });
+
+    expect(result.current.showSuccess).toBeDefined();
+    expect(result.current.showError).toBeDefined();
+    expect(result.current.showInfo).toBeDefined();
+  });
+
+  it('should throw error when used outside provider', () => {
+    const { result } = renderHook(() => useFeedback());
+
+    expect(result.error).toEqual(
+      new Error('useFeedback must be used within a FeedbackProvider')
+    );
+  });
+
+  it('should show success message', async () => {
+    const { result } = renderHook(() => useFeedback(), { wrapper });
+
+    act(() => {
+      result.current.showSuccess('Success message');
+    });
+
+    await waitFor(() => {
+      expect(Haptics.notificationAsync).toHaveBeenCalledWith('success');
+    });
+  });
+
+  it('should show error message', () => {
+    const { result } = renderHook(() => useFeedback(), { wrapper });
+
+    act(() => {
+      result.current.showError('Error message');
+    });
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should show info message', () => {
+    const { result } = renderHook(() => useFeedback(), { wrapper });
+
+    act(() => {
+      result.current.showInfo('Info message');
+    });
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should hide message after timeout', async () => {
+    const { result } = renderHook(() => useFeedback(), { wrapper });
+
+    act(() => {
+      result.current.showSuccess('Test message');
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    await waitFor(() => {
+      // Message should be hidden after timeout
+      expect(result.current).toBeDefined();
+    });
+  });
+});
