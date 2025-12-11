@@ -962,9 +962,10 @@ export function WorkSettingsScreen() {
                     <SettingsCard>
                         <SettingSection>
                             <SettingLabel>{t('profile.hourMultipliers')}</SettingLabel>
-                            <TimeHint style={{ marginBottom: spacing.sm }}>{t('profile.hourMultipliersDescription')}</TimeHint>
+                            <TimeHint>{t('profile.hourMultipliersDescription')}</TimeHint>
                             
                             <DayName style={{ marginTop: spacing.sm, marginBottom: spacing.xs }}>{t('profile.nightMultiplier')}</DayName>
+                            <TimeHint style={{ marginBottom: spacing.sm }}>{t('profile.nightMultiplierHint')}</TimeHint>
                             <HourlyRateInput
                                 value={nightMultiplier}
                                 onChangeText={(value: string) => handleMultiplierChange(value, setNightMultiplier)}

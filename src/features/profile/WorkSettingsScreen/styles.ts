@@ -133,9 +133,8 @@ export const TimeSeparator = styled.Text<{ theme: any }>`
 export const TimeHint = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.xs}px;
   color: ${({ theme }) => theme.text.secondary};
-  text-align: center;
   margin-top: ${spacing.xs}px;
-  margin-left: ${spacing.md}px;
+  margin-bottom: ${spacing.sm}px;
 `;
 
 export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
