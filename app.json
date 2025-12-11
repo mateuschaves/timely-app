@@ -28,8 +28,23 @@
     },
     "plugins": [
       "expo-apple-authentication",
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-updates",
+        {
+          "username": "mateuschaves"
+        }
+      ]
     ],
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/ea5bb2c2-37c7-4f85-9a32-e9f31de5e4cf"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

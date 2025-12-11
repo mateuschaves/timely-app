@@ -111,10 +111,30 @@ npm start
 
 ## 🛠️ Scripts Disponíveis
 
+### Desenvolvimento
 - `npm start` - Inicia o servidor de desenvolvimento
 - `npm run ios` - Executa no iOS
 - `npm run android` - Executa no Android
 - `npm run web` - Executa no navegador
+
+### Build e Deploy
+- `npm run build:dev` - Build de desenvolvimento para todas as plataformas
+- `npm run build:preview` - Build de preview para todas as plataformas
+- `npm run build:prod` - Build de produção para todas as plataformas
+- `npm run build:ios` - Build de produção apenas para iOS
+- `npm run build:android` - Build de produção apenas para Android
+
+### Updates OTA
+- `npm run update:dev` - Publica update OTA no canal de desenvolvimento
+- `npm run update:preview` - Publica update OTA no canal de preview
+- `npm run update:prod` - Publica update OTA no canal de produção
+
+### Submissão para Lojas
+- `npm run submit:ios` - Submete último build iOS para App Store
+- `npm run submit:android` - Submete último build Android para Play Store
+- `npm run submit:all` - Submete últimos builds para ambas as lojas
+
+📖 **Para mais detalhes sobre deploy:** Veja [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 ## 🔧 Configuração da API
 
@@ -148,4 +168,37 @@ O app utiliza **Apple Sign In** para autenticação. A autenticação está disp
 - [x] Implementar persistência local
 - [ ] Adicionar notificações
 - [ ] Melhorar UI/UX
+
+## 🚀 Deploy e OTA Updates
+
+O app está configurado para receber atualizações OTA (Over-The-Air) via EAS Update, permitindo enviar correções e melhorias sem precisar rebuildar e resubmeter para as lojas.
+
+### Recursos Configurados
+
+- ✅ **EAS Build**: Sistema de build nativo configurado
+- ✅ **OTA Updates**: Atualizações automáticas via expo-updates
+- ✅ **Canais de Update**: Ambientes separados (development, preview, production)
+- ✅ **Runtime Version**: Versionamento baseado em appVersion
+- ✅ **Auto-submit**: Submissão automática para lojas configurada
+
+### Quick Start
+
+```bash
+# Build de produção
+npm run build:prod
+
+# Publicar update OTA
+npm run update:prod
+
+# Submeter para as lojas
+npm run submit:all
+```
+
+📖 **Manual Completo de Deploy**: Consulte [DEPLOYMENT.md](./DEPLOYMENT.md) para instruções detalhadas sobre:
+- Configuração inicial do EAS
+- Processo completo de build e deploy
+- Como usar atualizações OTA
+- Gerenciamento de versões
+- Rollback e recuperação
+- Troubleshooting
 

@@ -7,21 +7,35 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "development",
       "env": {
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
     },
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "env": {
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
     },
     "production": {
       "autoIncrement": true,
+      "channel": "production",
       "env": {
         "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
       }
+    }
+  },
+  "update": {
+    "development": {
+      "channel": "development"
+    },
+    "preview": {
+      "channel": "preview"
+    },
+    "production": {
+      "channel": "production"
     }
   },
   "submit": {
