@@ -558,10 +558,16 @@ eas account:view
 ### Segurança
 
 1. **Nunca commite credenciais** no repositório
-2. **Use secrets do EAS** para variáveis sensíveis
+2. **Use secrets do EAS** para variáveis sensíveis (API keys, tokens)
 3. **Mantenha credenciais em local seguro** (1Password, LastPass, etc.)
 4. **Ative 2FA** na conta Expo
 5. **Restrinja acesso ao projeto** apenas para membros da equipe
+
+**Nota sobre Project ID e Update URL:** O Project ID no `app.json` (`ea5bb2c2-37c7-4f85-9a32-e9f31de5e4cf`) é uma informação pública e necessária para que o app se conecte ao servidor de updates do EAS. Não representa um risco de segurança pois:
+- É apenas um identificador do projeto
+- Acesso ao projeto requer autenticação no Expo
+- Apenas contas autorizadas podem publicar updates
+- É análogo a outros IDs públicos (bundle identifier, package name)
 
 ### Melhores Práticas
 
