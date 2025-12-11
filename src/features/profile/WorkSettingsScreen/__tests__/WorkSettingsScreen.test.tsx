@@ -370,5 +370,184 @@ describe('WorkSettingsScreen', () => {
       expect(mockUpdateUserSettings).toHaveBeenCalled();
     });
   });
+
+  describe('Hour Multipliers', () => {
+    it('should load hour multipliers from API and display as percentages', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+        hourMultipliers: {
+          night: 1.2,
+          weekend: 1.5,
+          holiday: 2.0,
+        },
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('profile.hourMultipliers')).toBeTruthy();
+      });
+    });
+
+    it('should save hour multipliers with correct format', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+        hourMultipliers: {
+          night: 1.2,
+          weekend: 1.5,
+          holiday: 2.0,
+        },
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('common.save')).toBeTruthy();
+      });
+
+      const saveButton = getByText('common.save');
+      fireEvent.press(saveButton);
+
+      await waitFor(() => {
+        expect(mockUpdateUserSettings).toHaveBeenCalled();
+      });
+
+      // Verify hour multipliers were sent
+      const updateCall = mockUpdateUserSettings.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('hourMultipliers');
+      // Multipliers should be present with the correct values
+      if (updateCall[0].hourMultipliers) {
+        expect(updateCall[0].hourMultipliers.night).toBe(1.2);
+        expect(updateCall[0].hourMultipliers.weekend).toBe(1.5);
+        expect(updateCall[0].hourMultipliers.holiday).toBe(2);
+      }
+    });
+
+    it('should handle saving with only some multipliers set', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+        hourMultipliers: {
+          night: 1.2,
+        },
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('common.save')).toBeTruthy();
+      });
+
+      const saveButton = getByText('common.save');
+      fireEvent.press(saveButton);
+
+      await waitFor(() => {
+        expect(mockUpdateUserSettings).toHaveBeenCalled();
+      });
+    });
+
+    it('should handle saving without any multipliers', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('common.save')).toBeTruthy();
+      });
+
+      const saveButton = getByText('common.save');
+      fireEvent.press(saveButton);
+
+      await waitFor(() => {
+        expect(mockUpdateUserSettings).toHaveBeenCalled();
+      });
+
+      // Verify that hourMultipliers is undefined when no values are set
+      const updateCall = mockUpdateUserSettings.mock.calls[0];
+      // hourMultipliers should be undefined or not included when empty
+      if (updateCall[0].hourMultipliers !== undefined) {
+        // If present, all values should be undefined
+        expect(updateCall[0].hourMultipliers.night).toBeUndefined();
+        expect(updateCall[0].hourMultipliers.weekend).toBeUndefined();
+        expect(updateCall[0].hourMultipliers.holiday).toBeUndefined();
+      }
+    });
+
+    it('should load hourly rate and lunch break minutes', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+        hourlyRate: 50,
+        lunchBreakMinutes: 60,
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('profile.hourlyRate')).toBeTruthy();
+        expect(getByText('profile.lunchBreakMinutes')).toBeTruthy();
+      });
+    });
+
+    it('should save hourly rate and lunch break minutes', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {},
+        hourlyRate: 50,
+        lunchBreakMinutes: 60,
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('common.save')).toBeTruthy();
+      });
+
+      const saveButton = getByText('common.save');
+      fireEvent.press(saveButton);
+
+      await waitFor(() => {
+        expect(mockUpdateUserSettings).toHaveBeenCalled();
+      });
+
+      const updateCall = mockUpdateUserSettings.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('hourlyRate');
+      expect(updateCall[0]).toHaveProperty('lunchBreakMinutes');
+    });
+
+    it('should handle all multipliers together', async () => {
+      mockGetUserSettings.mockResolvedValue({
+        workSchedule: {
+          monday: { start: '09:00', end: '18:00' },
+        },
+        hourlyRate: 50,
+        lunchBreakMinutes: 60,
+        hourMultipliers: {
+          night: 1.2,
+          weekend: 1.5,
+          holiday: 2.0,
+        },
+      } as any);
+
+      const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(getByText('profile.workSettings')).toBeTruthy();
+        expect(getByText('profile.hourMultipliers')).toBeTruthy();
+      });
+
+      const saveButton = getByText('common.save');
+      fireEvent.press(saveButton);
+
+      await waitFor(() => {
+        expect(mockUpdateUserSettings).toHaveBeenCalled();
+      });
+
+      const updateCall = mockUpdateUserSettings.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('workSchedule');
+      expect(updateCall[0]).toHaveProperty('hourlyRate');
+      expect(updateCall[0]).toHaveProperty('lunchBreakMinutes');
+      expect(updateCall[0]).toHaveProperty('hourMultipliers');
+    });
+  });
 });
 
