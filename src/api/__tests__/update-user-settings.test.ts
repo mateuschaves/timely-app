@@ -84,4 +84,49 @@ describe('updateUserSettings', () => {
     await expect(updateUserSettings(mockRequest)).rejects.toThrow('Network error');
     expect(apiClient.put).toHaveBeenCalledWith('/users/settings', mockRequest);
   });
+
+  it('should update user settings with hour multipliers', async () => {
+    const mockRequest = {
+      workSchedule: {
+        monday: { start: '09:00', end: '18:00' },
+      },
+      hourlyRate: 50,
+      lunchBreakMinutes: 60,
+      hourMultipliers: {
+        night: 1.2,
+        weekend: 1.5,
+        holiday: 2.0,
+      },
+    };
+
+    const mockResponse = {
+      id: '123',
+      workSchedule: mockRequest.workSchedule,
+      customHolidays: [],
+      workLocation: {
+        type: 'Point' as const,
+        coordinates: [0, 0],
+      },
+      hourlyRate: 50,
+      lunchBreakMinutes: 60,
+      hourMultipliers: {
+        night: 1.2,
+        weekend: 1.5,
+        holiday: 2.0,
+      },
+    };
+
+    (apiClient.put as jest.Mock).mockResolvedValue({
+      data: mockResponse,
+    });
+
+    const result = await updateUserSettings(mockRequest);
+
+    expect(apiClient.put).toHaveBeenCalledWith('/users/settings', mockRequest);
+    expect(result).toEqual(mockResponse);
+    expect(result.hourMultipliers).toBeDefined();
+    expect(result.hourMultipliers?.night).toBe(1.2);
+    expect(result.hourMultipliers?.weekend).toBe(1.5);
+    expect(result.hourMultipliers?.holiday).toBe(2.0);
+  });
 });

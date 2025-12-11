@@ -25,12 +25,19 @@ export interface WorkLocation {
   coordinates: [number, number];
 }
 
+export interface HourMultipliers {
+  night?: number;
+  weekend?: number;
+  holiday?: number;
+}
+
 export interface UpdateUserSettingsRequest {
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
   hourlyRate?: number;
   lunchBreakMinutes?: number;
+  hourMultipliers?: HourMultipliers;
 }
 
 export interface UpdateUserSettingsResponse {
@@ -40,6 +47,7 @@ export interface UpdateUserSettingsResponse {
   workLocation: WorkLocation;
   hourlyRate?: number;
   lunchBreakMinutes?: number;
+  hourMultipliers?: HourMultipliers;
 }
 
 export const updateUserSettings = async (
