@@ -1,5 +1,5 @@
 import { apiClient } from '@/config/api';
-import type { WorkSchedule, CustomHoliday, WorkLocation } from './update-user-settings';
+import type { WorkSchedule, CustomHoliday, WorkLocation, HourMultipliers } from './update-user-settings';
 
 export interface UserSettingsResponse {
   userId?: string;
@@ -9,6 +9,7 @@ export interface UserSettingsResponse {
   workLocation?: WorkLocation;
   hourlyRate?: number;
   lunchBreakMinutes?: number;
+  hourMultipliers?: HourMultipliers;
   timeFormat12h?: boolean;
   createdAt?: string;
   updatedAt?: string;

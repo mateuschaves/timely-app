@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { borderRadius, spacing } from '@/theme';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
-import { updateUserSettings, WorkSchedule, CustomHoliday } from '@/api/update-user-settings';
+import { updateUserSettings, WorkSchedule, CustomHoliday, HourMultipliers } from '@/api/update-user-settings';
 import { getUserSettings } from '@/api/get-user-settings';
 import { useFeedback } from '@/utils/feedback';
 import { capitalizeFirstLetter } from '@/utils/string';
@@ -103,6 +103,9 @@ export function WorkSettingsScreen() {
     const [hourlyRate, setHourlyRate] = useState<string>('');
     const [lunchBreakMinutes, setLunchBreakMinutes] = useState<string>('');
     const [timeFormat12h, setTimeFormat12h] = useState<boolean | null>(null); // null = usar detecção automática
+    const [nightMultiplier, setNightMultiplier] = useState<string>('');
+    const [weekendMultiplier, setWeekendMultiplier] = useState<string>('');
+    const [holidayMultiplier, setHolidayMultiplier] = useState<string>('');
 
     const dayNames = [
         { key: 'monday', label: capitalizeFirstLetter(t('profile.monday')) },
@@ -344,6 +347,59 @@ export function WorkSettingsScreen() {
         }
     };
 
+    // Funções para formatação de porcentagem (para multiplicadores)
+    const formatPercentage = (multiplier: number | string): string => {
+        if (!multiplier) return '';
+        const numValue = typeof multiplier === 'string' ? parseFloat(multiplier) : multiplier;
+        if (isNaN(numValue) || numValue < 1) return '';
+        
+        // Converter de multiplicador para porcentagem (ex: 1.20 -> 20%)
+        const percentage = (numValue - 1) * 100;
+        return `${percentage.toFixed(0)}%`;
+    };
+
+    const parsePercentageValue = (value: string): number | undefined => {
+        if (!value || !value.trim()) return undefined;
+        
+        // Remove caracteres não numéricos exceto ponto e vírgula
+        let cleaned = value.replace(/[^\d,.-]/g, '').trim();
+        if (!cleaned) return undefined;
+        
+        // Normaliza separador decimal
+        cleaned = cleaned.replace(',', '.');
+        
+        const numValue = parseFloat(cleaned);
+        if (isNaN(numValue) || numValue < 0) return undefined;
+        
+        // Converter de porcentagem para multiplicador (ex: 20% -> 1.20)
+        return 1 + (numValue / 100);
+    };
+
+    const handleMultiplierChange = (value: string, setter: (value: string) => void) => {
+        // Permite apenas números durante a digitação
+        const cleaned = value.replace(/[^\d,.-]/g, '');
+        setter(cleaned);
+    };
+
+    const handleMultiplierBlur = (value: string, setter: (value: string) => void) => {
+        if (!value || !value.trim()) {
+            setter('');
+            return;
+        }
+
+        // Parseia o valor
+        const multiplier = parsePercentageValue(value);
+        
+        if (multiplier !== undefined && !isNaN(multiplier) && multiplier >= 1) {
+            // Formata como porcentagem
+            const formatted = formatPercentage(multiplier);
+            setter(formatted);
+        } else {
+            // Se não conseguiu parsear, limpa o campo
+            setter('');
+        }
+    };
+
     useEffect(() => {
         if (settingsData) {
             const workSchedule = settingsData.workSchedule || {};
@@ -392,6 +448,19 @@ export function WorkSettingsScreen() {
             // Carregar preferência de formato de hora (null = usar detecção automática)
             if (settingsData.timeFormat12h !== undefined) {
                 setTimeFormat12h(settingsData.timeFormat12h);
+            }
+
+            // Carregar multiplicadores de hora
+            if (settingsData.hourMultipliers) {
+                if (settingsData.hourMultipliers.night !== undefined && settingsData.hourMultipliers.night !== null) {
+                    setNightMultiplier(formatPercentage(settingsData.hourMultipliers.night));
+                }
+                if (settingsData.hourMultipliers.weekend !== undefined && settingsData.hourMultipliers.weekend !== null) {
+                    setWeekendMultiplier(formatPercentage(settingsData.hourMultipliers.weekend));
+                }
+                if (settingsData.hourMultipliers.holiday !== undefined && settingsData.hourMultipliers.holiday !== null) {
+                    setHolidayMultiplier(formatPercentage(settingsData.hourMultipliers.holiday));
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -448,11 +517,27 @@ export function WorkSettingsScreen() {
         const hourlyRateValue = parseCurrencyValue(hourlyRate);
         const lunchBreakMinutesValue = lunchBreakMinutes.trim() ? parseInt(lunchBreakMinutes.trim(), 10) : undefined;
 
+        // Parse multipliers
+        const nightMultiplierValue = parsePercentageValue(nightMultiplier);
+        const weekendMultiplierValue = parsePercentageValue(weekendMultiplier);
+        const holidayMultiplierValue = parsePercentageValue(holidayMultiplier);
+
+        // Build hourMultipliers object only if at least one value is defined
+        const hourMultipliers: { night?: number; weekend?: number; holiday?: number } | undefined =
+            nightMultiplierValue !== undefined || weekendMultiplierValue !== undefined || holidayMultiplierValue !== undefined
+                ? {
+                    night: nightMultiplierValue,
+                    weekend: weekendMultiplierValue,
+                    holiday: holidayMultiplierValue,
+                }
+                : undefined;
+
         updateSettingsMutation.mutate({
             workSchedule,
             customHolidays: customHolidays,
             hourlyRate: hourlyRateValue,
             lunchBreakMinutes: lunchBreakMinutesValue && !isNaN(lunchBreakMinutesValue) && lunchBreakMinutesValue >= 0 ? lunchBreakMinutesValue : undefined,
+            hourMultipliers: hourMultipliers,
         });
     };
 
@@ -866,6 +951,50 @@ export function WorkSettingsScreen() {
                                 onBlur={handleHourlyRateBlur}
                                 onEndEditing={handleHourlyRateBlur}
                                 placeholder={getCurrencyFormatter.format(0) || t('profile.hourlyRatePlaceholder')}
+                                placeholderTextColor={theme.text.tertiary}
+                                keyboardType="decimal-pad"
+                                editable={!updateSettingsMutation.isPending}
+                            />
+                        </SettingSection>
+                    </SettingsCard>
+
+                    {/* Seção: Multiplicadores de Hora */}
+                    <SettingsCard>
+                        <SettingSection>
+                            <SettingLabel>{t('profile.hourMultipliers')}</SettingLabel>
+                            <TimeHint style={{ marginBottom: spacing.sm }}>{t('profile.hourMultipliersDescription')}</TimeHint>
+                            
+                            <DayName style={{ marginTop: spacing.sm, marginBottom: spacing.xs }}>{t('profile.nightMultiplier')}</DayName>
+                            <HourlyRateInput
+                                value={nightMultiplier}
+                                onChangeText={(value: string) => handleMultiplierChange(value, setNightMultiplier)}
+                                onBlur={() => handleMultiplierBlur(nightMultiplier, setNightMultiplier)}
+                                onEndEditing={() => handleMultiplierBlur(nightMultiplier, setNightMultiplier)}
+                                placeholder={t('profile.nightMultiplierPlaceholder')}
+                                placeholderTextColor={theme.text.tertiary}
+                                keyboardType="decimal-pad"
+                                editable={!updateSettingsMutation.isPending}
+                            />
+
+                            <DayName style={{ marginTop: spacing.md, marginBottom: spacing.xs }}>{t('profile.weekendMultiplier')}</DayName>
+                            <HourlyRateInput
+                                value={weekendMultiplier}
+                                onChangeText={(value: string) => handleMultiplierChange(value, setWeekendMultiplier)}
+                                onBlur={() => handleMultiplierBlur(weekendMultiplier, setWeekendMultiplier)}
+                                onEndEditing={() => handleMultiplierBlur(weekendMultiplier, setWeekendMultiplier)}
+                                placeholder={t('profile.weekendMultiplierPlaceholder')}
+                                placeholderTextColor={theme.text.tertiary}
+                                keyboardType="decimal-pad"
+                                editable={!updateSettingsMutation.isPending}
+                            />
+
+                            <DayName style={{ marginTop: spacing.md, marginBottom: spacing.xs }}>{t('profile.holidayMultiplier')}</DayName>
+                            <HourlyRateInput
+                                value={holidayMultiplier}
+                                onChangeText={(value: string) => handleMultiplierChange(value, setHolidayMultiplier)}
+                                onBlur={() => handleMultiplierBlur(holidayMultiplier, setHolidayMultiplier)}
+                                onEndEditing={() => handleMultiplierBlur(holidayMultiplier, setHolidayMultiplier)}
+                                placeholder={t('profile.holidayMultiplierPlaceholder')}
                                 placeholderTextColor={theme.text.tertiary}
                                 keyboardType="decimal-pad"
                                 editable={!updateSettingsMutation.isPending}
