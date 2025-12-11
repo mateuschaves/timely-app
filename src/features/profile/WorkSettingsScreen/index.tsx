@@ -523,7 +523,7 @@ export function WorkSettingsScreen() {
         const holidayMultiplierValue = parsePercentageValue(holidayMultiplier);
 
         // Build hourMultipliers object only if at least one value is defined
-        const hourMultipliers: { night?: number; weekend?: number; holiday?: number } | undefined =
+        const hourMultipliers: HourMultipliers | undefined =
             nightMultiplierValue !== undefined || weekendMultiplierValue !== undefined || holidayMultiplierValue !== undefined
                 ? {
                     night: nightMultiplierValue,
