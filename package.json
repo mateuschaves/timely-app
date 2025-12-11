@@ -15,7 +15,18 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=lcov --coverageReporters=html --coverageReporters=text-summary",
     "test:coverage:ci": "jest --ci --coverage --maxWorkers=2 --coverageReporters=text --coverageReporters=lcov",
-    "test:ci": "jest --ci --coverage --maxWorkers=2"
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "build:dev": "eas build --profile development --platform all",
+    "build:preview": "eas build --profile preview --platform all",
+    "build:prod": "eas build --profile production --platform all",
+    "build:ios": "eas build --profile production --platform ios",
+    "build:android": "eas build --profile production --platform android",
+    "update:dev": "eas update --branch development --auto",
+    "update:preview": "eas update --branch preview --auto",
+    "update:prod": "eas update --branch production --auto",
+    "submit:ios": "eas submit --platform ios --latest",
+    "submit:android": "eas submit --platform android --latest",
+    "submit:all": "eas submit --platform all --latest"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -38,6 +49,7 @@
     "expo-notifications": "^0.32.13",
     "expo-splash-screen": "^31.0.11",
     "expo-status-bar": "~3.0.8",
+    "expo-updates": "^29.0.15",
     "i18next": "^25.6.3",
     "react": "19.1.0",
     "react-i18next": "^16.3.5",
