@@ -97,7 +97,13 @@
     "deleteEventError": "Erreur lors de la suppression de l'événement. Veuillez réessayer.",
     "deleteEventSuccess": "Événement supprimé avec succès !",
     "orderIssue": "Les événements de ce jour sont dans le désordre. Veuillez vérifier les heures.",
-    "holiday": "Jour férié"
+    "holiday": "Jour férié",
+    "notesShowMore": "Afficher plus",
+    "clearNotes": "Supprimer le commentaire",
+    "generateReport": "Générer le rapport",
+    "shareReportTitle": "Partager le rapport PDF",
+    "shareNotAvailable": "Le partage n'est pas disponible sur cet appareil",
+    "pdfGenerationError": "Erreur lors de la génération du rapport. Veuillez réessayer."
   },
   "profile": {
     "title": "Profil",

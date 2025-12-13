@@ -202,6 +202,36 @@ export const EntryTime = styled.Text`
   color: ${({ theme }) => theme.text.primary};
 `;
 
+export const NotesContainer = styled.View`
+  margin-top: ${spacing.xs}px;
+  align-self: stretch;
+  margin-bottom: ${spacing.sm}px;
+`;
+
+export const NotesBubble = styled.View`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.light};
+`;
+
+export const NotesText = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  color: ${({ theme }) => theme.text.secondary};
+`;
+
+export const NotesShowMore = styled(TouchableOpacity)`
+  margin-top: ${spacing.xs}px;
+  align-self: flex-start;
+`;
+
+export const NotesShowMoreText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${({ theme }) => theme.primary};
+`;
+
 export const HoursWorkedBadge = styled.View`
   margin-top: ${spacing.xs}px;
   align-self: flex-start;
@@ -581,3 +611,19 @@ export const HolidayBadgeText = styled.Text`
   color: ${({ theme }) => theme.status.warning};
 `;
 
+export const GenerateReportButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: ${spacing.sm}px;
+  background-color: ${(props: any) => props.theme.primary};
+  padding: ${spacing.md}px ${spacing.lg}px;
+  border-radius: ${borderRadius.md}px;
+  margin-top: ${spacing.md}px;
+`;
+
+export const GenerateReportButtonText = styled.Text`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${(props: any) => props.theme.background.primary};
+`;

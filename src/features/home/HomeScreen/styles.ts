@@ -7,7 +7,7 @@ export const Container = styled(SafeAreaView)<{ theme: any }>`
   align-items: center;
   justify-content: center;
   padding-top: ${spacing.md}px;
-  padding-bottom: 200px;
+  padding-bottom: 0px;
   padding-left: 0px;
   padding-right: 0px;
   background-color: ${({ theme }) => theme.background.primary};
@@ -123,6 +123,7 @@ export const ButtonContainer = styled.View`
   align-items: center;
   justify-content: center;
   flex: 1;
+  margin-top: 0px;
 `;
 
 export const ClockButton = styled.TouchableOpacity<{ theme: any }>`
