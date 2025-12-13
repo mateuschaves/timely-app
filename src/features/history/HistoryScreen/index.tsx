@@ -1,12 +1,15 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { ListRenderItem } from 'react-native';
+import { ListRenderItem, Alert, ActivityIndicator } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
+import * as FileSystemLegacy from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
 import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
+import { generateMonthlyPdf } from '@/api/generate-monthly-pdf';
 import { ClockAction } from '@/api/types';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -27,6 +30,8 @@ import {
     SummaryDifferenceRow,
     SummaryDifferenceLabel,
     SummaryDifferenceValue,
+    GenerateReportButton,
+    GenerateReportButtonText,
     DaysList,
     DayCard,
     DayHeader,
@@ -62,6 +67,11 @@ import {
     OrderIssueText,
     HolidayBadge,
     HolidayBadgeText,
+    NotesContainer,
+    NotesBubble,
+    NotesText,
+    NotesShowMore,
+    NotesShowMoreText,
 } from './styles';
 import { HistorySkeletonLoader } from './SkeletonLoader';
 
@@ -127,6 +137,8 @@ export function HistoryScreen() {
     const { theme } = useTheme();
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
+    const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
     const { startDate, endDate, month } = useMemo(() => getMonthRange(currentMonth), [currentMonth]);
 
@@ -187,6 +199,39 @@ export function HistoryScreen() {
         return nextMonthStart <= todayStart;
     }, [currentMonth]);
 
+    const handleGenerateAndSharePdf = async () => {
+        try {
+            setIsGeneratingPdf(true);
+            const { startDate, endDate } = getMonthRange(currentMonth);
+            const response = await generateMonthlyPdf(startDate, endDate);
+
+            // Converter base64 para arquivo local
+            const fileUri = `${FileSystemLegacy.cacheDirectory}${response.fileName}`;
+            await FileSystemLegacy.writeAsStringAsync(fileUri, response.pdfBase64, {
+                encoding: FileSystemLegacy.EncodingType.Base64 as any,
+            });
+
+            // Compartilhar o arquivo
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(fileUri, {
+                    mimeType: 'application/pdf',
+                    dialogTitle: t('history.shareReportTitle'),
+                });
+            } else {
+                Alert.alert(t('common.error'), t('history.shareNotAvailable'));
+            }
+        } catch (error: any) {
+            console.error('Erro ao gerar PDF:', error);
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                t('history.pdfGenerationError');
+            Alert.alert(t('common.error'), errorMessage);
+        } finally {
+            setIsGeneratingPdf(false);
+        }
+    };
+
     // Função para formatação monetária
     const formatCurrency = useMemo(() => {
         const localeData = Localization.getLocales()[0];
@@ -246,6 +291,11 @@ export function HistoryScreen() {
         const nextEvent = index < events.length - 1 ? events[index + 1] : null;
         const isNextExit = nextEvent && nextEvent.action === ClockAction.CLOCK_OUT;
 
+        const expanded = expandedNotes[event.id] === true;
+        const maxChars = 140;
+        const hasLongNotes = (event.notes || '').length > maxChars;
+        const previewText = hasLongNotes ? (event.notes || '').slice(0, maxChars).trim() + '…' : (event.notes || '');
+
         return (
             <EventGroup key={event.id}>
                 <EventRow>
@@ -265,6 +315,21 @@ export function HistoryScreen() {
                     </EventEditButton>
                 </EventRow>
 
+                {event.notes && (
+                    <NotesContainer>
+                        <NotesBubble>
+                            <NotesText numberOfLines={expanded ? undefined : 4}>
+                                {expanded ? event.notes : previewText}
+                            </NotesText>
+                        </NotesBubble>
+                        {hasLongNotes && (
+                            <NotesShowMore onPress={() => setExpandedNotes(prev => ({ ...prev, [event.id]: !expanded }))} activeOpacity={0.7}>
+                                <NotesShowMoreText>{expanded ? t('common.close') : t('history.notesShowMore')}</NotesShowMoreText>
+                            </NotesShowMore>
+                        )}
+                    </NotesContainer>
+                )}
+
                 {/* Se for entrada e a próxima for saída, mostrar divisor com duração no meio e saída */}
                 {isEntry && isNextExit && nextEvent && (
                     <>
@@ -276,7 +341,35 @@ export function HistoryScreen() {
                                 <DurationDividerLine />
                             </DurationDivider>
                         )}
-                        <ConnectionLine />
+                        {/* Notas entre entrada e saída, sem quebrar layout */}
+                        {(nextEvent.notes || event.notes) && (
+                            <NotesContainer>
+                                <NotesBubble>
+                                    {(() => {
+                                        const entryHasNotes = !!event.notes;
+                                        const exitHasNotes = !!nextEvent.notes;
+                                        const targetEvent = exitHasNotes ? nextEvent : event;
+                                        const expanded = expandedNotes[targetEvent.id] === true;
+                                        const text = targetEvent.notes || '';
+                                        const maxChars = 140;
+                                        const hasLongNotes = text.length > maxChars;
+                                        const previewText = hasLongNotes ? text.slice(0, maxChars).trim() + '…' : text;
+                                        return (
+                                            <>
+                                                <NotesText numberOfLines={expanded ? undefined : 4}>
+                                                    {expanded ? text : previewText}
+                                                </NotesText>
+                                                {hasLongNotes && (
+                                                    <NotesShowMore onPress={() => setExpandedNotes(prev => ({ ...prev, [targetEvent.id]: !expanded }))} activeOpacity={0.7}>
+                                                        <NotesShowMoreText>{expanded ? t('common.close') : t('history.notesShowMore')}</NotesShowMoreText>
+                                                    </NotesShowMore>
+                                                )}
+                                            </>
+                                        );
+                                    })()}
+                                </NotesBubble>
+                            </NotesContainer>
+                        )}
                         <EventRow>
                             <EventIndicator type="exit" />
                             <EventContent>
@@ -472,6 +565,17 @@ export function HistoryScreen() {
                                         </SummaryDifferenceValue>
                                     </SummaryDifferenceRow>
                                 )}
+
+                                <GenerateReportButton onPress={handleGenerateAndSharePdf} disabled={isGeneratingPdf} activeOpacity={0.7}>
+                                    {isGeneratingPdf ? (
+                                        <ActivityIndicator size="small" color={theme.background.primary} />
+                                    ) : (
+                                        <Ionicons name="document-text" size={16} color="white" />
+                                    )}
+                                    <GenerateReportButtonText>
+                                        {isGeneratingPdf ? t('common.loading') : t('history.generateReport')}
+                                    </GenerateReportButtonText>
+                                </GenerateReportButton>
                             </MonthSummaryCard>
                         </ListHeaderContainer>
                     }

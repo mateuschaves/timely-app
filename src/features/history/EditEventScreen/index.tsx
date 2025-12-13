@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Keyboard } from 'react-native';
+import { Alert, Keyboard, View, TouchableOpacity } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -46,12 +46,16 @@ export function EditEventScreen() {
   const [time, setTime] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [notes, setNotes] = useState<string>('');
 
   useEffect(() => {
     if (event.hour) {
       const eventDate = parseISO(event.hour);
       setDate(format(eventDate, 'yyyy-MM-dd'));
       setTime(format(eventDate, 'HH:mm'));
+    }
+    if (event.notes) {
+      setNotes(event.notes || '');
     }
   }, [event.hour]);
 
@@ -76,13 +80,16 @@ export function EditEventScreen() {
       await updateClockEvent(event.id, {
         hour: hourDate.toISOString(),
         ...(event.photoUrl && { photoUrl: event.photoUrl }),
-        ...(event.notes && { notes: event.notes }),
+        notes: notes?.trim() ? notes.trim() : null,
       });
 
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['clockHistory', 'lastEvent', 'timeClockEntries'] }),
-        queryClient.refetchQueries({ queryKey: ['clockHistory', 'lastEvent', 'timeClockEntries'] })
-      ]);
+      // Invalidar todas as queries do histórico e forçar refetch
+      await queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      await queryClient.refetchQueries({ queryKey: ['clockHistory'] });
+      
+      // Invalidar outras queries relacionadas
+      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
 
       showSuccess(t('history.updateEventSuccess'));
       navigation.goBack();
@@ -167,6 +174,39 @@ export function EditEventScreen() {
             placeholderTextColor={theme.text.tertiary}
             editable={!isSaving && !isDeleting}
           />
+        </InputContainer>
+
+        <InputContainer>
+          <InputLabel>{t('history.notes')}</InputLabel>
+          <View style={{ position: 'relative' }}>
+            <Input
+              value={notes}
+              onChangeText={setNotes}
+              placeholder={t('history.notes')}
+              placeholderTextColor={theme.text.tertiary}
+              editable={!isSaving && !isDeleting}
+              multiline
+              numberOfLines={3}
+              style={{ minHeight: 80, textAlignVertical: 'top', paddingRight: notes?.length ? 48 : 16 }}
+            />
+            {!!notes?.length && (
+              <TouchableOpacity
+                onPress={() => setNotes('')}
+                disabled={isSaving || isDeleting}
+                activeOpacity={0.7}
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: 12,
+                  padding: 4,
+                  borderRadius: 12,
+                  backgroundColor: theme.background.secondary,
+                }}
+              >
+                <Ionicons name="close-circle" size={20} color={theme.text.tertiary} />
+              </TouchableOpacity>
+            )}
+          </View>
         </InputContainer>
 
         <ButtonContainer>

@@ -97,7 +97,13 @@
         "deleteEventError": "Error deleting event. Please try again.",
         "deleteEventSuccess": "Event deleted successfully!",
         "orderIssue": "Events for this day are out of order. Please check the times.",
-        "holiday": "Holiday"
+        "holiday": "Holiday",
+        "notesShowMore": "Show more",
+        "clearNotes": "Remove comment",
+        "generateReport": "Generate Report",
+        "shareReportTitle": "Share PDF Report",
+        "shareNotAvailable": "Sharing is not available on this device",
+        "pdfGenerationError": "Error generating report. Please try again."
     },
     "profile": {
         "title": "Profile",

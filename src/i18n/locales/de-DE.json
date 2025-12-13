@@ -97,7 +97,13 @@
     "deleteEventError": "Fehler beim Löschen des Ereignisses. Bitte versuchen Sie es erneut.",
     "deleteEventSuccess": "Ereignis erfolgreich gelöscht!",
     "orderIssue": "Die Ereignisse dieses Tages sind nicht in der richtigen Reihenfolge. Bitte überprüfen Sie die Zeiten.",
-    "holiday": "Feiertag"
+    "holiday": "Feiertag",
+    "notesShowMore": "Mehr anzeigen",
+    "clearNotes": "Kommentar entfernen",
+    "generateReport": "Bericht generieren",
+    "shareReportTitle": "PDF-Bericht teilen",
+    "shareNotAvailable": "Das Teilen ist auf diesem Gerät nicht verfügbar",
+    "pdfGenerationError": "Fehler beim Erstellen des Berichts. Bitte versuchen Sie es erneut."
   },
   "profile": {
     "title": "Profil",

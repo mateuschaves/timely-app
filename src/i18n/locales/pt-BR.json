@@ -97,7 +97,13 @@
         "deleteEventError": "Erro ao excluir evento. Tente novamente.",
         "deleteEventSuccess": "Evento excluído com sucesso!",
         "orderIssue": "Os eventos deste dia estão fora de ordem. Verifique os horários.",
-        "holiday": "Feriado"
+        "holiday": "Feriado",
+        "notesShowMore": "Ver mais",
+        "clearNotes": "Remover comentário",
+        "generateReport": "Gerar Relatório",
+        "shareReportTitle": "Compartilhar Relatório PDF",
+        "shareNotAvailable": "Compartilhamento não disponível neste dispositivo",
+        "pdfGenerationError": "Erro ao gerar relatório. Tente novamente."
     },
     "profile": {
         "title": "Perfil",
