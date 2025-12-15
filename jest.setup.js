@@ -126,6 +126,11 @@ jest.mock('expo-localization', () => ({
   locale: 'pt-BR',
 }));
 
+jest.mock('expo-sharing', () => ({
+  shareAsync: jest.fn(() => Promise.resolve()),
+  isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+}));
+
 // Mock react-native-safe-area-context globally
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');
