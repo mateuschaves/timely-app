@@ -130,7 +130,7 @@ export function ReportPreviewScreen() {
       const docsUri = FileSystem.documentDirectory || FileSystem.cacheDirectory;
       const targetPath = `${docsUri}${fileName}`;
       await FileSystem.writeAsStringAsync(targetPath, pdfBase64, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: FileSystemLegacy.EncodingType.Base64 as any,
       });
       Alert.alert(t('common.success'), t('history.downloadSuccess'));
     } catch (error: any) {
