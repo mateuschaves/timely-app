@@ -4,13 +4,13 @@ import { WebView } from 'react-native-webview';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import * as FileSystemLegacy from 'expo-file-system/legacy';
-import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { Ionicons } from '@expo/vector-icons';
 import { generateMonthlyPdf } from '@/api/generate-monthly-pdf';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { capitalizeFirstLetter } from '@/utils/string';
+import { fileSystemService } from '@/utils/fileSystem';
 import {
   Container,
   Header,
@@ -65,10 +65,12 @@ export function ReportPreviewScreen() {
         setPdfBase64(response.pdfBase64);
         setFileName(response.fileName || 'report.pdf');
 
-        const cacheUri = `${FileSystemLegacy.cacheDirectory}${response.fileName}`;
-        await FileSystemLegacy.writeAsStringAsync(cacheUri, response.pdfBase64, {
-          encoding: FileSystemLegacy.EncodingType.Base64 as any,
-        });
+        // Use the new FileSystem service to write the PDF to cache
+        const cacheUri = await fileSystemService.writeBase64File(
+          response.fileName,
+          response.pdfBase64
+        );
+        
         if (!isMounted) return;
         setFileUri(cacheUri);
       } catch (error: any) {
@@ -127,11 +129,10 @@ export function ReportPreviewScreen() {
 
     try {
       setIsDownloading(true);
-      const docsUri = FileSystem.documentDirectory || FileSystem.cacheDirectory;
-      const targetPath = `${docsUri}${fileName}`;
-      await FileSystem.writeAsStringAsync(targetPath, pdfBase64, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+      
+      // Use the new FileSystem service to write the PDF to documents
+      await fileSystemService.writeBase64ToDocuments(fileName, pdfBase64);
+      
       Alert.alert(t('common.success'), t('history.downloadSuccess'));
     } catch (error: any) {
       console.error('Erro ao salvar PDF:', error);
