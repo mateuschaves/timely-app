@@ -101,9 +101,16 @@
     "notesShowMore": "Mehr anzeigen",
     "clearNotes": "Kommentar entfernen",
     "generateReport": "Bericht generieren",
+      "previewReport": "PDF Vorschau",
+    "reportPreview": "Berichtsvorschau",
+    "shareReport": "Teilen",
+    "downloadReport": "Herunterladen",
     "shareReportTitle": "PDF-Bericht teilen",
     "shareNotAvailable": "Das Teilen ist auf diesem Gerät nicht verfügbar",
-    "pdfGenerationError": "Fehler beim Erstellen des Berichts. Bitte versuchen Sie es erneut."
+    "pdfGenerationError": "Fehler beim Erstellen des Berichts. Bitte versuchen Sie es erneut.",
+    "previewUnavailable": "Vorschau nicht verfügbar.",
+    "downloadSuccess": "PDF wurde gespeichert.",
+    "downloadError": "Fehler beim Speichern des PDFs."
   },
   "profile": {
     "title": "Profil",

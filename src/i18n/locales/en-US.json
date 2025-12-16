@@ -101,9 +101,16 @@
         "notesShowMore": "Show more",
         "clearNotes": "Remove comment",
         "generateReport": "Generate Report",
+        "previewReport": "Preview PDF",
+        "reportPreview": "Report preview",
+        "shareReport": "Share",
+        "downloadReport": "Download",
         "shareReportTitle": "Share PDF Report",
         "shareNotAvailable": "Sharing is not available on this device",
-        "pdfGenerationError": "Error generating report. Please try again."
+        "pdfGenerationError": "Error generating report. Please try again.",
+        "previewUnavailable": "Preview unavailable.",
+        "downloadSuccess": "PDF saved successfully.",
+        "downloadError": "Error saving PDF."
     },
     "profile": {
         "title": "Profile",

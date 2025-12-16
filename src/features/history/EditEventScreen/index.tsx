@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Keyboard, View, TouchableOpacity } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Modal, Platform, TouchableWithoutFeedback, View, TouchableOpacity } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { updateClockEvent, deleteClockEvent } from '@/api';
 import { ClockHistoryEvent } from '@/api/get-clock-history';
 import { format, parseISO } from 'date-fns';
@@ -18,6 +19,14 @@ import {
   InputContainer,
   InputLabel,
   Input,
+  PickerButton,
+  PickerValue,
+  ModalOverlay,
+  PickerModal,
+  PickerTitle,
+  PickerActions,
+  PickerActionButton,
+  PickerActionText,
   ButtonContainer,
   SaveButton,
   SaveButtonText,
@@ -42,8 +51,9 @@ export function EditEventScreen() {
   const { theme, colorScheme } = useTheme();
   const { event } = route.params;
 
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [notes, setNotes] = useState<string>('');
@@ -51,24 +61,87 @@ export function EditEventScreen() {
   useEffect(() => {
     if (event.hour) {
       const eventDate = parseISO(event.hour);
-      setDate(format(eventDate, 'yyyy-MM-dd'));
-      setTime(format(eventDate, 'HH:mm'));
+      if (!isNaN(eventDate.getTime())) {
+        const normalizedDate = new Date(eventDate);
+        normalizedDate.setSeconds(0, 0);
+        setSelectedDateTime(normalizedDate);
+      }
     }
-    if (event.notes) {
-      setNotes(event.notes || '');
+
+    setNotes(event.notes || '');
+  }, [event]);
+
+  useEffect(() => {
+    if (!selectedDateTime) {
+      const fallbackDate = event.hour ? parseISO(event.hour) : new Date();
+      if (!isNaN(fallbackDate.getTime())) {
+        fallbackDate.setSeconds(0, 0);
+        setSelectedDateTime(fallbackDate);
+      }
     }
-  }, [event.hour]);
+  }, [event.hour, selectedDateTime]);
+
+  const mergeDateAndTime = (pickedDate: Date, baseDate: Date, type: 'date' | 'time') => {
+    const nextDate = new Date(baseDate);
+
+    if (type === 'date') {
+      nextDate.setFullYear(pickedDate.getFullYear(), pickedDate.getMonth(), pickedDate.getDate());
+    } else {
+      nextDate.setHours(pickedDate.getHours(), pickedDate.getMinutes(), 0, 0);
+    }
+
+    nextDate.setSeconds(0, 0);
+    return nextDate;
+  };
+
+  const handleDateChange = (eventChange: DateTimePickerEvent, pickedDate?: Date) => {
+    if (Platform.OS !== 'ios') {
+      setShowDatePicker(false);
+    }
+
+    if (eventChange.type === 'dismissed' || !pickedDate) return;
+
+    setSelectedDateTime(current => mergeDateAndTime(pickedDate, current || new Date(), 'date'));
+  };
+
+  const handleTimeChange = (eventChange: DateTimePickerEvent, pickedDate?: Date) => {
+    if (Platform.OS !== 'ios') {
+      setShowTimePicker(false);
+    }
+
+    if (eventChange.type === 'dismissed' || !pickedDate) return;
+
+    setSelectedDateTime(current => mergeDateAndTime(pickedDate, current || new Date(), 'time'));
+  };
+
+  const formattedDate = selectedDateTime ? format(selectedDateTime, 'yyyy-MM-dd') : '';
+  const formattedTime = selectedDateTime ? format(selectedDateTime, 'HH:mm') : '';
+
+  const openDatePicker = () => {
+    if (isSaving || isDeleting) return;
+    Keyboard.dismiss();
+    setShowDatePicker(true);
+  };
+
+  const openTimePicker = () => {
+    if (isSaving || isDeleting) return;
+    Keyboard.dismiss();
+    setShowTimePicker(true);
+  };
+
+  const closePickers = () => {
+    setShowDatePicker(false);
+    setShowTimePicker(false);
+  };
 
   const handleSave = async () => {
-    if (!date.trim() || !time.trim()) {
+    if (!selectedDateTime) {
       Alert.alert(t('common.error'), t('history.hourRequired'));
       return;
     }
 
     try {
-      // Combina data e hora
-      const dateTimeString = `${date}T${time}:00`;
-      const hourDate = new Date(dateTimeString);
+      const hourDate = new Date(selectedDateTime);
       if (isNaN(hourDate.getTime())) {
         Alert.alert(t('common.error'), t('history.invalidHour'));
         return;
@@ -153,27 +226,29 @@ export function EditEventScreen() {
         </BackButton>
         <HeaderTitle>{t('history.editEvent')}</HeaderTitle>
       </Header>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 0}
+      >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <Content>
         <InputContainer>
           <InputLabel>{t('history.date')}</InputLabel>
-          <Input
-            value={date}
-            onChangeText={setDate}
-            placeholder="2024-07-16"
-            placeholderTextColor={theme.text.tertiary}
-            editable={!isSaving && !isDeleting}
-          />
+          <PickerButton onPress={openDatePicker} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+            <PickerValue placeholder={!formattedDate}>
+              {formattedDate || 'YYYY-MM-DD'}
+            </PickerValue>
+          </PickerButton>
         </InputContainer>
 
         <InputContainer>
           <InputLabel>{t('history.hour')}</InputLabel>
-          <Input
-            value={time}
-            onChangeText={setTime}
-            placeholder="08:00"
-            placeholderTextColor={theme.text.tertiary}
-            editable={!isSaving && !isDeleting}
-          />
+          <PickerButton onPress={openTimePicker} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+            <PickerValue placeholder={!formattedTime}>
+              {formattedTime || 'HH:mm'}
+            </PickerValue>
+          </PickerButton>
         </InputContainer>
 
         <InputContainer>
@@ -223,6 +298,65 @@ export function EditEventScreen() {
           </DeleteButton>
         </ButtonContainer>
       </Content>
+      </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+
+      <Modal
+        visible={showDatePicker}
+        transparent
+        animationType="fade"
+        onRequestClose={closePickers}
+      >
+        <ModalOverlay>
+          <PickerModal>
+            <PickerTitle>{t('history.date')}</PickerTitle>
+            <DateTimePicker
+              value={selectedDateTime || new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={handleDateChange}
+              themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
+              textColor={colorScheme === 'dark' ? '#FFFFFF' : '#000000'}
+            />
+            {Platform.OS === 'ios' && (
+              <PickerActions>
+                <PickerActionButton onPress={closePickers} activeOpacity={0.7}>
+                  <PickerActionText>{t('common.done')}</PickerActionText>
+                </PickerActionButton>
+              </PickerActions>
+            )}
+          </PickerModal>
+        </ModalOverlay>
+      </Modal>
+
+      <Modal
+        visible={showTimePicker}
+        transparent
+        animationType="fade"
+        onRequestClose={closePickers}
+      >
+        <ModalOverlay>
+          <PickerModal>
+            <PickerTitle>{t('history.hour')}</PickerTitle>
+            <DateTimePicker
+              value={selectedDateTime || new Date()}
+              mode="time"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              is24Hour
+              onChange={handleTimeChange}
+              themeVariant={colorScheme === 'dark' ? 'dark' : 'light'}
+              textColor={colorScheme === 'dark' ? '#FFFFFF' : '#000000'}
+            />
+            {Platform.OS === 'ios' && (
+              <PickerActions>
+                <PickerActionButton onPress={closePickers} activeOpacity={0.7}>
+                  <PickerActionText>{t('common.done')}</PickerActionText>
+                </PickerActionButton>
+              </PickerActions>
+            )}
+          </PickerModal>
+        </ModalOverlay>
+      </Modal>
     </Container>
   );
 }

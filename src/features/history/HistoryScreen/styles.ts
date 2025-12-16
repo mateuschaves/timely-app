@@ -611,7 +611,7 @@ export const HolidayBadgeText = styled.Text`
   color: ${({ theme }) => theme.status.warning};
 `;
 
-export const GenerateReportButton = styled.TouchableOpacity`
+export const GenerateReportButton = styled.TouchableOpacity<{ disabled?: boolean; theme?: any }>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -620,10 +620,24 @@ export const GenerateReportButton = styled.TouchableOpacity`
   padding: ${spacing.md}px ${spacing.lg}px;
   border-radius: ${borderRadius.md}px;
   margin-top: ${spacing.md}px;
+  min-height: 48px;
+  opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
-export const GenerateReportButtonText = styled.Text`
+export const GenerateReportButtonText = styled.Text<{ hidden?: boolean; theme?: any }>`
   font-size: ${typography.sizes.sm}px;
   font-weight: ${typography.weights.semibold};
   color: ${(props: any) => props.theme.background.primary};
+  opacity: ${(props: { hidden?: boolean }) => (props.hidden ? 0 : 1)};
+`;
+
+export const GenerateReportSecondaryButton = styled(GenerateReportButton)`
+  background-color: transparent;
+  border-width: 1px;
+  border-color: ${(props: any) => props.theme.primary};
+  margin-top: ${spacing.xs}px;
+`;
+
+export const GenerateReportSecondaryButtonText = styled(GenerateReportButtonText)`
+  color: ${(props: any) => props.theme.primary};
 `;

@@ -101,9 +101,16 @@
     "notesShowMore": "Afficher plus",
     "clearNotes": "Supprimer le commentaire",
     "generateReport": "Générer le rapport",
+    "previewReport": "Prévisualiser le PDF",
+    "reportPreview": "Aperçu du rapport",
+    "shareReport": "Partager",
+    "downloadReport": "Télécharger",
     "shareReportTitle": "Partager le rapport PDF",
     "shareNotAvailable": "Le partage n'est pas disponible sur cet appareil",
-    "pdfGenerationError": "Erreur lors de la génération du rapport. Veuillez réessayer."
+    "pdfGenerationError": "Erreur lors de la génération du rapport. Veuillez réessayer.",
+    "previewUnavailable": "Aperçu non disponible.",
+    "downloadSuccess": "PDF enregistré avec succès.",
+    "downloadError": "Erreur lors de l'enregistrement du PDF."
   },
   "profile": {
     "title": "Profil",
