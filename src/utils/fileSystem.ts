@@ -1,5 +1,4 @@
 import { Paths, File } from 'expo-file-system';
-import { EncodingType } from 'expo-file-system/build/ExpoFileSystem.types';
 
 export interface WriteFileOptions {
   encoding?: 'utf8' | 'base64';
