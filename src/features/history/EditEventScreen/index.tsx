@@ -69,11 +69,11 @@ export function EditEventScreen() {
     }
 
     setNotes(event.notes || '');
-  }, [event]);
+  }, [event.hour, event.notes]);
 
   useEffect(() => {
-    if (!selectedDateTime) {
-      const fallbackDate = event.hour ? parseISO(event.hour) : new Date();
+    if (!selectedDateTime && event.hour) {
+      const fallbackDate = parseISO(event.hour);
       if (!isNaN(fallbackDate.getTime())) {
         fallbackDate.setSeconds(0, 0);
         setSelectedDateTime(fallbackDate);
