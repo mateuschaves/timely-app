@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
-import { EditEventScreen } from '@/features/history';
+import { EditEventScreen, ReportPreviewScreen } from '@/features/history';
 
 export type AppStackParamList = {
   Main: undefined;
@@ -13,6 +13,7 @@ export type AppStackParamList = {
   PrivacyAndSecurity: undefined;
   DeleteAccount: undefined;
   EditEvent: { event: any };
+  ReportPreview: { startDate: string; endDate: string; monthLabel?: string };
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -76,6 +77,14 @@ export function AppNavigator() {
       <Stack.Screen
         name="EditEvent"
         component={EditEventScreen}
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="ReportPreview"
+        component={ReportPreviewScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',

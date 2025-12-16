@@ -34,7 +34,8 @@
         {
           "username": "mateuschaves"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "updates": {
       "enabled": true,

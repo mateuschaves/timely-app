@@ -101,9 +101,16 @@
         "notesShowMore": "Ver mais",
         "clearNotes": "Remover comentário",
         "generateReport": "Gerar Relatório",
+        "previewReport": "Pré-visualizar PDF",
+        "reportPreview": "Pré-visualizar relatório",
+        "shareReport": "Compartilhar",
+        "downloadReport": "Baixar",
         "shareReportTitle": "Compartilhar Relatório PDF",
         "shareNotAvailable": "Compartilhamento não disponível neste dispositivo",
-        "pdfGenerationError": "Erro ao gerar relatório. Tente novamente."
+        "pdfGenerationError": "Erro ao gerar relatório. Tente novamente.",
+        "previewUnavailable": "Prévia indisponível.",
+        "downloadSuccess": "PDF salvo com sucesso.",
+        "downloadError": "Erro ao salvar PDF."
     },
     "profile": {
         "title": "Perfil",

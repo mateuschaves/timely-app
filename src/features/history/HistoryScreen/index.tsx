@@ -1,15 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { ListRenderItem, Alert, ActivityIndicator } from 'react-native';
+import { ListRenderItem } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
-import * as FileSystemLegacy from 'expo-file-system/legacy';
-import * as Sharing from 'expo-sharing';
 import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
-import { generateMonthlyPdf } from '@/api/generate-monthly-pdf';
 import { ClockAction } from '@/api/types';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -138,7 +135,6 @@ export function HistoryScreen() {
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
     const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
-    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
     const { startDate, endDate, month } = useMemo(() => getMonthRange(currentMonth), [currentMonth]);
 
@@ -199,37 +195,12 @@ export function HistoryScreen() {
         return nextMonthStart <= todayStart;
     }, [currentMonth]);
 
-    const handleGenerateAndSharePdf = async () => {
-        try {
-            setIsGeneratingPdf(true);
-            const { startDate, endDate } = getMonthRange(currentMonth);
-            const response = await generateMonthlyPdf(startDate, endDate);
-
-            // Converter base64 para arquivo local
-            const fileUri = `${FileSystemLegacy.cacheDirectory}${response.fileName}`;
-            await FileSystemLegacy.writeAsStringAsync(fileUri, response.pdfBase64, {
-                encoding: FileSystemLegacy.EncodingType.Base64 as any,
-            });
-
-            // Compartilhar o arquivo
-            if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri, {
-                    mimeType: 'application/pdf',
-                    dialogTitle: t('history.shareReportTitle'),
-                });
-            } else {
-                Alert.alert(t('common.error'), t('history.shareNotAvailable'));
-            }
-        } catch (error: any) {
-            console.error('Erro ao gerar PDF:', error);
-            const errorMessage =
-                error.response?.data?.message ||
-                error.message ||
-                t('history.pdfGenerationError');
-            Alert.alert(t('common.error'), errorMessage);
-        } finally {
-            setIsGeneratingPdf(false);
-        }
+    const handleNavigateToReportPreview = () => {
+        navigation.navigate('ReportPreview', {
+            startDate,
+            endDate,
+            monthLabel: currentMonthFormatted,
+        });
     };
 
     // Função para formatação monetária
@@ -566,14 +537,10 @@ export function HistoryScreen() {
                                     </SummaryDifferenceRow>
                                 )}
 
-                                <GenerateReportButton onPress={handleGenerateAndSharePdf} disabled={isGeneratingPdf} activeOpacity={0.7}>
-                                    {isGeneratingPdf ? (
-                                        <ActivityIndicator size="small" color={theme.background.primary} />
-                                    ) : (
-                                        <Ionicons name="document-text" size={16} color="white" />
-                                    )}
+                                <GenerateReportButton onPress={handleNavigateToReportPreview} activeOpacity={0.7}>
+                                    <Ionicons name="document-text" size={16} color={theme.text.inverse} />
                                     <GenerateReportButtonText>
-                                        {isGeneratingPdf ? t('common.loading') : t('history.generateReport')}
+                                        {t('history.generateReport')}
                                     </GenerateReportButtonText>
                                 </GenerateReportButton>
                             </MonthSummaryCard>
