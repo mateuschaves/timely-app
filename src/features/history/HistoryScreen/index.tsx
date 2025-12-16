@@ -403,9 +403,11 @@ export function HistoryScreen() {
                         )}
                     </DayDateContainer>
                     <DayHeaderRight>
-                        <DayTotalHoursBadge>
-                            <DayTotalHours>{item.totalWorkedTime || '00:00'}</DayTotalHours>
-                        </DayTotalHoursBadge>
+                        {!isIncomplete && (
+                            <DayTotalHoursBadge>
+                                <DayTotalHours>{item.totalWorkedTime || '00:00'}</DayTotalHours>
+                            </DayTotalHoursBadge>
+                        )}
                         {item.status && item.hoursDifferenceFormatted && (
                             <DayStatusBadge status={item.status}>
                                 <DayStatusText status={item.status}>
