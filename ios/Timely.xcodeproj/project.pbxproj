@@ -10,6 +10,9 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		49A400A85F7EA3CBC677FB3F /* libPods-Timely.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6E4ACDDC41185691A865AB0 /* libPods-Timely.a */; };
+		8882E3E12F0E6F690053A8F0 /* ClockIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */; };
+		8882E3E22F0E6F690053A8F1 /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E32F0E6F0D0053A8F1 /* TokenStorage.swift */; };
+		8882E3E42F0E6F690053A8F2 /* TokenStorageBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E52F0E6F0D0053A8F2 /* TokenStorageBridge.m */; };
 		A77B10B109946BAE10E4BF85 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 49C9C8B3F54DAE58BDAF1D40 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
@@ -20,8 +23,11 @@
 		13B07F961A680F5B00A75B9A /* Timely.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Timely.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Timely/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Timely/Info.plist; sourceTree = "<group>"; };
-		49C9C8B3F54DAE58BDAF1D40 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Timely/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		49C9C8B3F54DAE58BDAF1D40 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Timely/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		4EA6C2B1E11CCE4E7B60E78D /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Timely/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClockIntent.swift; path = Timely/ClockIntent.swift; sourceTree = "<group>"; };
+		8882E3E32F0E6F0D0053A8F1 /* TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TokenStorage.swift; path = Timely/TokenStorage.swift; sourceTree = "<group>"; };
+		8882E3E52F0E6F0D0053A8F2 /* TokenStorageBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TokenStorageBridge.m; path = Timely/TokenStorageBridge.m; sourceTree = "<group>"; };
 		A570BEDE4352C9E043E5E0AE /* Pods-Timely.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timely.release.xcconfig"; path = "Target Support Files/Pods-Timely/Pods-Timely.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Timely/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B5992E9E8A3077E40F4377C7 /* Pods-Timely.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timely.debug.xcconfig"; path = "Target Support Files/Pods-Timely/Pods-Timely.debug.xcconfig"; sourceTree = "<group>"; };
@@ -30,6 +36,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Timely/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Timely-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Timely-Bridging-Header.h"; path = "Timely/Timely-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748452D0722820044C1D9 /* Timely.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Timely.entitlements; path = Timely/Timely.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +56,9 @@
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				F11748442D0722820044C1D9 /* Timely-Bridging-Header.h */,
+				F11748452D0722820044C1D9 /* Timely.entitlements */,
+				8882E3E32F0E6F0D0053A8F1 /* TokenStorage.swift */,
+				8882E3E52F0E6F0D0053A8F2 /* TokenStorageBridge.m */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -61,6 +71,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				B6E4ACDDC41185691A865AB0 /* libPods-Timely.a */,
 			);
@@ -73,7 +84,6 @@
 				B5992E9E8A3077E40F4377C7 /* Pods-Timely.debug.xcconfig */,
 				A570BEDE4352C9E043E5E0AE /* Pods-Timely.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -275,6 +285,7 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/Timely/Timely.entitlements",
 				"$(SRCROOT)/Pods/Target Support Files/Pods-Timely/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
@@ -333,6 +344,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
+				8882E3E12F0E6F690053A8F0 /* ClockIntent.swift in Sources */,
+				8882E3E22F0E6F690053A8F1 /* TokenStorage.swift in Sources */,
+				8882E3E42F0E6F690053A8F2 /* TokenStorageBridge.m in Sources */,
 				F9840FA546CDE06F2DBFBE76 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -346,7 +360,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = Timely/Timely.entitlements;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 4KWUX6ULKJ;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -359,18 +375,23 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.Timely;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wazowsky.timelyapp;
 				PRODUCT_NAME = Timely;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Timely/Timely-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -381,7 +402,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION = YES;
+				CODE_SIGN_ENTITLEMENTS = Timely/Timely.entitlements;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 4KWUX6ULKJ;
 				INFOPLIST_FILE = Timely/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -389,17 +412,22 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = org.name.Timely;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wazowsky.timelyapp;
 				PRODUCT_NAME = Timely;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Timely/Timely-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

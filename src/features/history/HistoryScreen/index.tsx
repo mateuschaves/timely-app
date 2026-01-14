@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { ListRenderItem } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
@@ -132,6 +132,7 @@ export function HistoryScreen() {
     const { t, i18n } = useTranslation();
     const navigation = useNavigation<any>();
     const { theme } = useTheme();
+    const queryClient = useQueryClient();
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
     const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
@@ -148,6 +149,16 @@ export function HistoryScreen() {
         queryFn: () => getClockHistory({ startDate, endDate, timezone: deviceTimezone }),
         refetchOnWindowFocus: true,
     });
+
+    // Atualiza os dados quando a tela entrar em foco
+    useFocusEffect(
+        React.useCallback(() => {
+            // Invalida a query para forçar um refetch quando a tela entrar em foco
+            queryClient.invalidateQueries({
+                queryKey: ['clockHistory', startDate, endDate, deviceTimezone],
+            });
+        }, [queryClient, startDate, endDate, deviceTimezone])
+    );
 
     const dateLocale = getDateLocale(i18n.language);
 
