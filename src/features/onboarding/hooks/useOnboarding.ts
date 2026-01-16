@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '@/config/storage';
 
+// Increment this version to force onboarding to show again for all users
+// This allows showing updated onboarding flows to existing users
 const CURRENT_ONBOARDING_VERSION = '1.0.0';
 
 export interface OnboardingState {
