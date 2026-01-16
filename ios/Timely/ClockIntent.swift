@@ -15,6 +15,10 @@ struct ClockIntent: AppIntent {
     }
     
     func perform() async throws -> some ProvidesDialog {
+        // Captura a hora IMEDIATAMENTE quando o intent é chamado, antes de qualquer confirmação do usuário
+        let invocationTime = Date()
+        print("⏰ Hora de invocação capturada: \(invocationTime)")
+        
         // Recupera o token do UserDefaults (onde AsyncStorage armazena no iOS)
         // Debug: lista todas as chaves do UserDefaults para identificar o formato
         #if DEBUG
@@ -38,9 +42,10 @@ struct ClockIntent: AppIntent {
         }
         
         // Bate o ponto - o backend determina automaticamente se é entrada ou saída
+        // Passa o tempo de invocação capturado no início do método
         print("🚀 Iniciando chamada para bater ponto...")
         do {
-            let response = try await ClockIntentHelper.clock(token: token)
+            let response = try await ClockIntentHelper.clock(token: token, invocationTime: invocationTime)
             print("✅ Resposta da API recebida: \(response)")
             
             // Extrai a ação (clock-in ou clock-out) da resposta
@@ -134,12 +139,14 @@ struct ClockIntentHelper {
     
     // Faz a chamada para bater o ponto
     // O backend determina automaticamente se é entrada ou saída baseado no último evento
-    static func clock(token: String) async throws -> [String: Any] {
+    // invocationTime: o momento em que o AppIntent foi chamado (antes da confirmação do usuário)
+    static func clock(token: String, invocationTime: Date) async throws -> [String: Any] {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
-        let now = formatter.string(from: Date())
+        let now = formatter.string(from: invocationTime)
         
-        print("📅 Hora formatada: \(now)")
+        print("📅 Hora de invocação formatada: \(now)")
+        print("📅 Diferença até agora: \(Date().timeIntervalSince(invocationTime)) segundos")
         
         guard let url = URL(string: "\(apiBaseURL)/clockin") else {
             print("❌ URL inválida: \(apiBaseURL)/clockin")
