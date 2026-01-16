@@ -138,21 +138,21 @@ export function HomeScreen() {
     }, [queryClient])
   );
 
-  // Gerenciar Live Activity baseado no estado atual do usuário (clocked in ou não)
+  // Manage Live Activity based on current user state (clocked in or not)
   useEffect(() => {
     const manageLiveActivity = async () => {
       if (Platform.OS !== 'ios' || isLoadingLastEvent) return;
 
-      // Se o último evento foi um clock-in (nextAction é clock-out), significa que está trabalhando
+      // If the last event was a clock-in (nextAction is clock-out), it means user is working
       if (lastEvent && nextAction === ClockAction.CLOCK_OUT) {
-        // Usuário está trabalhando - garantir que Live Activity está ativa
+        // User is working - ensure Live Activity is active
         const entryTime = new Date(lastEvent.hour);
         await startWorkSessionActivity(entryTime);
-        console.log('Live Activity restaurada/iniciada para sessão ativa');
+        console.log('Live Activity restored/started for active session');
       } else {
-        // Usuário não está trabalhando - garantir que Live Activity está inativa
+        // User is not working - ensure Live Activity is inactive
         await stopWorkSessionActivity();
-        console.log('Live Activity parada - sem sessão ativa');
+        console.log('Live Activity stopped - no active session');
       }
     };
 
@@ -249,17 +249,17 @@ export function HomeScreen() {
 
       console.log('Clock realizado com sucesso');
       
-      // Gerenciar Live Activity baseado na ação
+      // Manage Live Activity based on action
       if (Platform.OS === 'ios') {
         if (nextAction === ClockAction.CLOCK_IN) {
-          // Iniciou o trabalho - iniciar Live Activity
+          // Started work - start Live Activity
           const entryTime = new Date(now);
           await startWorkSessionActivity(entryTime);
-          console.log('Live Activity iniciada para entrada:', now);
+          console.log('Live Activity started for entry:', now);
         } else if (nextAction === ClockAction.CLOCK_OUT) {
-          // Saiu do trabalho - parar Live Activity
+          // Exited work - stop Live Activity
           await stopWorkSessionActivity();
-          console.log('Live Activity encerrada para saída');
+          console.log('Live Activity ended for exit');
         }
       }
       
