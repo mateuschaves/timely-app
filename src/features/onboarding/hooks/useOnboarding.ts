@@ -25,15 +25,14 @@ export function useOnboarding() {
 
   const checkOnboardingStatus = async () => {
     try {
-      const [onboardingCompleted, onboardingVersion, workSettings] = await Promise.all([
+      const [onboardingCompleted, onboardingVersion] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED),
         AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_VERSION),
-        AsyncStorage.getItem(STORAGE_KEYS.WORK_SETTINGS),
       ]);
 
-      // User is existing if they have work settings saved (meaning they used the app before)
-      // New users won't have work settings yet
-      const isExistingUser = !!workSettings;
+      // User is existing if they have completed onboarding before
+      // This flag determines which intro screen copy to show
+      const isExistingUser = onboardingCompleted === 'true';
 
       // Check if onboarding needs to be shown
       const shouldShowOnboarding = 

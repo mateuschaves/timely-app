@@ -26,9 +26,11 @@ The onboarding feature provides a contextual introduction to the app for both ne
 
 ### User Detection
 
-The system determines if a user is new or existing by checking for work settings:
-- **New users**: No work settings exist in storage
-- **Existing users**: Work settings exist (they've used the app before)
+The system determines if a user is new or existing by checking the onboarding completion flag:
+- **New users**: `onboardingCompleted` flag doesn't exist or is false (never completed onboarding)
+- **Existing users**: `onboardingCompleted` flag is true (completed onboarding before)
+
+This approach ensures that when onboarding version changes, existing users still see the "existing user" intro flow, while truly new users see the "new user" flow.
 
 ## Usage
 

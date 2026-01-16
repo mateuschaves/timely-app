@@ -30,25 +30,7 @@ describe('useOnboarding', () => {
     expect(result.current.isOnboardingCompleted).toBe(false);
   });
 
-  it('should mark user as existing when work settings exist', async () => {
-    (AsyncStorage.getItem as jest.Mock).mockImplementation((key) => {
-      if (key === STORAGE_KEYS.WORK_SETTINGS) {
-        return Promise.resolve(JSON.stringify({ someSettings: true }));
-      }
-      return Promise.resolve(null);
-    });
-
-    const { result } = renderHook(() => useOnboarding());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.isExistingUser).toBe(true);
-    expect(result.current.isOnboardingCompleted).toBe(false);
-  });
-
-  it('should mark onboarding as completed when flag is set', async () => {
+  it('should mark user as existing when onboarding was completed before', async () => {
     (AsyncStorage.getItem as jest.Mock).mockImplementation((key) => {
       if (key === STORAGE_KEYS.ONBOARDING_COMPLETED) {
         return Promise.resolve('true');
@@ -65,7 +47,29 @@ describe('useOnboarding', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
+    expect(result.current.isExistingUser).toBe(true);
     expect(result.current.isOnboardingCompleted).toBe(true);
+  });
+
+  it('should mark onboarding as incomplete when version changed for existing user', async () => {
+    (AsyncStorage.getItem as jest.Mock).mockImplementation((key) => {
+      if (key === STORAGE_KEYS.ONBOARDING_COMPLETED) {
+        return Promise.resolve('true');
+      }
+      if (key === STORAGE_KEYS.ONBOARDING_VERSION) {
+        return Promise.resolve('0.9.0'); // Old version
+      }
+      return Promise.resolve(null);
+    });
+
+    const { result } = renderHook(() => useOnboarding());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.isExistingUser).toBe(true);
+    expect(result.current.isOnboardingCompleted).toBe(false);
   });
 
   it('should complete onboarding and set storage keys', async () => {
