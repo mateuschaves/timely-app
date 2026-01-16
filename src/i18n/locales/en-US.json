@@ -213,5 +213,38 @@
         "lunchBody": "Have a good lunch!",
         "exitTitle": "Time to clock out!",
         "exitBody": "Don't forget to record your exit."
+    },
+    "onboarding": {
+        "intro": {
+            "existing": {
+                "title": "We want to understand your routine better",
+                "body": "We're evolving timely to offer automations better suited to your daily life.\nA few quick questions help us personalize your experience.",
+                "primaryCta": "Continue",
+                "secondaryCta": "Do it later"
+            },
+            "new": {
+                "title": "Set up timely for your routine",
+                "body": "Answer a few quick questions to configure automations and reports.",
+                "cta": "Get Started"
+            }
+        },
+        "workModel": {
+            "title": "How do you work?",
+            "subtitle": "Choose the model that best describes your routine",
+            "office": "On-site",
+            "officeDescription": "Work at the office or fixed location",
+            "hybrid": "Hybrid",
+            "hybridDescription": "Some days on-site, others remote",
+            "remote": "Remote",
+            "remoteDescription": "Work from home or anywhere",
+            "flexible": "Flexible",
+            "flexibleDescription": "Hours and locations vary frequently",
+            "continue": "Continue"
+        },
+        "skip": "Skip",
+        "skipConfirmTitle": "Skip setup?",
+        "skipConfirmMessage": "You can configure this later in profile settings.",
+        "skipConfirmButton": "Yes, skip",
+        "cancelSkip": "Cancel"
     }
 }

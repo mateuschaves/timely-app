@@ -213,5 +213,38 @@
         "lunchBody": "Tenha um bom almoço!",
         "exitTitle": "Hora de sair!",
         "exitBody": "Não se esqueça de registrar sua saída."
+    },
+    "onboarding": {
+        "intro": {
+            "existing": {
+                "title": "Queremos conhecer melhor sua rotina",
+                "body": "Estamos evoluindo o timely para oferecer automações mais adequadas ao seu dia a dia.\nAlgumas perguntas rápidas nos ajudam a personalizar sua experiência.",
+                "primaryCta": "Continuar",
+                "secondaryCta": "Fazer depois"
+            },
+            "new": {
+                "title": "Configure o timely para sua rotina",
+                "body": "Responda algumas perguntas rápidas para configurar automações e relatórios.",
+                "cta": "Começar"
+            }
+        },
+        "workModel": {
+            "title": "Como você trabalha?",
+            "subtitle": "Escolha o modelo que melhor descreve sua rotina",
+            "office": "Presencial",
+            "officeDescription": "Trabalho no escritório ou local fixo",
+            "hybrid": "Híbrido",
+            "hybridDescription": "Alguns dias presencial, outros remoto",
+            "remote": "Remoto",
+            "remoteDescription": "Trabalho de casa ou qualquer lugar",
+            "flexible": "Flexível",
+            "flexibleDescription": "Horários e locais variam frequentemente",
+            "continue": "Continuar"
+        },
+        "skip": "Pular",
+        "skipConfirmTitle": "Pular configuração?",
+        "skipConfirmMessage": "Você pode configurar isso depois nas configurações do perfil.",
+        "skipConfirmButton": "Sim, pular",
+        "cancelSkip": "Cancelar"
     }
 }
