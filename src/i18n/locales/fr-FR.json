@@ -68,7 +68,12 @@
     "lastExit": "Dernière sortie",
     "workSettingsNotConfiguredHint": "Configurez vos heures de travail pour des rapports plus complets",
     "locationPermissionRequired": "Autorisez l'accès à la localisation pour enregistrer le pointage avec précision",
-    "hourlyRateNotConfigured": "Configurez votre taux horaire pour des rapports plus complets"
+    "hourlyRateNotConfigured": "Configurez votre taux horaire pour des rapports plus complets",
+    "liveActivity": {
+      "workingTitle": "En cours",
+      "entryTime": "Heure d'entrée",
+      "elapsedTime": "Temps écoulé"
+    }
   },
   "history": {
     "title": "Historique des pointages",

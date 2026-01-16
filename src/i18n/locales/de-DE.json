@@ -68,7 +68,12 @@
     "lastExit": "Letzter Ausstempeln",
     "workSettingsNotConfiguredHint": "Konfigurieren Sie Ihre Arbeitszeiten für vollständigere Berichte",
     "locationPermissionRequired": "Erlauben Sie den Zugriff auf den Standort, um die Zeiterfassung genau zu registrieren",
-    "hourlyRateNotConfigured": "Konfigurieren Sie Ihren Stundensatz für vollständigere Berichte"
+    "hourlyRateNotConfigured": "Konfigurieren Sie Ihren Stundensatz für vollständigere Berichte",
+    "liveActivity": {
+      "workingTitle": "Arbeitet",
+      "entryTime": "Einstempeln",
+      "elapsedTime": "Verstrichene Zeit"
+    }
   },
   "history": {
     "title": "Zeiterfassungsverlauf",
