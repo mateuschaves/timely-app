@@ -68,7 +68,12 @@
         "lastExit": "Last exit",
         "workSettingsNotConfiguredHint": "Configure your work hours for more complete reports",
         "locationPermissionRequired": "Allow location access to register clock with accuracy",
-        "hourlyRateNotConfigured": "Configure your hourly rate for more complete reports"
+        "hourlyRateNotConfigured": "Configure your hourly rate for more complete reports",
+        "liveActivity": {
+            "workingTitle": "Working",
+            "entryTime": "Entry time",
+            "elapsedTime": "Elapsed time"
+        }
     },
     "history": {
         "title": "Time Clock History",
