@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useOnboarding } from '../hooks/useOnboarding';
+import { WorkModel } from '../types';
 import {
   Container,
   Header,
@@ -18,8 +19,6 @@ import {
   ContinueButton,
   ContinueButtonText,
 } from './styles';
-
-type WorkModel = 'office' | 'hybrid' | 'remote' | 'flexible';
 
 interface WorkModelOption {
   id: WorkModel;
