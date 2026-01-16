@@ -2,12 +2,12 @@
 
 ## Overview
 
-The onboarding feature provides a contextual introduction to the app for both new and existing users. It supports multiple languages and can be versioned to show updated onboarding flows when needed.
+The onboarding feature provides an introduction to the app for all users. It supports multiple languages and can be versioned to show updated onboarding flows when needed.
 
 ## Features
 
-- **Different flows for new vs existing users**: New users see a simplified intro, while existing users see an explanation of new features
-- **Skippable**: Users can skip onboarding at any time (especially existing users)
+- **Unified onboarding flow**: Same intro message for both new and existing users
+- **Skippable**: All users can skip onboarding at any time with "Fazer depois" option
 - **Versioned**: Onboarding can be shown again to all users by incrementing the version number
 - **Internationalized**: All strings support pt-BR, en-US, fr-FR, and de-DE
 - **Non-blocking**: Users can access the app without completing onboarding
@@ -21,16 +21,17 @@ The onboarding feature provides a contextual introduction to the app for both ne
 
 ### Screens
 
-1. **IntroScreen**: Initial screen with different copy for new/existing users
+1. **IntroScreen**: Initial screen with unified message and skip option for everyone
 2. **WorkModelSelectionScreen**: Allows users to select their work model
 
 ### User Detection
 
-The system determines if a user is new or existing by checking the onboarding completion flag:
-- **New users**: `onboardingCompleted` flag doesn't exist or is false (never completed onboarding)
-- **Existing users**: `onboardingCompleted` flag is true (completed onboarding before)
+The system tracks onboarding completion using the `onboardingCompleted` flag:
+- When `onboardingCompleted` doesn't exist or is false: onboarding is shown
+- When `onboardingCompleted` is true and version matches: onboarding is skipped
+- When version changes: onboarding is shown again regardless of previous completion
 
-This approach ensures that when onboarding version changes, existing users still see the "existing user" intro flow, while truly new users see the "new user" flow.
+All users see the same intro message and have the option to skip.
 
 ## Usage
 

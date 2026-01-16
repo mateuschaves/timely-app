@@ -24,45 +24,30 @@ type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Intro
 export function IntroScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const { isExistingUser, skipOnboarding } = useOnboarding();
+  const { skipOnboarding } = useOnboarding();
 
   const handleContinue = () => {
     navigation.navigate('WorkModelSelection');
   };
 
   const handleSkip = () => {
-    if (isExistingUser) {
-      Alert.alert(
-        t('onboarding.skipConfirmTitle'),
-        t('onboarding.skipConfirmMessage'),
-        [
-          {
-            text: t('onboarding.cancelSkip'),
-            style: 'cancel',
+    Alert.alert(
+      t('onboarding.skipConfirmTitle'),
+      t('onboarding.skipConfirmMessage'),
+      [
+        {
+          text: t('onboarding.cancelSkip'),
+          style: 'cancel',
+        },
+        {
+          text: t('onboarding.skipConfirmButton'),
+          onPress: async () => {
+            await skipOnboarding();
           },
-          {
-            text: t('onboarding.skipConfirmButton'),
-            onPress: async () => {
-              await skipOnboarding();
-            },
-          },
-        ]
-      );
-    }
+        },
+      ]
+    );
   };
-
-  const translations = isExistingUser
-    ? {
-        title: t('onboarding.intro.existing.title'),
-        body: t('onboarding.intro.existing.body'),
-        primaryCta: t('onboarding.intro.existing.primaryCta'),
-        secondaryCta: t('onboarding.intro.existing.secondaryCta'),
-      }
-    : {
-        title: t('onboarding.intro.new.title'),
-        body: t('onboarding.intro.new.body'),
-        primaryCta: t('onboarding.intro.new.cta'),
-      };
 
   return (
     <Container>
@@ -71,19 +56,17 @@ export function IntroScreen() {
           <Icon>⏰</Icon>
         </IconContainer>
 
-        <Title>{translations.title}</Title>
-        <Body>{translations.body}</Body>
+        <Title>{t('onboarding.intro.title')}</Title>
+        <Body>{t('onboarding.intro.body')}</Body>
 
         <ButtonContainer>
           <PrimaryButton onPress={handleContinue} activeOpacity={0.8}>
-            <PrimaryButtonText>{translations.primaryCta}</PrimaryButtonText>
+            <PrimaryButtonText>{t('onboarding.intro.primaryCta')}</PrimaryButtonText>
           </PrimaryButton>
 
-          {isExistingUser && translations.secondaryCta && (
-            <SecondaryButton onPress={handleSkip} activeOpacity={0.6}>
-              <SecondaryButtonText>{translations.secondaryCta}</SecondaryButtonText>
-            </SecondaryButton>
-          )}
+          <SecondaryButton onPress={handleSkip} activeOpacity={0.6}>
+            <SecondaryButtonText>{t('onboarding.intro.secondaryCta')}</SecondaryButtonText>
+          </SecondaryButton>
         </ButtonContainer>
       </Content>
     </Container>

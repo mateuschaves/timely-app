@@ -216,17 +216,10 @@
   },
   "onboarding": {
     "intro": {
-      "existing": {
-        "title": "Wir möchten Ihre Routine besser verstehen",
-        "body": "Wir entwickeln timely weiter, um Automatisierungen anzubieten, die besser zu Ihrem Alltag passen.\nEin paar schnelle Fragen helfen uns, Ihre Erfahrung zu personalisieren.",
-        "primaryCta": "Weiter",
-        "secondaryCta": "Später machen"
-      },
-      "new": {
-        "title": "Richten Sie timely für Ihre Routine ein",
-        "body": "Beantworten Sie ein paar schnelle Fragen, um Automatisierungen und Berichte zu konfigurieren.",
-        "cta": "Beginnen"
-      }
+      "title": "Richten Sie timely für Ihre Routine ein",
+      "body": "Beantworten Sie ein paar schnelle Fragen, um Automatisierungen und Berichte an Ihren täglichen Arbeitsablauf anzupassen.",
+      "primaryCta": "Weiter",
+      "secondaryCta": "Später machen"
     },
     "workModel": {
       "title": "Wie arbeiten Sie?",
