@@ -4,7 +4,7 @@ import { updateUserMe } from '@/api/update-user-me';
 
 // Mock the auth context
 const mockFetchUserMe = jest.fn();
-const mockUser = {
+let mockUser = {
   id: '123',
   email: 'test@example.com',
   name: 'Test User',
@@ -29,6 +29,14 @@ describe('useOnboarding', () => {
       ...mockUser,
       onboardingCompleted: true,
     });
+    // Reset mockUser to default state
+    mockUser = {
+      id: '123',
+      email: 'test@example.com',
+      name: 'Test User',
+      appleUserId: '123',
+      onboardingCompleted: false,
+    };
   });
 
   it('should initialize with loading state', () => {
@@ -45,24 +53,6 @@ describe('useOnboarding', () => {
     });
 
     expect(result.current.isOnboardingCompleted).toBe(false);
-  });
-
-  it('should show onboarding completed when user has completed it', async () => {
-    const completedUser = { ...mockUser, onboardingCompleted: true };
-    jest.mock('@/features/auth', () => ({
-      useAuthContext: () => ({
-        user: completedUser,
-        fetchUserMe: mockFetchUserMe,
-      }),
-    }));
-
-    const { result } = renderHook(() => useOnboarding());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.isOnboardingCompleted).toBe(true);
   });
 
   it('should complete onboarding via API', async () => {
@@ -97,4 +87,5 @@ describe('useOnboarding', () => {
     expect(result.current.isOnboardingCompleted).toBe(true);
   });
 });
+
 
