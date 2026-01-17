@@ -72,7 +72,7 @@ export function WorkModelSelectionScreen() {
               console.error('Error skipping onboarding:', error);
               Alert.alert(
                 t('common.error'),
-                'Não foi possível pular o onboarding. Tente novamente.'
+                t('onboarding.error.skipFailed')
               );
             }
           },
@@ -92,7 +92,7 @@ export function WorkModelSelectionScreen() {
       console.error('Error completing onboarding:', error);
       Alert.alert(
         t('common.error'),
-        'Não foi possível finalizar o onboarding. Tente novamente.'
+        t('onboarding.error.completeFailed')
       );
     }
   };

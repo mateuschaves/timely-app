@@ -238,6 +238,10 @@
     "skipConfirmTitle": "Passer la configuration ?",
     "skipConfirmMessage": "Vous pouvez configurer cela plus tard dans les paramètres du profil.",
     "skipConfirmButton": "Oui, passer",
-    "cancelSkip": "Annuler"
+    "cancelSkip": "Annuler",
+    "error": {
+      "skipFailed": "Impossible de passer l'intégration. Veuillez réessayer.",
+      "completeFailed": "Impossible de terminer l'intégration. Veuillez réessayer."
+    }
   }
 }

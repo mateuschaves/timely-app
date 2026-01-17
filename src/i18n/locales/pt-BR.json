@@ -238,6 +238,10 @@
         "skipConfirmTitle": "Pular configuração?",
         "skipConfirmMessage": "Você pode configurar isso depois nas configurações do perfil.",
         "skipConfirmButton": "Sim, pular",
-        "cancelSkip": "Cancelar"
+        "cancelSkip": "Cancelar",
+        "error": {
+            "skipFailed": "Não foi possível pular o onboarding. Tente novamente.",
+            "completeFailed": "Não foi possível finalizar o onboarding. Tente novamente."
+        }
     }
 }

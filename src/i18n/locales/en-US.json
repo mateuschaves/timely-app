@@ -238,6 +238,10 @@
         "skipConfirmTitle": "Skip setup?",
         "skipConfirmMessage": "You can configure this later in profile settings.",
         "skipConfirmButton": "Yes, skip",
-        "cancelSkip": "Cancel"
+        "cancelSkip": "Cancel",
+        "error": {
+            "skipFailed": "Unable to skip onboarding. Please try again.",
+            "completeFailed": "Unable to complete onboarding. Please try again."
+        }
     }
 }

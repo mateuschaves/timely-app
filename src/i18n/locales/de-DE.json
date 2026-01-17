@@ -238,6 +238,10 @@
     "skipConfirmTitle": "Einrichtung überspringen?",
     "skipConfirmMessage": "Sie können dies später in den Profileinstellungen konfigurieren.",
     "skipConfirmButton": "Ja, überspringen",
-    "cancelSkip": "Abbrechen"
+    "cancelSkip": "Abbrechen",
+    "error": {
+      "skipFailed": "Onboarding konnte nicht übersprungen werden. Bitte versuchen Sie es erneut.",
+      "completeFailed": "Onboarding konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
+    }
   }
 }
