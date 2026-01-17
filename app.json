@@ -19,11 +19,12 @@
       "bundleIdentifier": "com.wazowsky.timelyapp",
       "scheme": "timely",
       "usesAppleSignIn": true,
-      "deploymentTarget": "14.0",
+      "deploymentTarget": "16.1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSSupportsLiveActivities": true
       }
     },
     "plugins": [
@@ -35,7 +36,14 @@
           "username": "mateuschaves"
         }
       ],
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-live-activity",
+        {
+          "frequentUpdates": true,
+          "modulePath": "./modules/expo-live-activity/index.ts"
+        }
+      ]
     ],
     "updates": {
       "enabled": true,

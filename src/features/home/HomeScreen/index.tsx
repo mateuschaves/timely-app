@@ -6,6 +6,7 @@ import { useTranslation } from '@/i18n';
 import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
+import { useLiveActivity } from '@/features/time-clock/hooks/useLiveActivity';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -30,6 +31,7 @@ export function HomeScreen() {
   const { clock, isClocking } = useTimeClock();
   const { lastEvent, nextAction, isLoading: isLoadingLastEvent } = useLastEvent();
   const { requestLocationPermission } = useLocation();
+  const { startWorkSessionActivity, stopWorkSessionActivity } = useLiveActivity();
   const { hasWorkSettings, canShowCard } = useWorkSettings();
   const { hasHourlyRate, canShowCard: canShowHourlyRateCard } = useHourlyRate();
   const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(null);
@@ -136,6 +138,28 @@ export function HomeScreen() {
     }, [queryClient])
   );
 
+  // Manage Live Activity based on current user state (clocked in or not)
+  useEffect(() => {
+    const manageLiveActivity = async () => {
+      if (Platform.OS !== 'ios' || isLoadingLastEvent) return;
+
+      // If the last event was a clock-in (nextAction is clock-out), it means user is working
+      if (lastEvent && nextAction === ClockAction.CLOCK_OUT) {
+        // User is working - ensure Live Activity is active
+        const entryTime = new Date(lastEvent.hour);
+        await startWorkSessionActivity(entryTime);
+        console.log('Live Activity restored/started for active session');
+      } else {
+        // User is not working - ensure Live Activity is inactive
+        await stopWorkSessionActivity();
+        console.log('Live Activity stopped - no active session');
+      }
+    };
+
+    manageLiveActivity();
+  }, [lastEvent, nextAction, isLoadingLastEvent, startWorkSessionActivity, stopWorkSessionActivity]);
+
+
   const handleRequestLocationPermission = async () => {
     setIsCheckingLocation(true);
     try {
@@ -224,6 +248,21 @@ export function HomeScreen() {
       }, nextAction);
 
       console.log('Clock realizado com sucesso');
+      
+      // Manage Live Activity based on action
+      if (Platform.OS === 'ios') {
+        if (nextAction === ClockAction.CLOCK_IN) {
+          // Started work - start Live Activity
+          const entryTime = new Date(now);
+          await startWorkSessionActivity(entryTime);
+          console.log('Live Activity started for entry:', now);
+        } else if (nextAction === ClockAction.CLOCK_OUT) {
+          // Exited work - stop Live Activity
+          await stopWorkSessionActivity();
+          console.log('Live Activity ended for exit');
+        }
+      }
+      
       // As queries já são invalidadas e refeitas pelo useTimeClock hook
     } catch (error: any) {
       console.error('Erro ao processar ponto:', error);

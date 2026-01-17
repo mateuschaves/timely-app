@@ -68,7 +68,12 @@
         "lastExit": "Última saída",
         "workSettingsNotConfiguredHint": "Configure seus horários de trabalho para relatórios mais completos",
         "locationPermissionRequired": "Permita o acesso à localização para registrar o ponto com precisão",
-        "hourlyRateNotConfigured": "Configure seu valor por hora para relatórios mais completos"
+        "hourlyRateNotConfigured": "Configure seu valor por hora para relatórios mais completos",
+        "liveActivity": {
+            "workingTitle": "Trabalhando",
+            "entryTime": "Entrada",
+            "elapsedTime": "Tempo decorrido"
+        }
     },
     "history": {
         "title": "Histórico de Ponto",

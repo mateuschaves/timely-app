@@ -131,6 +131,19 @@ jest.mock('expo-sharing', () => ({
   isAvailableAsync: jest.fn(() => Promise.resolve(true)),
 }));
 
+jest.mock('expo-live-activity', () => ({
+  startActivity: jest.fn(() => Promise.resolve('activity-id-123')),
+  endActivity: jest.fn(() => Promise.resolve()),
+  updateActivity: jest.fn(() => Promise.resolve()),
+  areActivitiesEnabled: jest.fn(() => Promise.resolve(true)),
+  defineActivityAttributes: jest.fn((name, attributes, contentState) => ({
+    name,
+    attributes,
+    contentState,
+  })),
+  defineActivityAttributesModule: jest.fn((activities) => activities),
+}));
+
 // Mock react-native-safe-area-context globally
 jest.mock('react-native-safe-area-context', () => {
   const React = require('react');

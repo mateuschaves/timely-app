@@ -11,6 +11,7 @@ Aplicativo React Native para registro de horas trabalhadas, desenvolvido com Exp
 - **Styled Components** - Estilização com CSS-in-JS
 - **Expo Linking** - Suporte a deeplinks
 - **Expo Apple Authentication** - Login com Apple
+- **Expo Live Activity** - Live Activities no iOS (iOS 16.1+)
 - **AsyncStorage** - Persistência local de dados
 
 ## 📁 Estrutura do Projeto
@@ -161,11 +162,26 @@ O app utiliza **Apple Sign In** para autenticação. A autenticação está disp
 3. Execute `npx expo prebuild` para gerar os arquivos nativos
 4. O login será exibido automaticamente quando o usuário não estiver autenticado
 
+## 📱 Live Activity (iOS 16.1+)
+
+O app suporta **Live Activities** no iOS, exibindo informações em tempo real na Tela de Bloqueio e na Dynamic Island (iPhone 14 Pro e superior).
+
+### Funcionalidades:
+- Exibe informações da sessão de trabalho em andamento
+- Mostra horário de entrada e tempo decorrido
+- Atualiza automaticamente a cada minuto
+- Inicia automaticamente ao bater ponto de entrada
+- Para automaticamente ao bater ponto de saída
+- Restaura ao abrir o app com sessão ativa
+
+📖 **Para mais detalhes**: Consulte [docs/LIVE_ACTIVITY.md](./docs/LIVE_ACTIVITY.md)
+
 ## 📝 Próximos Passos
 
 - [ ] Implementar API backend
 - [x] Adicionar autenticação
 - [x] Implementar persistência local
+- [x] Adicionar Live Activities no iOS
 - [ ] Adicionar notificações
 - [ ] Melhorar UI/UX
 
