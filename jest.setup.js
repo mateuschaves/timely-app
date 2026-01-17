@@ -187,7 +187,9 @@ jest.mock('@react-navigation/native', () => {
     })),
     useFocusEffect: jest.fn((callback) => {
       // Execute the callback immediately in tests
-      callback();
+      if (typeof callback === 'function') {
+        callback();
+      }
     }),
     useRoute: jest.fn(() => ({
       params: {},
