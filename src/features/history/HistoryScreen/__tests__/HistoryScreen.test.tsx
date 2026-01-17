@@ -88,9 +88,7 @@ jest.mock('@tanstack/react-query', () => {
 });
 
 jest.mock('@/api/get-clock-history');
-jest.mock('@react-navigation/native', () => ({
-  useNavigation: jest.fn(),
-}));
+jest.mock('@react-navigation/native');
 
 jest.mock('@expo/vector-icons', () => ({
   Ionicons: 'Ionicons',

@@ -174,6 +174,30 @@ jest.mock('react-native-safe-area-context', () => {
 // Note: useColorScheme should be mocked in individual test files if needed
 // Note: BackHandler should be mocked in individual test files that use NavigationContainer
 
+// Mock @react-navigation/native
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
+  return {
+    ...actualNav,
+    useNavigation: jest.fn(() => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+      reset: jest.fn(),
+      setOptions: jest.fn(),
+    })),
+    useFocusEffect: jest.fn((callback) => {
+      // Execute the callback immediately in tests
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }),
+    useRoute: jest.fn(() => ({
+      params: {},
+    })),
+    useIsFocused: jest.fn(() => true),
+  };
+});
+
 // Mock console.tron for Reactotron
 global.console.tron = {
   log: jest.fn(),
