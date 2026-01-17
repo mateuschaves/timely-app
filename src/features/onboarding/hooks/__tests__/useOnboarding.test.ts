@@ -1,7 +1,6 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useOnboarding } from '../useOnboarding';
 import { updateUserMe } from '@/api/update-user-me';
-import * as AuthModule from '@/features/auth';
 
 // Mock the auth context
 const mockFetchUserMe = jest.fn();
@@ -22,7 +21,11 @@ describe('useOnboarding', () => {
       email: 'test@example.com',
       name: 'Test User',
       appleUserId: '123',
+      appleId: null,
       onboardingCompleted: true,
+      lastLogin: '2024-01-01T00:00:00Z',
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z',
     });
   });
 
