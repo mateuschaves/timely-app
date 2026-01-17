@@ -218,5 +218,35 @@
     "lunchBody": "Bon appétit !",
     "exitTitle": "Il est temps de sortir !",
     "exitBody": "N'oubliez pas d'enregistrer votre sortie."
+  },
+  "onboarding": {
+    "intro": {
+      "title": "Configurez timely pour votre routine",
+      "body": "Répondez à quelques questions rapides pour personnaliser les automatisations et les rapports selon votre flux de travail quotidien.",
+      "primaryCta": "Continuer",
+      "secondaryCta": "Le faire plus tard"
+    },
+    "workModel": {
+      "title": "Comment travaillez-vous ?",
+      "subtitle": "Choisissez le modèle qui décrit le mieux votre routine",
+      "office": "Sur site",
+      "officeDescription": "Travail au bureau ou lieu fixe",
+      "hybrid": "Hybride",
+      "hybridDescription": "Quelques jours sur site, d'autres à distance",
+      "remote": "À distance",
+      "remoteDescription": "Travail à domicile ou n'importe où",
+      "flexible": "Flexible",
+      "flexibleDescription": "Les horaires et les lieux varient fréquemment",
+      "continue": "Continuer"
+    },
+    "skip": "Passer",
+    "skipConfirmTitle": "Passer la configuration ?",
+    "skipConfirmMessage": "Vous pouvez configurer cela plus tard dans les paramètres du profil.",
+    "skipConfirmButton": "Oui, passer",
+    "cancelSkip": "Annuler",
+    "error": {
+      "skipFailed": "Impossible de passer l'intégration. Veuillez réessayer.",
+      "completeFailed": "Impossible de terminer l'intégration. Veuillez réessayer."
+    }
   }
 }

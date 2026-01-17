@@ -218,5 +218,35 @@
     "lunchBody": "Guten Appetit!",
     "exitTitle": "Zeit zum Ausstempeln!",
     "exitBody": "Vergessen Sie nicht, Ihren Ausstempeln zu erfassen."
+  },
+  "onboarding": {
+    "intro": {
+      "title": "Richten Sie timely für Ihre Routine ein",
+      "body": "Beantworten Sie ein paar schnelle Fragen, um Automatisierungen und Berichte an Ihren täglichen Arbeitsablauf anzupassen.",
+      "primaryCta": "Weiter",
+      "secondaryCta": "Später machen"
+    },
+    "workModel": {
+      "title": "Wie arbeiten Sie?",
+      "subtitle": "Wählen Sie das Modell, das Ihre Routine am besten beschreibt",
+      "office": "Vor Ort",
+      "officeDescription": "Arbeit im Büro oder an einem festen Standort",
+      "hybrid": "Hybrid",
+      "hybridDescription": "Einige Tage vor Ort, andere remote",
+      "remote": "Remote",
+      "remoteDescription": "Arbeit von zu Hause oder überall",
+      "flexible": "Flexibel",
+      "flexibleDescription": "Zeiten und Orte variieren häufig",
+      "continue": "Weiter"
+    },
+    "skip": "Überspringen",
+    "skipConfirmTitle": "Einrichtung überspringen?",
+    "skipConfirmMessage": "Sie können dies später in den Profileinstellungen konfigurieren.",
+    "skipConfirmButton": "Ja, überspringen",
+    "cancelSkip": "Abbrechen",
+    "error": {
+      "skipFailed": "Onboarding konnte nicht übersprungen werden. Bitte versuchen Sie es erneut.",
+      "completeFailed": "Onboarding konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
+    }
   }
 }

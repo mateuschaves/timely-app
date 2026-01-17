@@ -218,5 +218,35 @@
         "lunchBody": "Have a good lunch!",
         "exitTitle": "Time to clock out!",
         "exitBody": "Don't forget to record your exit."
+    },
+    "onboarding": {
+        "intro": {
+            "title": "Set up timely for your routine",
+            "body": "Answer a few quick questions to personalize automations and reports for your daily workflow.",
+            "primaryCta": "Continue",
+            "secondaryCta": "Do it later"
+        },
+        "workModel": {
+            "title": "How do you work?",
+            "subtitle": "Choose the model that best describes your routine",
+            "office": "On-site",
+            "officeDescription": "Work at the office or fixed location",
+            "hybrid": "Hybrid",
+            "hybridDescription": "Some days on-site, others remote",
+            "remote": "Remote",
+            "remoteDescription": "Work from home or anywhere",
+            "flexible": "Flexible",
+            "flexibleDescription": "Hours and locations vary frequently",
+            "continue": "Continue"
+        },
+        "skip": "Skip",
+        "skipConfirmTitle": "Skip setup?",
+        "skipConfirmMessage": "You can configure this later in profile settings.",
+        "skipConfirmButton": "Yes, skip",
+        "cancelSkip": "Cancel",
+        "error": {
+            "skipFailed": "Unable to skip onboarding. Please try again.",
+            "completeFailed": "Unable to complete onboarding. Please try again."
+        }
     }
 }

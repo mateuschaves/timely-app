@@ -218,5 +218,35 @@
         "lunchBody": "Tenha um bom almoço!",
         "exitTitle": "Hora de sair!",
         "exitBody": "Não se esqueça de registrar sua saída."
+    },
+    "onboarding": {
+        "intro": {
+            "title": "Configure o timely para sua rotina",
+            "body": "Responda algumas perguntas rápidas para personalizar automações e relatórios de acordo com seu dia a dia.",
+            "primaryCta": "Continuar",
+            "secondaryCta": "Fazer depois"
+        },
+        "workModel": {
+            "title": "Como você trabalha?",
+            "subtitle": "Escolha o modelo que melhor descreve sua rotina",
+            "office": "Presencial",
+            "officeDescription": "Trabalho no escritório ou local fixo",
+            "hybrid": "Híbrido",
+            "hybridDescription": "Alguns dias presencial, outros remoto",
+            "remote": "Remoto",
+            "remoteDescription": "Trabalho de casa ou qualquer lugar",
+            "flexible": "Flexível",
+            "flexibleDescription": "Horários e locais variam frequentemente",
+            "continue": "Continuar"
+        },
+        "skip": "Pular",
+        "skipConfirmTitle": "Pular configuração?",
+        "skipConfirmMessage": "Você pode configurar isso depois nas configurações do perfil.",
+        "skipConfirmButton": "Sim, pular",
+        "cancelSkip": "Cancelar",
+        "error": {
+            "skipFailed": "Não foi possível pular o onboarding. Tente novamente.",
+            "completeFailed": "Não foi possível finalizar o onboarding. Tente novamente."
+        }
     }
 }

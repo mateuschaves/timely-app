@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuthContext } from './src/features/auth';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
+import { OnboardingNavigator } from './src/navigation/OnboardingNavigator';
+import { useOnboarding } from './src/features/onboarding';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
@@ -56,6 +58,7 @@ const linking = {
 
 function NavigationContent() {
   const { isAuthenticated, isLoading } = useAuthContext();
+  const { isOnboardingCompleted, isLoading: isOnboardingLoading } = useOnboarding();
   const { handleDeeplink } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
@@ -244,8 +247,13 @@ function NavigationContent() {
   }, [isAuthenticated, handleDeeplink, navigation]);
 
   // Não renderiza nada durante o loading - a splash screen fica visível
-  if (isLoading) {
+  if (isLoading || isOnboardingLoading) {
     return null;
+  }
+
+  // Show onboarding if user is authenticated but hasn't completed onboarding
+  if (isAuthenticated && !isOnboardingCompleted) {
+    return <OnboardingNavigator />;
   }
 
   return (
@@ -257,17 +265,18 @@ function NavigationContent() {
 
 function Navigation() {
   const { isLoading } = useAuthContext();
+  const { isLoading: isOnboardingLoading } = useOnboarding();
 
   useEffect(() => {
-    // Esconde a splash screen quando os dados do usuário estiverem carregados
-    if (!isLoading) {
+    // Esconde a splash screen quando os dados do usuário e onboarding estiverem carregados
+    if (!isLoading && !isOnboardingLoading) {
       SplashScreen.hideAsync().catch((error) => {
         console.warn('Erro ao esconder splash screen:', error);
       });
     }
-  }, [isLoading]);
+  }, [isLoading, isOnboardingLoading]);
 
-  if (isLoading) {
+  if (isLoading || isOnboardingLoading) {
     // Durante o carregamento, retorna null para manter a splash screen visível
     return null;
   }
