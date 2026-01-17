@@ -79,16 +79,18 @@ Após configurar o App Intent:
 
 Quando o App Intent é executado:
 
-1. **Recupera o token**: O intent acessa o UserDefaults para recuperar o token JWT armazenado pelo AsyncStorage
-2. **Registra o ponto**: Faz uma chamada POST para `/clockin` com:
-   - `hour`: Hora atual em formato ISO8601
+1. **Captura o timestamp**: O intent captura a hora IMEDIATAMENTE no início da execução, antes de qualquer confirmação do usuário
+2. **Recupera o token**: O intent acessa o UserDefaults para recuperar o token JWT armazenado pelo AsyncStorage
+3. **Registra o ponto**: Faz uma chamada POST para `/clockin` com:
+   - `hour`: Hora de invocação capturada no passo 1 (formato ISO8601)
    - O backend determina automaticamente se é entrada ou saída baseado no último evento do usuário
-3. **Retorna resultado**: Retorna sucesso ou erro para o usuário
+4. **Retorna resultado**: Retorna sucesso ou erro para o usuário
 
 **Importante**: 
 - Toda a lógica é executada nativamente em Swift, sem abrir o app React Native
 - Funciona mesmo com o dispositivo bloqueado
 - O backend é responsável por determinar se é entrada ou saída, então não precisamos fazer chamadas extras
+- **Timestamp preciso**: Mesmo se o iOS pedir confirmação do usuário antes de executar a ação, o horário registrado será o momento exato em que o Shortcuts chamou o intent, não quando o usuário confirmou
 
 ## Notas importantes
 
