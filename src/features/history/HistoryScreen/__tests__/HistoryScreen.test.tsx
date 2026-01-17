@@ -90,6 +90,12 @@ jest.mock('@tanstack/react-query', () => {
 jest.mock('@/api/get-clock-history');
 jest.mock('@react-navigation/native', () => ({
   useNavigation: jest.fn(),
+  useFocusEffect: jest.fn((callback) => {
+    // Execute the callback immediately in tests
+    if (typeof callback === 'function') {
+      callback();
+    }
+  }),
 }));
 
 jest.mock('@expo/vector-icons', () => ({
