@@ -42,7 +42,15 @@ export function IntroScreen() {
         {
           text: t('onboarding.skipConfirmButton'),
           onPress: async () => {
-            await skipOnboarding();
+            try {
+              await skipOnboarding();
+            } catch (error) {
+              console.error('Error skipping onboarding:', error);
+              Alert.alert(
+                t('common.error'),
+                'Não foi possível pular o onboarding. Tente novamente.'
+              );
+            }
           },
         },
       ]

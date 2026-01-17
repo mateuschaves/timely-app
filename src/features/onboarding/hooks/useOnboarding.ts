@@ -15,26 +15,14 @@ export function useOnboarding() {
   });
 
   useEffect(() => {
-    checkOnboardingStatus();
+    // Get onboarding status from user object (from API)
+    const isOnboardingCompleted = user?.onboardingCompleted ?? true;
+
+    setState({
+      isOnboardingCompleted,
+      isLoading: false,
+    });
   }, [user]);
-
-  const checkOnboardingStatus = async () => {
-    try {
-      // Get onboarding status from user object (from API)
-      const isOnboardingCompleted = user?.onboardingCompleted ?? true;
-
-      setState({
-        isOnboardingCompleted,
-        isLoading: false,
-      });
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      setState((prev) => ({
-        ...prev,
-        isLoading: false,
-      }));
-    }
-  };
 
   const completeOnboarding = useCallback(async () => {
     try {
@@ -62,7 +50,6 @@ export function useOnboarding() {
     ...state,
     completeOnboarding,
     skipOnboarding,
-    checkOnboardingStatus,
   };
 }
 

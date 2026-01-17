@@ -66,7 +66,15 @@ export function WorkModelSelectionScreen() {
         {
           text: t('onboarding.skipConfirmButton'),
           onPress: async () => {
-            await skipOnboarding();
+            try {
+              await skipOnboarding();
+            } catch (error) {
+              console.error('Error skipping onboarding:', error);
+              Alert.alert(
+                t('common.error'),
+                'Não foi possível pular o onboarding. Tente novamente.'
+              );
+            }
           },
         },
       ]
@@ -76,9 +84,17 @@ export function WorkModelSelectionScreen() {
   const handleContinue = async () => {
     if (!selectedModel) return;
 
-    // Here you would typically save the selected work model
-    // For now, we'll just complete the onboarding
-    await completeOnboarding();
+    try {
+      // Here you would typically save the selected work model
+      // For now, we'll just complete the onboarding
+      await completeOnboarding();
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      Alert.alert(
+        t('common.error'),
+        'Não foi possível finalizar o onboarding. Tente novamente.'
+      );
+    }
   };
 
   return (
