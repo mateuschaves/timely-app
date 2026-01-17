@@ -66,6 +66,7 @@ export function useAuth() {
           email: response.email || null,
           name: response.name || null,
           appleUserId: existingUser?.appleUserId || response.id,
+          onboardingCompleted: response.onboardingCompleted || false,
         };
 
         // Save updated user to storage
@@ -161,6 +162,7 @@ export function useAuth() {
         email: credential.email || savedUser?.email || null,
         name: nameFromCredential || savedUser?.name || null,
         appleUserId: credential.user,
+        onboardingCompleted: savedUser?.onboardingCompleted || false,
       };
 
       await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
@@ -239,6 +241,7 @@ export function useAuth() {
         email: response.email || null,
         name: response.name || null,
         appleUserId: existingUser?.appleUserId || response.id,
+        onboardingCompleted: response.onboardingCompleted || false,
       };
 
       // Save updated user to storage

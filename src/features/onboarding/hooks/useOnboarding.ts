@@ -1,48 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { STORAGE_KEYS } from '@/config/storage';
-
-// Increment this version to force onboarding to show again for all users
-// This allows showing updated onboarding flows to existing users
-const CURRENT_ONBOARDING_VERSION = '1.0.0';
+import { useAuthContext } from '@/features/auth';
+import { updateUserMe } from '@/api/update-user-me';
 
 export interface OnboardingState {
   isOnboardingCompleted: boolean;
   isLoading: boolean;
-  isExistingUser: boolean;
 }
 
 export function useOnboarding() {
+  const { user, fetchUserMe } = useAuthContext();
   const [state, setState] = useState<OnboardingState>({
     isOnboardingCompleted: true,
     isLoading: true,
-    isExistingUser: false,
   });
 
   useEffect(() => {
     checkOnboardingStatus();
-  }, []);
+  }, [user]);
 
   const checkOnboardingStatus = async () => {
     try {
-      const [onboardingCompleted, onboardingVersion] = await Promise.all([
-        AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED),
-        AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_VERSION),
-      ]);
-
-      // User is existing if they have completed onboarding before
-      // This flag determines which intro screen copy to show
-      const isExistingUser = onboardingCompleted === 'true';
-
-      // Check if onboarding needs to be shown
-      const shouldShowOnboarding = 
-        !onboardingCompleted || 
-        onboardingVersion !== CURRENT_ONBOARDING_VERSION;
+      // Get onboarding status from user object (from API)
+      const isOnboardingCompleted = user?.onboardingCompleted ?? true;
 
       setState({
-        isOnboardingCompleted: !shouldShowOnboarding,
+        isOnboardingCompleted,
         isLoading: false,
-        isExistingUser,
       });
     } catch (error) {
       console.error('Error checking onboarding status:', error);
@@ -55,10 +38,11 @@ export function useOnboarding() {
 
   const completeOnboarding = useCallback(async () => {
     try {
-      await Promise.all([
-        AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, 'true'),
-        AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_VERSION, CURRENT_ONBOARDING_VERSION),
-      ]);
+      // Update onboarding status via API
+      await updateUserMe({ onboardingCompleted: true });
+
+      // Refresh user data to get updated onboarding status
+      await fetchUserMe();
 
       setState((prev) => ({
         ...prev,
@@ -68,7 +52,7 @@ export function useOnboarding() {
       console.error('Error completing onboarding:', error);
       throw error;
     }
-  }, []);
+  }, [fetchUserMe]);
 
   const skipOnboarding = useCallback(async () => {
     await completeOnboarding();
@@ -81,3 +65,4 @@ export function useOnboarding() {
     checkOnboardingStatus,
   };
 }
+

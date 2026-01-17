@@ -4,6 +4,8 @@ export interface UserMeResponse {
   id: string;
   name: string;
   email: string;
+  appleId: string | null;
+  onboardingCompleted: boolean;
   lastLogin: string;
   createdAt: string;
   updatedAt: string;

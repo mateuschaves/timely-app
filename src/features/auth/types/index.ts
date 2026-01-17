@@ -3,6 +3,7 @@ export interface User {
   email: string | null;
   name: string | null;
   appleUserId: string;
+  onboardingCompleted: boolean;
 }
 
 export interface AuthState {

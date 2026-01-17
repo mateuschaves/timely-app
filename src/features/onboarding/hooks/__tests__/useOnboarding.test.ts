@@ -1,14 +1,34 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useOnboarding } from '../useOnboarding';
-import { STORAGE_KEYS } from '@/config/storage';
+import { updateUserMe } from '@/api/update-user-me';
 
-jest.mock('@react-native-async-storage/async-storage');
+// Mock the auth context
+const mockFetchUserMe = jest.fn();
+const mockUser = {
+  id: '123',
+  email: 'test@example.com',
+  name: 'Test User',
+  appleUserId: '123',
+  onboardingCompleted: false,
+};
+
+jest.mock('@/features/auth', () => ({
+  useAuthContext: () => ({
+    user: mockUser,
+    fetchUserMe: mockFetchUserMe,
+  }),
+}));
+
+jest.mock('@/api/update-user-me');
 
 describe('useOnboarding', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+    mockFetchUserMe.mockResolvedValue(undefined);
+    (updateUserMe as jest.Mock).mockResolvedValue({
+      ...mockUser,
+      onboardingCompleted: true,
+    });
   });
 
   it('should initialize with loading state', () => {
@@ -17,29 +37,24 @@ describe('useOnboarding', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('should mark user as new when no work settings exist', async () => {
-    (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-
+  it('should get onboarding status from user object', async () => {
     const { result } = renderHook(() => useOnboarding());
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.isExistingUser).toBe(false);
     expect(result.current.isOnboardingCompleted).toBe(false);
   });
 
-  it('should mark user as existing when onboarding was completed before', async () => {
-    (AsyncStorage.getItem as jest.Mock).mockImplementation((key) => {
-      if (key === STORAGE_KEYS.ONBOARDING_COMPLETED) {
-        return Promise.resolve('true');
-      }
-      if (key === STORAGE_KEYS.ONBOARDING_VERSION) {
-        return Promise.resolve('1.0.0');
-      }
-      return Promise.resolve(null);
-    });
+  it('should show onboarding completed when user has completed it', async () => {
+    const completedUser = { ...mockUser, onboardingCompleted: true };
+    jest.mock('@/features/auth', () => ({
+      useAuthContext: () => ({
+        user: completedUser,
+        fetchUserMe: mockFetchUserMe,
+      }),
+    }));
 
     const { result } = renderHook(() => useOnboarding());
 
@@ -47,34 +62,10 @@ describe('useOnboarding', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(result.current.isExistingUser).toBe(true);
     expect(result.current.isOnboardingCompleted).toBe(true);
   });
 
-  it('should mark onboarding as incomplete when version changed for existing user', async () => {
-    (AsyncStorage.getItem as jest.Mock).mockImplementation((key) => {
-      if (key === STORAGE_KEYS.ONBOARDING_COMPLETED) {
-        return Promise.resolve('true');
-      }
-      if (key === STORAGE_KEYS.ONBOARDING_VERSION) {
-        return Promise.resolve('0.9.0'); // Old version
-      }
-      return Promise.resolve(null);
-    });
-
-    const { result } = renderHook(() => useOnboarding());
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-
-    expect(result.current.isExistingUser).toBe(true);
-    expect(result.current.isOnboardingCompleted).toBe(false);
-  });
-
-  it('should complete onboarding and set storage keys', async () => {
-    (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
-
+  it('should complete onboarding via API', async () => {
     const { result } = renderHook(() => useOnboarding());
 
     await waitFor(() => {
@@ -85,20 +76,12 @@ describe('useOnboarding', () => {
       await result.current.completeOnboarding();
     });
 
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-      STORAGE_KEYS.ONBOARDING_COMPLETED,
-      'true'
-    );
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-      STORAGE_KEYS.ONBOARDING_VERSION,
-      '1.0.0'
-    );
+    expect(updateUserMe).toHaveBeenCalledWith({ onboardingCompleted: true });
+    expect(mockFetchUserMe).toHaveBeenCalled();
     expect(result.current.isOnboardingCompleted).toBe(true);
   });
 
   it('should skip onboarding by completing it', async () => {
-    (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
-
     const { result } = renderHook(() => useOnboarding());
 
     await waitFor(() => {
@@ -109,10 +92,9 @@ describe('useOnboarding', () => {
       await result.current.skipOnboarding();
     });
 
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith(
-      STORAGE_KEYS.ONBOARDING_COMPLETED,
-      'true'
-    );
+    expect(updateUserMe).toHaveBeenCalledWith({ onboardingCompleted: true });
+    expect(mockFetchUserMe).toHaveBeenCalled();
     expect(result.current.isOnboardingCompleted).toBe(true);
   });
 });
+

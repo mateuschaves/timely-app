@@ -17,6 +17,8 @@ describe('getUserMe', () => {
       id: '123',
       name: 'John Doe',
       email: 'john@example.com',
+      appleId: null,
+      onboardingCompleted: false,
       lastLogin: '2024-01-01T00:00:00Z',
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
