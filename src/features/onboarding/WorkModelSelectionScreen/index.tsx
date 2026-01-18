@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Alert } from 'react-native';
 import { useTranslation } from '@/i18n';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useOnboarding } from '../hooks/useOnboarding';
-import { WorkModel } from '../types';
+import { WorkModel, OnboardingStackParamList } from '../types';
 import {
   Container,
   Header,
@@ -20,6 +22,8 @@ import {
   ContinueButtonText,
 } from './styles';
 
+type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'WorkModelSelection'>;
+
 interface WorkModelOption {
   id: WorkModel;
   titleKey: string;
@@ -28,14 +32,15 @@ interface WorkModelOption {
 
 export function WorkModelSelectionScreen() {
   const { t } = useTranslation();
-  const { completeOnboarding, skipOnboarding } = useOnboarding();
+  const navigation = useNavigation<NavigationProp>();
+  const { skipOnboarding, completeOnboarding } = useOnboarding();
   const [selectedModel, setSelectedModel] = useState<WorkModel | null>(null);
 
   const workModelOptions: WorkModelOption[] = [
     {
-      id: 'office',
-      titleKey: 'onboarding.workModel.office',
-      descriptionKey: 'onboarding.workModel.officeDescription',
+      id: 'onsite',
+      titleKey: 'onboarding.workModel.onsite',
+      descriptionKey: 'onboarding.workModel.onsiteDescription',
     },
     {
       id: 'hybrid',
@@ -46,11 +51,6 @@ export function WorkModelSelectionScreen() {
       id: 'remote',
       titleKey: 'onboarding.workModel.remote',
       descriptionKey: 'onboarding.workModel.remoteDescription',
-    },
-    {
-      id: 'flexible',
-      titleKey: 'onboarding.workModel.flexible',
-      descriptionKey: 'onboarding.workModel.flexibleDescription',
     },
   ];
 
@@ -85,11 +85,15 @@ export function WorkModelSelectionScreen() {
     if (!selectedModel) return;
 
     try {
-      // Here you would typically save the selected work model
-      // For now, we'll just complete the onboarding
-      await completeOnboarding();
+      // Se o usuário escolheu híbrido ou presencial (onsite), perguntar localização
+      if (selectedModel === 'hybrid' || selectedModel === 'onsite') {
+        navigation.navigate('WorkLocation', { workModel: selectedModel });
+      } else {
+        // Para remoto, completar onboarding diretamente
+        await completeOnboarding(selectedModel);
+      }
     } catch (error) {
-      console.error('Error completing onboarding:', error);
+      console.error('Error navigating to location screen:', error);
       Alert.alert(
         t('common.error'),
         t('onboarding.error.completeFailed')

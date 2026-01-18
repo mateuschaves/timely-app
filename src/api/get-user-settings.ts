@@ -4,6 +4,7 @@ import type { WorkSchedule, CustomHoliday, WorkLocation, HourMultipliers } from 
 export interface UserSettingsResponse {
   userId?: string;
   id?: string;
+  workMode?: 'onsite' | 'hybrid' | 'remote';
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;

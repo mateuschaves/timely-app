@@ -159,6 +159,10 @@
         "friday": "Sexta-feira",
         "saturday": "Sábado",
         "sunday": "Domingo",
+        "workType": {
+            "hybrid": "Presencial",
+            "remote": "Remoto"
+        },
         "customHolidays": "Feriados Customizados",
         "addHoliday": "Adicionar Feriado",
         "holidayNamePlaceholder": "Nome do feriado",
@@ -229,15 +233,24 @@
         "workModel": {
             "title": "Como você trabalha?",
             "subtitle": "Escolha o modelo que melhor descreve sua rotina",
-            "office": "Presencial",
-            "officeDescription": "Trabalho no escritório ou local fixo",
+            "onsite": "Presencial",
+            "onsiteDescription": "Trabalho no escritório ou local fixo",
             "hybrid": "Híbrido",
             "hybridDescription": "Alguns dias presencial, outros remoto",
             "remote": "Remoto",
             "remoteDescription": "Trabalho de casa ou qualquer lugar",
-            "flexible": "Flexível",
-            "flexibleDescription": "Horários e locais variam frequentemente",
             "continue": "Continuar"
+        },
+        "workLocation": {
+            "title": "Onde você trabalha?",
+            "subtitle": "Pesquise pelo endereço ou escolha no mapa onde você trabalha",
+            "searchPlaceholder": "Pesquisar endereço, rua, cidade ou bairro...",
+            "useCurrentLocation": "Usar minha localização",
+            "selectedLocation": "Localização selecionada",
+            "selectedAddress": "Endereço selecionado",
+            "selectLocationError": "Por favor, selecione uma localização no mapa ou pesquise por um endereço",
+            "locationError": "Erro ao obter localização atual",
+            "mapNotAvailable": "O mapa estará disponível após fazer o build nativo do app. Por enquanto, use a busca de endereço acima ou sua localização atual."
         },
         "skip": "Pular",
         "skipConfirmTitle": "Pular configuração?",

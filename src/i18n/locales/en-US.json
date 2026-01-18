@@ -159,6 +159,10 @@
         "friday": "Friday",
         "saturday": "Saturday",
         "sunday": "Sunday",
+        "workType": {
+            "hybrid": "On-site",
+            "remote": "Remote"
+        },
         "customHolidays": "Custom Holidays",
         "addHoliday": "Add Holiday",
         "holidayNamePlaceholder": "Holiday name",
@@ -229,15 +233,24 @@
         "workModel": {
             "title": "How do you work?",
             "subtitle": "Choose the model that best describes your routine",
-            "office": "On-site",
-            "officeDescription": "Work at the office or fixed location",
+            "onsite": "On-site",
+            "onsiteDescription": "Work at the office or fixed location",
             "hybrid": "Hybrid",
             "hybridDescription": "Some days on-site, others remote",
             "remote": "Remote",
             "remoteDescription": "Work from home or anywhere",
-            "flexible": "Flexible",
-            "flexibleDescription": "Hours and locations vary frequently",
             "continue": "Continue"
+        },
+        "workLocation": {
+            "title": "Where do you work?",
+            "subtitle": "Search by address or choose on the map where you work",
+            "searchPlaceholder": "Search address, street, city or neighborhood...",
+            "useCurrentLocation": "Use my location",
+            "selectedLocation": "Selected location",
+            "selectedAddress": "Selected address",
+            "selectLocationError": "Please select a location on the map or search for an address",
+            "locationError": "Error getting current location",
+            "mapNotAvailable": "The map will be available after building the native app. For now, use the address search above or your current location."
         },
         "skip": "Skip",
         "skipConfirmTitle": "Skip setup?",

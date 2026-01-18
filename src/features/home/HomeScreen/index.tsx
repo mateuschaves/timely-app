@@ -151,8 +151,11 @@ export function HomeScreen() {
         console.log('Live Activity restored/started for active session');
       } else {
         // User is not working - ensure Live Activity is inactive
-        await stopWorkSessionActivity();
-        console.log('Live Activity stopped - no active session');
+        // Only log if we actually stopped something
+        const hadActivity = await stopWorkSessionActivity();
+        if (hadActivity) {
+          console.log('Live Activity stopped - no active session');
+        }
       }
     };
 

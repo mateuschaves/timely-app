@@ -1,6 +1,7 @@
 export type OnboardingStackParamList = {
   Intro: undefined;
   WorkModelSelection: undefined;
+  WorkLocation: { workModel: WorkModel };
 };
 
-export type WorkModel = 'office' | 'hybrid' | 'remote' | 'flexible';
+export type WorkModel = 'onsite' | 'hybrid' | 'remote';

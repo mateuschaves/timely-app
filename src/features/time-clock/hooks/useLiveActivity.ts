@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Platform } from 'react-native';
 import { 
   startActivity, 
   endActivity, 
   updateActivity,
-  areActivitiesEnabled,
   ActivityState
 } from 'expo-live-activity';
 
@@ -27,25 +26,56 @@ export function useLiveActivity() {
   const isSupported = async (): Promise<boolean> => {
     if (Platform.OS !== 'ios') return false;
     
+    // Check if the functions are available (they may not be in Expo Go or if module isn't linked)
+    if (typeof startActivity !== 'function' || typeof endActivity !== 'function') {
+      return false;
+    }
+    
+    // Live Activities require iOS 16.2+, but we can't check version here
+    // Just return true if we're on iOS and the functions are available
+    // The actual startActivity call will fail gracefully if not supported
+    return true;
+  };
+
+  // Stop the Live Activity (helper function used internally)
+  const stopActivityInternal = async (): Promise<boolean> => {
     try {
-      const enabled = await areActivitiesEnabled();
-      return enabled;
+      const hadActivity = !!activityIdRef.current;
+      
+      // Clear update interval
+      if (updateIntervalRef.current) {
+        clearInterval(updateIntervalRef.current);
+        updateIntervalRef.current = null;
+      }
+
+      if (activityIdRef.current) {
+        await endActivity(activityIdRef.current);
+        console.log('Live Activity ended:', activityIdRef.current);
+        activityIdRef.current = null;
+      }
+      
+      return hadActivity;
     } catch (error) {
-      console.warn('Error checking Live Activity support:', error);
+      console.error('Error stopping Live Activity:', error);
       return false;
     }
   };
 
+  // Stop the Live Activity (public API)
+  const stopWorkSessionActivity = useCallback(async (): Promise<boolean> => {
+    return stopActivityInternal();
+  }, []);
+
   // Start a new Live Activity for work session
-  const startWorkSessionActivity = async (entryTime: Date): Promise<string | null> => {
+  const startWorkSessionActivity = useCallback(async (entryTime: Date): Promise<string | null> => {
     try {
       if (!(await isSupported())) {
         console.log('Live Activities not supported or enabled');
         return null;
       }
 
-      // Stop any existing activity first
-      await stopWorkSessionActivity();
+      // Stop any existing activity first (using internal helper)
+      await stopActivityInternal();
 
       const attributes: LiveActivityAttributes = {
         appName: 'Timely',
@@ -75,7 +105,7 @@ export function useLiveActivity() {
       console.error('Error starting Live Activity:', error);
       return null;
     }
-  };
+  }, []);
 
   // Update elapsed time periodically
   const startUpdatingElapsedTime = (entryTime: Date) => {
@@ -123,24 +153,6 @@ export function useLiveActivity() {
     }
   };
 
-  // Stop the Live Activity
-  const stopWorkSessionActivity = async (): Promise<void> => {
-    try {
-      // Clear update interval
-      if (updateIntervalRef.current) {
-        clearInterval(updateIntervalRef.current);
-        updateIntervalRef.current = null;
-      }
-
-      if (activityIdRef.current) {
-        await endActivity(activityIdRef.current);
-        console.log('Live Activity ended:', activityIdRef.current);
-        activityIdRef.current = null;
-      }
-    } catch (error) {
-      console.error('Error stopping Live Activity:', error);
-    }
-  };
 
   // Cleanup on unmount
   useEffect(() => {

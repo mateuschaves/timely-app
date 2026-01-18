@@ -159,6 +159,10 @@
     "friday": "Freitag",
     "saturday": "Samstag",
     "sunday": "Sonntag",
+    "workType": {
+      "hybrid": "Vor Ort",
+      "remote": "Remote"
+    },
     "customHolidays": "Benutzerdefinierte Feiertage",
     "addHoliday": "Feiertag hinzufügen",
     "holidayNamePlaceholder": "Name des Feiertags",
@@ -229,15 +233,24 @@
     "workModel": {
       "title": "Wie arbeiten Sie?",
       "subtitle": "Wählen Sie das Modell, das Ihre Routine am besten beschreibt",
-      "office": "Vor Ort",
-      "officeDescription": "Arbeit im Büro oder an einem festen Standort",
+      "onsite": "Vor Ort",
+      "onsiteDescription": "Arbeit im Büro oder an einem festen Standort",
       "hybrid": "Hybrid",
       "hybridDescription": "Einige Tage vor Ort, andere remote",
       "remote": "Remote",
       "remoteDescription": "Arbeit von zu Hause oder überall",
-      "flexible": "Flexibel",
-      "flexibleDescription": "Zeiten und Orte variieren häufig",
       "continue": "Weiter"
+    },
+    "workLocation": {
+      "title": "Wo arbeiten Sie?",
+      "subtitle": "Suchen Sie nach Adresse oder wählen Sie auf der Karte, wo Sie arbeiten",
+      "searchPlaceholder": "Adresse, Straße, Stadt oder Stadtteil suchen...",
+      "useCurrentLocation": "Meinen Standort verwenden",
+      "selectedLocation": "Ausgewählter Standort",
+      "selectedAddress": "Ausgewählte Adresse",
+      "selectLocationError": "Bitte wählen Sie einen Standort auf der Karte aus oder suchen Sie nach einer Adresse",
+      "locationError": "Fehler beim Abrufen des aktuellen Standorts",
+      "mapNotAvailable": "Die Karte wird nach dem Erstellen der nativen App verfügbar sein. Verwenden Sie vorerst die Adresssuche oben oder Ihren aktuellen Standort."
     },
     "skip": "Überspringen",
     "skipConfirmTitle": "Einrichtung überspringen?",

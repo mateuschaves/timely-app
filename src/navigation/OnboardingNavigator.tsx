@@ -1,6 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { IntroScreen, WorkModelSelectionScreen, OnboardingStackParamList } from '@/features/onboarding';
+import { Platform } from 'react-native';
+import { IntroScreen, WorkModelSelectionScreen, WorkLocationScreen, OnboardingStackParamList } from '@/features/onboarding';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
 
@@ -11,8 +12,18 @@ export function OnboardingNavigator() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Intro" component={IntroScreen} />
-      <Stack.Screen name="WorkModelSelection" component={WorkModelSelectionScreen} />
+      <Stack.Screen 
+        name="Intro" 
+        component={IntroScreen}
+      />
+      <Stack.Screen 
+        name="WorkModelSelection" 
+        component={WorkModelSelectionScreen}
+      />
+      <Stack.Screen 
+        name="WorkLocation" 
+        component={WorkLocationScreen}
+      />
     </Stack.Navigator>
   );
 }

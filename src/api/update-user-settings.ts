@@ -3,6 +3,7 @@ import { apiClient } from '@/config/api';
 export interface WorkScheduleDay {
   start: string;
   end: string;
+  workType?: 'hybrid' | 'remote'; // Apenas para dias que podem ser híbridos ou remotos
 }
 
 export interface WorkSchedule {
@@ -32,6 +33,7 @@ export interface HourMultipliers {
 }
 
 export interface UpdateUserSettingsRequest {
+  workMode?: 'onsite' | 'hybrid' | 'remote';
   workSchedule?: WorkSchedule;
   customHolidays?: CustomHoliday[];
   workLocation?: WorkLocation;
@@ -42,6 +44,7 @@ export interface UpdateUserSettingsRequest {
 
 export interface UpdateUserSettingsResponse {
   id: string;
+  workMode?: 'onsite' | 'hybrid' | 'remote';
   workSchedule: WorkSchedule;
   customHolidays: CustomHoliday[];
   workLocation: WorkLocation;

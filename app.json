@@ -43,7 +43,8 @@
           "frequentUpdates": true,
           "modulePath": "./modules/expo-live-activity/index.ts"
         }
-      ]
+      ],
+      "expo-maps"
     ],
     "updates": {
       "enabled": true,

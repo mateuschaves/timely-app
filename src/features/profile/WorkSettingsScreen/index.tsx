@@ -62,12 +62,16 @@ import {
     ModalOverlay,
     HourlyRateInput,
     TimePickerModal,
+    WorkTypeContainer,
+    WorkTypeButton,
+    WorkTypeButtonText,
 } from './styles';
 
 interface DaySchedule {
     enabled: boolean;
     startTime: string;
     endTime: string;
+    workType?: 'hybrid' | 'remote'; // Apenas para dias que podem ser híbridos ou remotos
 }
 
 
@@ -121,6 +125,12 @@ export function WorkSettingsScreen() {
         queryKey: ['userSettings'],
         queryFn: getUserSettings,
     });
+
+    // Verificar se o usuário tem possibilidade de trabalhar remoto
+    const canWorkRemote = useMemo(() => {
+        const workMode = settingsData?.workMode;
+        return workMode === 'hybrid' || workMode === 'remote';
+    }, [settingsData?.workMode]);
 
     const updateSettingsMutation = useMutation({
         mutationFn: updateUserSettings,
@@ -407,25 +417,25 @@ export function WorkSettingsScreen() {
             setDays(prev => ({
                 ...prev,
                 monday: workSchedule.monday
-                    ? { enabled: true, startTime: workSchedule.monday.start, endTime: workSchedule.monday.end }
+                    ? { enabled: true, startTime: workSchedule.monday.start, endTime: workSchedule.monday.end, workType: workSchedule.monday.workType }
                     : { ...defaultSchedule },
                 tuesday: workSchedule.tuesday
-                    ? { enabled: true, startTime: workSchedule.tuesday.start, endTime: workSchedule.tuesday.end }
+                    ? { enabled: true, startTime: workSchedule.tuesday.start, endTime: workSchedule.tuesday.end, workType: workSchedule.tuesday.workType }
                     : { ...defaultSchedule },
                 wednesday: workSchedule.wednesday
-                    ? { enabled: true, startTime: workSchedule.wednesday.start, endTime: workSchedule.wednesday.end }
+                    ? { enabled: true, startTime: workSchedule.wednesday.start, endTime: workSchedule.wednesday.end, workType: workSchedule.wednesday.workType }
                     : { ...defaultSchedule },
                 thursday: workSchedule.thursday
-                    ? { enabled: true, startTime: workSchedule.thursday.start, endTime: workSchedule.thursday.end }
+                    ? { enabled: true, startTime: workSchedule.thursday.start, endTime: workSchedule.thursday.end, workType: workSchedule.thursday.workType }
                     : { ...defaultSchedule },
                 friday: workSchedule.friday
-                    ? { enabled: true, startTime: workSchedule.friday.start, endTime: workSchedule.friday.end }
+                    ? { enabled: true, startTime: workSchedule.friday.start, endTime: workSchedule.friday.end, workType: workSchedule.friday.workType }
                     : { ...defaultSchedule },
                 saturday: workSchedule.saturday
-                    ? { enabled: true, startTime: workSchedule.saturday.start, endTime: workSchedule.saturday.end }
+                    ? { enabled: true, startTime: workSchedule.saturday.start, endTime: workSchedule.saturday.end, workType: workSchedule.saturday.workType }
                     : { ...defaultSchedule },
                 sunday: workSchedule.sunday
-                    ? { enabled: true, startTime: workSchedule.sunday.start, endTime: workSchedule.sunday.end }
+                    ? { enabled: true, startTime: workSchedule.sunday.start, endTime: workSchedule.sunday.end, workType: workSchedule.sunday.workType }
                     : { ...defaultSchedule },
             }));
 
@@ -475,42 +485,49 @@ export function WorkSettingsScreen() {
             workSchedule.monday = {
                 start: days.monday.startTime,
                 end: days.monday.endTime,
+                ...(canWorkRemote && days.monday.workType ? { workType: days.monday.workType } : {}),
             };
         }
         if (days.tuesday.enabled) {
             workSchedule.tuesday = {
                 start: days.tuesday.startTime,
                 end: days.tuesday.endTime,
+                ...(canWorkRemote && days.tuesday.workType ? { workType: days.tuesday.workType } : {}),
             };
         }
         if (days.wednesday.enabled) {
             workSchedule.wednesday = {
                 start: days.wednesday.startTime,
                 end: days.wednesday.endTime,
+                ...(canWorkRemote && days.wednesday.workType ? { workType: days.wednesday.workType } : {}),
             };
         }
         if (days.thursday.enabled) {
             workSchedule.thursday = {
                 start: days.thursday.startTime,
                 end: days.thursday.endTime,
+                ...(canWorkRemote && days.thursday.workType ? { workType: days.thursday.workType } : {}),
             };
         }
         if (days.friday.enabled) {
             workSchedule.friday = {
                 start: days.friday.startTime,
                 end: days.friday.endTime,
+                ...(canWorkRemote && days.friday.workType ? { workType: days.friday.workType } : {}),
             };
         }
         if (days.saturday.enabled) {
             workSchedule.saturday = {
                 start: days.saturday.startTime,
                 end: days.saturday.endTime,
+                ...(canWorkRemote && days.saturday.workType ? { workType: days.saturday.workType } : {}),
             };
         }
         if (days.sunday.enabled) {
             workSchedule.sunday = {
                 start: days.sunday.startTime,
                 end: days.sunday.endTime,
+                ...(canWorkRemote && days.sunday.workType ? { workType: days.sunday.workType } : {}),
             };
         }
 
@@ -898,6 +915,46 @@ export function WorkSettingsScreen() {
                                                     <TimeHint>
                                                         {formatTimeForDisplay(daySchedule.startTime)} — {formatTimeForDisplay(daySchedule.endTime)}
                                                     </TimeHint>
+                                                )}
+                                                {canWorkRemote && (
+                                                    <WorkTypeContainer>
+                                                        <WorkTypeButton
+                                                            theme={theme}
+                                                            selected={daySchedule.workType === 'hybrid'}
+                                                            onPress={() => {
+                                                                setDays(prev => ({
+                                                                    ...prev,
+                                                                    [day.key]: {
+                                                                        ...prev[day.key],
+                                                                        workType: prev[day.key].workType === 'hybrid' ? undefined : 'hybrid',
+                                                                    },
+                                                                }));
+                                                            }}
+                                                            activeOpacity={0.7}
+                                                        >
+                                                            <WorkTypeButtonText theme={theme} selected={daySchedule.workType === 'hybrid'}>
+                                                                {t('profile.workType.hybrid')}
+                                                            </WorkTypeButtonText>
+                                                        </WorkTypeButton>
+                                                        <WorkTypeButton
+                                                            theme={theme}
+                                                            selected={daySchedule.workType === 'remote'}
+                                                            onPress={() => {
+                                                                setDays(prev => ({
+                                                                    ...prev,
+                                                                    [day.key]: {
+                                                                        ...prev[day.key],
+                                                                        workType: prev[day.key].workType === 'remote' ? undefined : 'remote',
+                                                                    },
+                                                                }));
+                                                            }}
+                                                            activeOpacity={0.7}
+                                                        >
+                                                            <WorkTypeButtonText theme={theme} selected={daySchedule.workType === 'remote'}>
+                                                                {t('profile.workType.remote')}
+                                                            </WorkTypeButtonText>
+                                                        </WorkTypeButton>
+                                                    </WorkTypeContainer>
                                                 )}
                                             </>
                                         )}

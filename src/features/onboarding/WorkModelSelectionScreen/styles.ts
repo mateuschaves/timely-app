@@ -5,6 +5,18 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
+  margin: ${spacing.xl}px;
+  border-radius: ${borderRadius.xl}px;
+  overflow: hidden;
+  max-width: 480px;
+  width: 100%;
+  max-height: 85%;
+  align-self: center;
+  shadow-color: #000;
+  shadow-offset: 0px 20px;
+  shadow-opacity: 0.3;
+  shadow-radius: 25px;
+  elevation: 10;
 `;
 
 export const Header = styled.View`
@@ -29,6 +41,7 @@ export const Content = styled.ScrollView.attrs({
   },
 })`
   flex: 1;
+  max-height: 100%;
 `;
 
 export const Title = styled.Text`
@@ -91,8 +104,8 @@ export const ContinueButton = styled.TouchableOpacity<{ theme: any; disabled?: b
   min-height: 50px;
 `;
 
-export const ContinueButtonText = styled.Text<{ disabled?: boolean }>`
+export const ContinueButtonText = styled.Text<{ theme: any; disabled?: boolean }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
-  color: ${({ disabled }) => (disabled ? '#999' : '#ffffff')};
+  color: ${({ theme, disabled }) => (disabled ? '#999' : theme.text.inverse)};
 `;

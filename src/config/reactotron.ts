@@ -39,7 +39,7 @@ export const setupReactotron = () => {
 
   reactotron = Reactotron.configure({
     name: 'Timely App',
-    host: Platform.OS === 'ios' ? '192.168.15.74' : '10.0.2.2', // Android emulator usa 10.0.2.2 para localhost
+    host: 'localhost', // Android emulator usa 10.0.2.2 para localhost
   })
     .useReactNative({
       asyncStorage: true, // Monitora AsyncStorage

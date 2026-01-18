@@ -159,6 +159,10 @@
     "friday": "Vendredi",
     "saturday": "Samedi",
     "sunday": "Dimanche",
+    "workType": {
+      "hybrid": "Sur site",
+      "remote": "À distance"
+    },
     "customHolidays": "Jours fériés personnalisés",
     "addHoliday": "Ajouter un jour férié",
     "holidayNamePlaceholder": "Nom du jour férié",
@@ -229,15 +233,24 @@
     "workModel": {
       "title": "Comment travaillez-vous ?",
       "subtitle": "Choisissez le modèle qui décrit le mieux votre routine",
-      "office": "Sur site",
-      "officeDescription": "Travail au bureau ou lieu fixe",
+      "onsite": "Sur site",
+      "onsiteDescription": "Travail au bureau ou lieu fixe",
       "hybrid": "Hybride",
       "hybridDescription": "Quelques jours sur site, d'autres à distance",
       "remote": "À distance",
       "remoteDescription": "Travail à domicile ou n'importe où",
-      "flexible": "Flexible",
-      "flexibleDescription": "Les horaires et les lieux varient fréquemment",
       "continue": "Continuer"
+    },
+    "workLocation": {
+      "title": "Où travaillez-vous ?",
+      "subtitle": "Recherchez par adresse ou choisissez sur la carte où vous travaillez",
+      "searchPlaceholder": "Rechercher une adresse, rue, ville ou quartier...",
+      "useCurrentLocation": "Utiliser ma localisation",
+      "selectedLocation": "Localisation sélectionnée",
+      "selectedAddress": "Adresse sélectionnée",
+      "selectLocationError": "Veuillez sélectionner un emplacement sur la carte ou rechercher une adresse",
+      "locationError": "Erreur lors de l'obtention de la localisation actuelle",
+      "mapNotAvailable": "La carte sera disponible après la construction de l'application native. Pour l'instant, utilisez la recherche d'adresse ci-dessus ou votre localisation actuelle."
     },
     "skip": "Passer",
     "skipConfirmTitle": "Passer la configuration ?",

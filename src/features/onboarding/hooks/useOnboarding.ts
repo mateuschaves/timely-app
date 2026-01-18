@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
+import { updateUserSettings } from '@/api/update-user-settings';
+import { LocationCoordinates } from '@/api/types';
+import { WorkModel } from '../types';
 
 export interface OnboardingState {
   isOnboardingCompleted: boolean;
@@ -24,10 +27,20 @@ export function useOnboarding() {
     });
   }, [user]);
 
-  const completeOnboarding = useCallback(async () => {
+  const completeOnboarding = useCallback(async (workModel?: WorkModel, workLocation?: LocationCoordinates) => {
     try {
       // Update onboarding status via API
-      await updateUserMe({ onboardingCompleted: true });
+      await updateUserMe({ 
+        onboardingCompleted: true,
+      });
+
+      // Save workMode and workLocation to worksettings
+      if (workModel || workLocation) {
+        await updateUserSettings({
+          workMode: workModel,
+          workLocation,
+        });
+      }
 
       // Refresh user data to get updated onboarding status
       await fetchUserMe();

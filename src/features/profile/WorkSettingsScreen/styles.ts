@@ -405,3 +405,28 @@ export const TimePickerWrapper = styled.View<{ theme: any }>`
   padding: ${spacing.sm}px 0;
 `;
 
+export const WorkTypeContainer = styled.View`
+  flex-direction: row;
+  gap: ${spacing.sm}px;
+  margin-top: ${spacing.sm}px;
+  margin-bottom: ${spacing.xs}px;
+`;
+
+export const WorkTypeButton = styled.TouchableOpacity<{ theme: any; selected: boolean }>`
+  flex: 1;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-radius: ${borderRadius.md}px;
+  background-color: ${({ theme, selected }) =>
+    selected ? theme.primary + '15' : theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary};
+  border: 1px solid ${({ theme, selected }) => (selected ? theme.primary : theme.border.medium)};
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+`;
+
+export const WorkTypeButtonText = styled.Text<{ theme: any; selected: boolean }>`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${({ theme, selected }) => (selected ? theme.primary : theme.text.secondary)};
+`;
+

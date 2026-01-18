@@ -5,6 +5,17 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
+  margin: ${spacing.xl}px;
+  border-radius: ${borderRadius.xl}px;
+  overflow: hidden;
+  max-width: 480px;
+  width: 100%;
+  align-self: center;
+  shadow-color: #000;
+  shadow-offset: 0px 20px;
+  shadow-opacity: 0.3;
+  shadow-radius: 25px;
+  elevation: 10;
 `;
 
 export const Content = styled.View`
@@ -56,10 +67,10 @@ export const PrimaryButton = styled.TouchableOpacity<{ theme: any }>`
   min-height: 50px;
 `;
 
-export const PrimaryButtonText = styled.Text`
+export const PrimaryButtonText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
-  color: #ffffff;
+  color: ${({ theme }) => theme.text.inverse};
 `;
 
 export const SecondaryButton = styled.TouchableOpacity`
