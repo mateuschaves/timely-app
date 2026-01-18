@@ -6,8 +6,10 @@ import * as ExpoLinking from 'expo-linking';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider, useAuthContext } from './src/features/auth';
-import { RootNavigator } from './src/navigation/RootNavigator';
-import { useOnboarding } from './src/features/onboarding';
+import { AppNavigator } from './src/navigation/AppNavigator';
+import { AuthNavigator } from './src/navigation/AuthNavigator';
+import { OnboardingNavigator } from './src/navigation/OnboardingNavigator';
+import { OnboardingProvider, useOnboarding } from './src/features/onboarding';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
@@ -55,7 +57,8 @@ const linking = {
 };
 
 function NavigationContent() {
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isOnboardingCompleted, isLoading: isOnboardingLoading } = useOnboarding();
   const { handleDeeplink } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
@@ -248,7 +251,16 @@ function NavigationContent() {
     return null;
   }
 
-  return null;
+  // Show onboarding if user is authenticated but hasn't completed onboarding
+  if (isAuthenticated && !isOnboardingCompleted) {
+    return <OnboardingNavigator />;
+  }
+
+  return (
+    <>
+      {isAuthenticated ? <AppNavigator /> : <AuthNavigator />}
+    </>
+  );
 }
 
 function Navigation() {
@@ -271,7 +283,7 @@ function Navigation() {
 
   return (
     <NavigationContainer linking={linking}>
-      <RootNavigator />
+      <NavigationContent />
     </NavigationContainer>
   );
 }
@@ -282,9 +294,11 @@ export default function App() {
       <ThemeProvider>
         <ThemeWrapper>
           <AuthProvider>
-            <FeedbackProvider>
-              <Navigation />
-            </FeedbackProvider>
+            <OnboardingProvider>
+              <FeedbackProvider>
+                <Navigation />
+              </FeedbackProvider>
+            </OnboardingProvider>
           </AuthProvider>
         </ThemeWrapper>
       </ThemeProvider>

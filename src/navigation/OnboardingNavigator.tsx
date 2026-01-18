@@ -1,6 +1,5 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
 import { IntroScreen, WorkModelSelectionScreen, WorkLocationScreen, OnboardingStackParamList } from '@/features/onboarding';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
@@ -10,6 +9,7 @@ export function OnboardingNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        animation: 'slide_from_right',
       }}
     >
       <Stack.Screen 

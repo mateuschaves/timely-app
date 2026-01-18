@@ -3,10 +3,13 @@ import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from '@/i18n';
-import { useOnboarding } from '../hooks/useOnboarding';
+import { useOnboarding } from '../context/OnboardingContext';
 import { OnboardingStackParamList } from '../types';
 import {
   Container,
+  Header,
+  CloseButton,
+  CloseButtonText,
   Content,
   IconContainer,
   Icon,
@@ -59,6 +62,12 @@ export function IntroScreen() {
 
   return (
     <Container>
+      <Header>
+        <CloseButton onPress={handleSkip} activeOpacity={0.6}>
+          <CloseButtonText>×</CloseButtonText>
+        </CloseButton>
+      </Header>
+      
       <Content>
         <IconContainer>
           <Icon>⏰</Icon>

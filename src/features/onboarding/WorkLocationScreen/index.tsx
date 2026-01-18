@@ -5,7 +5,7 @@ import { spacing } from '@/theme';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useOnboarding } from '../hooks/useOnboarding';
+import { useOnboarding } from '../context/OnboardingContext';
 import { OnboardingStackParamList, WorkModel } from '../types';
 import { useGeocoding, AddressSuggestion } from '../hooks/useGeocoding';
 import { LocationCoordinates } from '@/api/types';
@@ -43,8 +43,8 @@ try {
 import {
   Container,
   Header,
-  SkipButton,
-  SkipButtonText,
+  CloseButton,
+  CloseButtonText,
   Content,
   Title,
   Subtitle,
@@ -321,9 +321,9 @@ export function WorkLocationScreen() {
   return (
     <Container>
       <Header>
-        <SkipButton onPress={handleSkip} activeOpacity={0.6}>
-          <SkipButtonText>{t('onboarding.skip')}</SkipButtonText>
-        </SkipButton>
+        <CloseButton onPress={handleSkip} activeOpacity={0.6}>
+          <CloseButtonText>×</CloseButtonText>
+        </CloseButton>
       </Header>
 
       <Content>

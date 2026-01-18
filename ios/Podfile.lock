@@ -79,6 +79,8 @@ PODS:
     - ExpoModulesCore
   - ExpoLocation (19.0.7):
     - ExpoModulesCore
+  - ExpoMaps (0.12.10):
+    - ExpoModulesCore
   - ExpoModulesCore (3.0.26):
     - hermes-engine
     - RCTRequired
@@ -1976,6 +1978,7 @@ DEPENDENCIES:
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
   - ExpoLocalization (from `../node_modules/expo-localization/ios`)
   - ExpoLocation (from `../node_modules/expo-location/ios`)
+  - ExpoMaps (from `../node_modules/expo-maps/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoSharing (from `../node_modules/expo-sharing/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
@@ -2098,6 +2101,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-localization/ios"
   ExpoLocation:
     :path: "../node_modules/expo-location/ios"
+  ExpoMaps:
+    :path: "../node_modules/expo-maps/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core"
   ExpoSharing:
@@ -2277,6 +2282,7 @@ SPEC CHECKSUMS:
   ExpoLinking: 50a65cd7beb6051ffc82f84ffb33961dd5e55a5b
   ExpoLocalization: 6c6f0f89ad2822001ab0bc2eb6d4d980c77f080c
   ExpoLocation: 1dc9e4c06ef66ed081348a11eb637d1dfecc7d61
+  ExpoMaps: 6638d2c8d78b411f1647abcca33df9f081cfc595
   ExpoModulesCore: e37f2bfc6f5b553989e1a67e15b7c5c8bbcac0cc
   ExpoSharing: a0e593c497c49377e9797b72586964e31c17ca7c
   ExpoSplashScreen: f46795cd52cdad65d30e54043f04c86401c4f85d

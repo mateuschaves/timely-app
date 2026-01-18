@@ -5,18 +5,6 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
-  margin: ${spacing.xl}px;
-  border-radius: ${borderRadius.xl}px;
-  overflow: hidden;
-  max-width: 480px;
-  width: 100%;
-  max-height: 85%;
-  align-self: center;
-  shadow-color: #000;
-  shadow-offset: 0px 20px;
-  shadow-opacity: 0.3;
-  shadow-radius: 25px;
-  elevation: 10;
 `;
 
 export const Header = styled.View`
@@ -24,14 +12,20 @@ export const Header = styled.View`
   align-items: flex-end;
 `;
 
-export const SkipButton = styled.TouchableOpacity`
-  padding: ${spacing.sm}px ${spacing.md}px;
+export const CloseButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${borderRadius.round}px;
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary};
 `;
 
-export const SkipButtonText = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.medium};
-  color: ${({ theme }) => theme.text.secondary};
+export const CloseButtonText = styled.Text<{ theme: any }>`
+  font-size: 24px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.text.primary};
+  line-height: 24px;
 `;
 
 export const Content = styled.ScrollView.attrs({

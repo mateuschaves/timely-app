@@ -3,13 +3,13 @@ import { Alert } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useOnboarding } from '../hooks/useOnboarding';
+import { useOnboarding } from '../context/OnboardingContext';
 import { WorkModel, OnboardingStackParamList } from '../types';
 import {
   Container,
   Header,
-  SkipButton,
-  SkipButtonText,
+  CloseButton,
+  CloseButtonText,
   Content,
   Title,
   Subtitle,
@@ -104,9 +104,9 @@ export function WorkModelSelectionScreen() {
   return (
     <Container>
       <Header>
-        <SkipButton onPress={handleSkip} activeOpacity={0.6}>
-          <SkipButtonText>{t('onboarding.skip')}</SkipButtonText>
-        </SkipButton>
+        <CloseButton onPress={handleSkip} activeOpacity={0.6}>
+          <CloseButtonText>×</CloseButtonText>
+        </CloseButton>
       </Header>
 
       <Content>

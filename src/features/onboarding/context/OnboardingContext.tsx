@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { useAuthContext } from '@/features/auth';
 import { updateUserMe } from '@/api/update-user-me';
 import { updateUserSettings } from '@/api/update-user-settings';
@@ -10,7 +10,18 @@ export interface OnboardingState {
   isLoading: boolean;
 }
 
-export function useOnboarding() {
+interface OnboardingContextValue extends OnboardingState {
+  completeOnboarding: (workModel?: WorkModel, workLocation?: LocationCoordinates) => Promise<void>;
+  skipOnboarding: () => Promise<void>;
+}
+
+const OnboardingContext = createContext<OnboardingContextValue | undefined>(undefined);
+
+interface OnboardingProviderProps {
+  children: ReactNode;
+}
+
+export function OnboardingProvider({ children }: OnboardingProviderProps) {
   const { user, fetchUserMe } = useAuthContext();
   const [state, setState] = useState<OnboardingState>({
     isOnboardingCompleted: true,
@@ -74,10 +85,25 @@ export function useOnboarding() {
     }));
   }, []);
 
-  return {
+  const value: OnboardingContextValue = {
     ...state,
     completeOnboarding,
     skipOnboarding,
   };
+
+  return (
+    <OnboardingContext.Provider value={value}>
+      {children}
+    </OnboardingContext.Provider>
+  );
 }
 
+export function useOnboarding() {
+  const context = useContext(OnboardingContext);
+  
+  if (context === undefined) {
+    throw new Error('useOnboarding must be used within an OnboardingProvider');
+  }
+  
+  return context;
+}

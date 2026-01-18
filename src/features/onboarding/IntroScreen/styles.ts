@@ -5,17 +5,27 @@ import { spacing, borderRadius, typography } from '@/theme';
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
   background-color: ${({ theme }) => theme.background.primary};
-  margin: ${spacing.xl}px;
-  border-radius: ${borderRadius.xl}px;
-  overflow: hidden;
-  max-width: 480px;
-  width: 100%;
-  align-self: center;
-  shadow-color: #000;
-  shadow-offset: 0px 20px;
-  shadow-opacity: 0.3;
-  shadow-radius: 25px;
-  elevation: 10;
+`;
+
+export const Header = styled.View`
+  padding: ${spacing.md}px ${spacing.lg}px;
+  align-items: flex-end;
+`;
+
+export const CloseButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${borderRadius.round}px;
+  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary};
+`;
+
+export const CloseButtonText = styled.Text<{ theme: any }>`
+  font-size: 24px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.text.primary};
+  line-height: 24px;
 `;
 
 export const Content = styled.View`
