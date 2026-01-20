@@ -3,6 +3,7 @@ export { LanguageScreen } from './LanguageScreen';
 export { AppearanceScreen } from './AppearanceScreen';
 export { EditNameScreen } from './EditNameScreen';
 export { WorkSettingsScreen } from './WorkSettingsScreen';
+export { WorkplaceLocationScreen } from './WorkplaceLocationScreen';
 export { PrivacyAndSecurityScreen } from './PrivacyAndSecurityScreen';
 export { DeleteAccountScreen } from './DeleteAccountScreen';
 export { useWorkSettings } from './hooks/useWorkSettings';

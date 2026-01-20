@@ -13,8 +13,10 @@ import { useOnboarding } from './src/features/onboarding';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
+import { useGeofencing } from './src/features/time-clock/hooks/useGeofencing';
 import { useLastEvent } from './src/features/home/hooks/useLastEvent';
 import { useNotifications } from './src/hooks/useNotifications';
+import * as Notifications from 'expo-notifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
 import './src/config/reactotron.d';
@@ -59,14 +61,56 @@ const linking = {
 function NavigationContent() {
   const { isAuthenticated, isLoading } = useAuthContext();
   const { isOnboardingCompleted, isLoading: isOnboardingLoading } = useOnboarding();
-  const { handleDeeplink } = useTimeClock();
+  const { handleDeeplink, clock } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
+  const { startMonitoring } = useGeofencing();
   useNotifications();
 
   const lastProcessedUrl = useRef<string | null>(null);
   const isProcessingRef = useRef(false);
   const initialUrlChecked = useRef(false);
+
+  // Handle notification responses from geofencing
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      
+      if (data.type === 'geofence_enter' || data.type === 'geofence_exit') {
+        console.log('Geofence notification tapped:', data);
+        
+        // Create a deeplink URL to trigger clock in/out
+        const action = data.action || 'clock-in';
+        const currentTime = new Date().toISOString();
+        const deeplink = `timely://clock?time=${encodeURIComponent(currentTime)}&type=${action === 'clock-in' ? 'entry' : 'exit'}`;
+        
+        // Process the deeplink
+        processDeeplink(deeplink);
+      }
+    });
+
+    return () => subscription.remove();
+  }, [isAuthenticated]);
+
+  // Initialize geofencing when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const initGeofencing = async () => {
+      try {
+        await startMonitoring();
+      } catch (error) {
+        console.error('Error initializing geofencing:', error);
+      }
+    };
+
+    // Delay initialization slightly to allow app to fully load
+    setTimeout(() => {
+      initGeofencing();
+    }, 2000);
+  }, [isAuthenticated, startMonitoring]);
 
   useEffect(() => {
     if (!isAuthenticated) return;

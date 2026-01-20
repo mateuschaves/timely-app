@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabNavigator } from './BottomTabNavigator';
-import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
+import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, WorkplaceLocationScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
 import { EditEventScreen, ReportPreviewScreen } from '@/features/history';
 
 export type AppStackParamList = {
@@ -10,6 +10,7 @@ export type AppStackParamList = {
   Appearance: undefined;
   EditName: undefined;
   WorkSettings: undefined;
+  WorkplaceLocation: undefined;
   PrivacyAndSecurity: undefined;
   DeleteAccount: undefined;
   EditEvent: { event: any };
@@ -53,6 +54,14 @@ export function AppNavigator() {
       <Stack.Screen
         name="WorkSettings"
         component={WorkSettingsScreen}
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="WorkplaceLocation"
+        component={WorkplaceLocationScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',

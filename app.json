@@ -22,9 +22,11 @@
       "deploymentTarget": "16.1",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "Precisamos da sua localização para registrar o ponto com precisão.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
+        "NSLocationAlwaysUsageDescription": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
         "ITSAppUsesNonExemptEncryption": false,
-        "NSSupportsLiveActivities": true
+        "NSSupportsLiveActivities": true,
+        "UIBackgroundModes": ["location", "remote-notification"]
       }
     },
     "plugins": [
@@ -42,6 +44,15 @@
         {
           "frequentUpdates": true,
           "modulePath": "./modules/expo-live-activity/index.ts"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
+          "locationAlwaysPermission": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
+          "locationWhenInUsePermission": "Precisamos da sua localização para registrar o ponto com precisão.",
+          "isIosBackgroundLocationEnabled": true
         }
       ]
     ],
@@ -62,7 +73,8 @@
       "package": "com.timelyapp",
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
       ],
       "intentFilters": [
         {

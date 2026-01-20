@@ -1,0 +1,233 @@
+import { useEffect, useCallback, useState } from 'react';
+import { Platform } from 'react-native';
+import ExpoGeofencing, {
+  addGeofenceEnterListener,
+  addGeofenceExitListener,
+  addGeofenceErrorListener,
+  GeofenceEvent,
+} from '@/../modules/expo-geofencing';
+import { useAuthContext } from '@/features/auth';
+import { getUserSettings } from '@/api/get-user-settings';
+import { useQuery } from '@tanstack/react-query';
+import * as Notifications from 'expo-notifications';
+
+const WORKPLACE_GEOFENCE_ID = 'workplace';
+const GEOFENCE_RADIUS = 100; // 100 meters
+
+export function useGeofencing() {
+  const { user } = useAuthContext();
+  const [isMonitoring, setIsMonitoring] = useState(false);
+  const [hasPermission, setHasPermission] = useState(false);
+
+  // Get user settings to check for workplace location
+  const { data: settings } = useQuery({
+    queryKey: ['userSettings', user?.id],
+    queryFn: getUserSettings,
+    enabled: !!user?.id,
+  });
+
+  // Check if geofencing is available (iOS only for now)
+  const isAvailable = Platform.OS === 'ios';
+
+  /**
+   * Request "Always" location permission needed for background geofencing
+   */
+  const requestPermission = useCallback(async () => {
+    if (!isAvailable) {
+      console.log('Geofencing not available on this platform');
+      return false;
+    }
+
+    try {
+      const result = await ExpoGeofencing.requestAlwaysAuthorization();
+      const granted = result.status === 'granted';
+      setHasPermission(granted);
+      
+      if (!granted) {
+        console.log('Always location permission not granted:', result.status);
+      }
+      
+      return granted;
+    } catch (error) {
+      console.error('Error requesting geofencing permission:', error);
+      return false;
+    }
+  }, [isAvailable]);
+
+  /**
+   * Start monitoring workplace geofence
+   */
+  const startMonitoring = useCallback(async () => {
+    if (!isAvailable) {
+      console.log('Geofencing not available on this platform');
+      return false;
+    }
+
+    if (!settings?.workLocation) {
+      console.log('No workplace location configured');
+      return false;
+    }
+
+    try {
+      // Check permission first
+      const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
+      if (!hasAuth) {
+        console.log('No always location permission, requesting...');
+        const granted = await requestPermission();
+        if (!granted) {
+          return false;
+        }
+      }
+
+      // Get workplace coordinates
+      const [longitude, latitude] = settings.workLocation.coordinates;
+
+      // Start monitoring
+      const success = ExpoGeofencing.startMonitoring(
+        WORKPLACE_GEOFENCE_ID,
+        latitude,
+        longitude,
+        GEOFENCE_RADIUS
+      );
+
+      if (success) {
+        setIsMonitoring(true);
+        console.log(`✅ Started monitoring workplace geofence at (${latitude}, ${longitude})`);
+      } else {
+        console.log('❌ Failed to start monitoring workplace geofence');
+      }
+
+      return success;
+    } catch (error) {
+      console.error('Error starting geofence monitoring:', error);
+      return false;
+    }
+  }, [isAvailable, settings?.workLocation, requestPermission]);
+
+  /**
+   * Stop monitoring workplace geofence
+   */
+  const stopMonitoring = useCallback(() => {
+    if (!isAvailable) {
+      return false;
+    }
+
+    try {
+      const success = ExpoGeofencing.stopMonitoring(WORKPLACE_GEOFENCE_ID);
+      if (success) {
+        setIsMonitoring(false);
+        console.log('✅ Stopped monitoring workplace geofence');
+      }
+      return success;
+    } catch (error) {
+      console.error('Error stopping geofence monitoring:', error);
+      return false;
+    }
+  }, [isAvailable]);
+
+  /**
+   * Handle geofence entry (arriving at work)
+   */
+  const handleGeofenceEnter = useCallback(async (event: GeofenceEvent) => {
+    console.log('📍 Entered workplace geofence:', event);
+
+    try {
+      // Send notification
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: '🏢 Chegou ao trabalho',
+          body: 'Você chegou ao local de trabalho. Toque para registrar o ponto.',
+          data: {
+            type: 'geofence_enter',
+            identifier: event.identifier,
+            latitude: event.latitude,
+            longitude: event.longitude,
+            action: 'clock-in',
+          },
+        },
+        trigger: null, // Send immediately
+      });
+    } catch (error) {
+      console.error('Error handling geofence entry:', error);
+    }
+  }, []);
+
+  /**
+   * Handle geofence exit (leaving work)
+   */
+  const handleGeofenceExit = useCallback(async (event: GeofenceEvent) => {
+    console.log('📍 Exited workplace geofence:', event);
+
+    try {
+      // Send notification
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: '🚶 Saiu do trabalho',
+          body: 'Você saiu do local de trabalho. Toque para registrar a saída.',
+          data: {
+            type: 'geofence_exit',
+            identifier: event.identifier,
+            latitude: event.latitude,
+            longitude: event.longitude,
+            action: 'clock-out',
+          },
+        },
+        trigger: null, // Send immediately
+      });
+    } catch (error) {
+      console.error('Error handling geofence exit:', error);
+    }
+  }, []);
+
+  /**
+   * Handle geofence errors
+   */
+  const handleGeofenceError = useCallback((event: { identifier: string; error: string }) => {
+    console.error('❌ Geofence error:', event);
+  }, []);
+
+  // Set up event listeners
+  useEffect(() => {
+    if (!isAvailable) {
+      return;
+    }
+
+    const enterSubscription = addGeofenceEnterListener(handleGeofenceEnter);
+    const exitSubscription = addGeofenceExitListener(handleGeofenceExit);
+    const errorSubscription = addGeofenceErrorListener(handleGeofenceError);
+
+    return () => {
+      enterSubscription.remove();
+      exitSubscription.remove();
+      errorSubscription.remove();
+    };
+  }, [isAvailable, handleGeofenceEnter, handleGeofenceExit, handleGeofenceError]);
+
+  // Check current monitoring status on mount
+  useEffect(() => {
+    if (!isAvailable) {
+      return;
+    }
+
+    try {
+      const regions = ExpoGeofencing.getMonitoredRegions();
+      const monitoring = regions.includes(WORKPLACE_GEOFENCE_ID);
+      setIsMonitoring(monitoring);
+
+      const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
+      setHasPermission(hasAuth);
+    } catch (error) {
+      console.error('Error checking geofence status:', error);
+    }
+  }, [isAvailable]);
+
+  return {
+    isAvailable,
+    isMonitoring,
+    hasPermission,
+    startMonitoring,
+    stopMonitoring,
+    requestPermission,
+    workplaceLocation: settings?.workLocation,
+  };
+}
