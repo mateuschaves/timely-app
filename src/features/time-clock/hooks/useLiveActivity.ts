@@ -1,22 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { Platform } from 'react-native';
-import { 
-  startActivity, 
-  endActivity, 
-  updateActivity,
-  ActivityState
-} from 'expo-live-activity';
-
-export interface LiveActivityData {
-  entryTime: string;
-  elapsedTime: string;
-}
-
-export interface LiveActivityAttributes {
-  appName: string;
-}
-
-const ACTIVITY_NAME = 'TimelyWorkSession';
+import { startActivity, stopActivity, updateActivity } from 'expo-live-activity';
 
 export function useLiveActivity() {
   const activityIdRef = useRef<string | null>(null);
@@ -24,16 +8,17 @@ export function useLiveActivity() {
 
   // Check if Live Activities are supported and enabled
   const isSupported = async (): Promise<boolean> => {
-    if (Platform.OS !== 'ios') return false;
-    
-    // Check if the functions are available (they may not be in Expo Go or if module isn't linked)
-    if (typeof startActivity !== 'function' || typeof endActivity !== 'function') {
+    if (Platform.OS !== 'ios') {
       return false;
     }
     
-    // Live Activities require iOS 16.2+, but we can't check version here
-    // Just return true if we're on iOS and the functions are available
-    // The actual startActivity call will fail gracefully if not supported
+    // Check if functions are available
+    if (typeof startActivity !== 'function' || typeof stopActivity !== 'function') {
+      console.log('expo-live-activity functions not available');
+      return false;
+    }
+    
+    // Live Activities require iOS 16.1+
     return true;
   };
 
@@ -49,7 +34,10 @@ export function useLiveActivity() {
       }
 
       if (activityIdRef.current) {
-        await endActivity(activityIdRef.current);
+        await stopActivity(activityIdRef.current, {
+          title: 'Ponto registrado',
+          subtitle: 'Sessão de trabalho finalizada'
+        });
         console.log('Live Activity ended:', activityIdRef.current);
         activityIdRef.current = null;
       }
@@ -69,40 +57,42 @@ export function useLiveActivity() {
   // Start a new Live Activity for work session
   const startWorkSessionActivity = useCallback(async (entryTime: Date): Promise<string | null> => {
     try {
+      console.log('🚀 Tentando criar Live Activity...');
+      
       if (!(await isSupported())) {
-        console.log('Live Activities not supported or enabled');
+        console.log('❌ Live Activities not supported or enabled');
         return null;
       }
 
+      console.log('✅ Live Activities suportado');
+
       // Stop any existing activity first (using internal helper)
       await stopActivityInternal();
+      console.log('🧹 Atividades antigas limpas');
 
-      const attributes: LiveActivityAttributes = {
-        appName: 'Timely',
-      };
-
-      const contentState: LiveActivityData = {
-        entryTime: entryTime.toISOString(),
-        elapsedTime: '00:00:00',
-      };
-
-      const activityId = await startActivity<LiveActivityAttributes, LiveActivityData>(
-        ACTIVITY_NAME,
-        attributes,
-        contentState
-      );
+      console.log('📝 Criando nova Live Activity...');
+      const activityId = await startActivity({
+        title: 'Trabalho em Andamento',
+        subtitle: `Entrada: ${entryTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+      });
 
       if (activityId) {
         activityIdRef.current = activityId;
-        console.log('Live Activity started:', activityId);
+        console.log('✅ Live Activity criado:', activityId);
+        console.log('🔔 BLOQUEIE O IPHONE AGORA!');
+        console.log('📱 Versão iOS: Precisa ser 16.2+');
+        console.log('⚙️  Verifique: Ajustes → Notificações → Atividades ao Vivo = ATIVADO');
 
         // Start updating the elapsed time every minute
         startUpdatingElapsedTime(entryTime);
+        
+        return activityId;
       }
 
-      return activityId;
+      console.log('❌ startActivity retornou null/undefined');
+      return null;
     } catch (error) {
-      console.error('Error starting Live Activity:', error);
+      console.error('❌ Error starting Live Activity:', error);
       return null;
     }
   }, []);
@@ -125,7 +115,10 @@ export function useLiveActivity() {
 
   // Calculate and update elapsed time
   const updateElapsedTime = async (entryTime: Date) => {
-    if (!activityIdRef.current) return;
+    if (!activityIdRef.current) {
+      console.log('⚠️ Tentou atualizar mas não há activity ID');
+      return;
+    }
 
     try {
       const now = new Date();
@@ -133,23 +126,19 @@ export function useLiveActivity() {
       
       const hours = Math.floor(elapsed / (1000 * 60 * 60));
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
       
-      const elapsedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const elapsedTime = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}min`;
 
-      const contentState: LiveActivityData = {
-        entryTime: entryTime.toISOString(),
-        elapsedTime,
-      };
+      console.log(`🔄 Atualizando Live Activity ${activityIdRef.current.substring(0, 8)}...`);
+      await updateActivity(activityIdRef.current, {
+        title: 'Trabalho em Andamento',
+        subtitle: `Tempo: ${elapsedTime}`
+      });
 
-      await updateActivity<LiveActivityData>(
-        activityIdRef.current,
-        contentState
-      );
-
-      console.log('Live Activity updated:', elapsedTime);
+      console.log('✅ Live Activity atualizado:', elapsedTime);
     } catch (error) {
-      console.error('Error updating Live Activity:', error);
+      console.error('❌ Error updating Live Activity:', error);
+      console.error('ID que tentou usar:', activityIdRef.current);
     }
   };
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,11 +13,52 @@
 		8882E3E12F0E6F690053A8F0 /* ClockIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */; };
 		8882E3E22F0E6F690053A8F1 /* TokenStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E32F0E6F0D0053A8F1 /* TokenStorage.swift */; };
 		8882E3E42F0E6F690053A8F2 /* TokenStorageBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 8882E3E52F0E6F0D0053A8F2 /* TokenStorageBridge.m */; };
+		88A7C7C42F1D7DB000434F1A /* LiveActivityExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 88A7C7AF2F1D7DAD00434F1A /* LiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		88A7C81E2F1D908A00434F1A /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88A7C7B22F1D7DAD00434F1A /* SwiftUI.framework */; };
+		88A7C81F2F1D908A00434F1A /* SwiftUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 88A7C7B22F1D7DAD00434F1A /* SwiftUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		88A7C8212F1D908E00434F1A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88A7C7B02F1D7DAD00434F1A /* WidgetKit.framework */; };
+		88A7C8222F1D908E00434F1A /* WidgetKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 88A7C7B02F1D7DAD00434F1A /* WidgetKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A77B10B109946BAE10E4BF85 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 49C9C8B3F54DAE58BDAF1D40 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		F9840FA546CDE06F2DBFBE76 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA6C2B1E11CCE4E7B60E78D /* ExpoModulesProvider.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		88A7C7C22F1D7DB000434F1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 88A7C7AE2F1D7DAD00434F1A;
+			remoteInfo = LiveActivityExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		88A7C7C52F1D7DB000434F1A /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				88A7C7C42F1D7DB000434F1A /* LiveActivityExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		88A7C8202F1D908A00434F1A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				88A7C81F2F1D908A00434F1A /* SwiftUI.framework in Embed Frameworks */,
+				88A7C8222F1D908E00434F1A /* WidgetKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* Timely.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Timely.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -28,6 +69,9 @@
 		8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClockIntent.swift; path = Timely/ClockIntent.swift; sourceTree = "<group>"; };
 		8882E3E32F0E6F0D0053A8F1 /* TokenStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TokenStorage.swift; path = Timely/TokenStorage.swift; sourceTree = "<group>"; };
 		8882E3E52F0E6F0D0053A8F2 /* TokenStorageBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = TokenStorageBridge.m; path = Timely/TokenStorageBridge.m; sourceTree = "<group>"; };
+		88A7C7AF2F1D7DAD00434F1A /* LiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		88A7C7B02F1D7DAD00434F1A /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		88A7C7B22F1D7DAD00434F1A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A570BEDE4352C9E043E5E0AE /* Pods-Timely.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timely.release.xcconfig"; path = "Target Support Files/Pods-Timely/Pods-Timely.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Timely/SplashScreen.storyboard; sourceTree = "<group>"; };
 		B5992E9E8A3077E40F4377C7 /* Pods-Timely.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timely.debug.xcconfig"; path = "Target Support Files/Pods-Timely/Pods-Timely.debug.xcconfig"; sourceTree = "<group>"; };
@@ -39,12 +83,35 @@
 		F11748452D0722820044C1D9 /* Timely.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Timely.entitlements; path = Timely/Timely.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		88A7C7C82F1D7DB000434F1A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 88A7C7AE2F1D7DAD00434F1A /* LiveActivityExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		88A7C7B42F1D7DAD00434F1A /* LiveActivity */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (88A7C7C82F1D7DB000434F1A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = LiveActivity; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				49A400A85F7EA3CBC677FB3F /* libPods-Timely.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		88A7C7AC2F1D7DAD00434F1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				88A7C81E2F1D908A00434F1A /* SwiftUI.framework in Frameworks */,
+				88A7C8212F1D908E00434F1A /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +141,8 @@
 				8882E3E02F0E6F0D0053A8F0 /* ClockIntent.swift */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				B6E4ACDDC41185691A865AB0 /* libPods-Timely.a */,
+				88A7C7B02F1D7DAD00434F1A /* WidgetKit.framework */,
+				88A7C7B22F1D7DAD00434F1A /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -99,6 +168,7 @@
 			children = (
 				13B07FAE1A68108700A75B9A /* Timely */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
+				88A7C7B42F1D7DAD00434F1A /* LiveActivity */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				5C756D56C023FF5837FD4AE7 /* Pods */,
@@ -113,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* Timely.app */,
+				88A7C7AF2F1D7DAD00434F1A /* LiveActivityExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,15 +228,38 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				03C72597A7CF36F4A63F42D7 /* [CP] Embed Pods Frameworks */,
+				88A7C7C52F1D7DB000434F1A /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				88A7C7C32F1D7DB000434F1A /* PBXTargetDependency */,
 			);
 			name = Timely;
 			productName = Timely;
 			productReference = 13B07F961A680F5B00A75B9A /* Timely.app */;
 			productType = "com.apple.product-type.application";
+		};
+		88A7C7AE2F1D7DAD00434F1A /* LiveActivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 88A7C7C92F1D7DB000434F1A /* Build configuration list for PBXNativeTarget "LiveActivityExtension" */;
+			buildPhases = (
+				88A7C7AB2F1D7DAD00434F1A /* Sources */,
+				88A7C7AC2F1D7DAD00434F1A /* Frameworks */,
+				88A7C7AD2F1D7DAD00434F1A /* Resources */,
+				88A7C8202F1D908A00434F1A /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				88A7C7B42F1D7DAD00434F1A /* LiveActivity */,
+			);
+			name = LiveActivityExtension;
+			productName = LiveActivityExtension;
+			productReference = 88A7C7AF2F1D7DAD00434F1A /* LiveActivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -173,10 +267,14 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 2620;
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+					};
+					88A7C7AE2F1D7DAD00434F1A = {
+						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
@@ -194,6 +292,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* Timely */,
+				88A7C7AE2F1D7DAD00434F1A /* LiveActivityExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -207,6 +306,13 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				A77B10B109946BAE10E4BF85 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		88A7C7AD2F1D7DAD00434F1A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,7 +457,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		88A7C7AB2F1D7DAD00434F1A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		88A7C7C32F1D7DB000434F1A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 88A7C7AE2F1D7DAD00434F1A /* LiveActivityExtension */;
+			targetProxy = 88A7C7C22F1D7DB000434F1A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -550,6 +671,101 @@
 			};
 			name = Release;
 		};
+		88A7C7C62F1D7DB000434F1A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4KWUX6ULKJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wazowsky.timelyapp.LiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		88A7C7C72F1D7DB000434F1A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 4KWUX6ULKJ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LiveActivity;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wazowsky.timelyapp.LiveActivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -567,6 +783,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		88A7C7C92F1D7DB000434F1A /* Build configuration list for PBXNativeTarget "LiveActivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88A7C7C62F1D7DB000434F1A /* Debug */,
+				88A7C7C72F1D7DB000434F1A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

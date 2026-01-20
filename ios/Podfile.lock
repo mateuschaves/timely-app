@@ -75,6 +75,8 @@ PODS:
     - ExpoModulesCore
   - ExpoLinking (8.0.9):
     - ExpoModulesCore
+  - ExpoLiveActivity (0.4.2):
+    - ExpoModulesCore
   - ExpoLocalization (17.0.7):
     - ExpoModulesCore
   - ExpoLocation (19.0.7):
@@ -1976,6 +1978,7 @@ DEPENDENCIES:
   - ExpoInsights (from `../node_modules/expo-insights/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinking (from `../node_modules/expo-linking/ios`)
+  - ExpoLiveActivity (from `../node_modules/expo-live-activity/ios`)
   - ExpoLocalization (from `../node_modules/expo-localization/ios`)
   - ExpoLocation (from `../node_modules/expo-location/ios`)
   - ExpoMaps (from `../node_modules/expo-maps/ios`)
@@ -2097,6 +2100,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLinking:
     :path: "../node_modules/expo-linking/ios"
+  ExpoLiveActivity:
+    :path: "../node_modules/expo-live-activity/ios"
   ExpoLocalization:
     :path: "../node_modules/expo-localization/ios"
   ExpoLocation:
@@ -2280,6 +2285,7 @@ SPEC CHECKSUMS:
   ExpoInsights: d8319d6f548a2350d17b69079822250a380ad50b
   ExpoKeepAwake: 3f5e3ac53627849174f3603271df8e08f174ed4a
   ExpoLinking: 50a65cd7beb6051ffc82f84ffb33961dd5e55a5b
+  ExpoLiveActivity: 2ffb70c75848f64bd072bf891fcff4f3a73b52c1
   ExpoLocalization: 6c6f0f89ad2822001ab0bc2eb6d4d980c77f080c
   ExpoLocation: 1dc9e4c06ef66ed081348a11eb637d1dfecc7d61
   ExpoMaps: 6638d2c8d78b411f1647abcca33df9f081cfc595
@@ -2364,6 +2370,6 @@ SPEC CHECKSUMS:
   RNScreens: dd61bc3a3e6f6901ad833efa411917d44827cf51
   Yoga: 5934998fbeaef7845dbf698f698518695ab4cd1a
 
-PODFILE CHECKSUM: e24f30632ecef3adfdbc0fd16d7bc1754b655607
+PODFILE CHECKSUM: 590e7ea50494dcee341f528ec6f01a9322d0666b
 
 COCOAPODS: 1.16.2

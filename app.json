@@ -40,8 +40,7 @@
       [
         "expo-live-activity",
         {
-          "frequentUpdates": true,
-          "modulePath": "./modules/expo-live-activity/index.ts"
+          "frequentUpdates": true
         }
       ],
       "expo-maps"

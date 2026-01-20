@@ -75,11 +75,6 @@ export const getClockHistory = async (
     }
   );
   
-  // Debug: verificar estrutura da resposta
-  if (__DEV__) {
-    console.log('getClockHistory - response.data:', JSON.stringify(response.data, null, 2));
-  }
-  
   // A resposta pode ter diferentes estruturas:
   // 1. { status, url, data: { data: [...], summary: {...} } }
   // 2. { data: [...], summary: {...} }

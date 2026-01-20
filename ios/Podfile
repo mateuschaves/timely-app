@@ -22,6 +22,9 @@ prepare_react_native_project!
 
 target 'Timely' do
   use_expo_modules!
+  
+  # Manually add expo-live-activity since autolinking is not working
+  pod 'ExpoLiveActivity', :path => '../node_modules/expo-live-activity/ios'
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
