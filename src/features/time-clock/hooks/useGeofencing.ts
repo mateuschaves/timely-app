@@ -10,6 +10,7 @@ import { useAuthContext } from '@/features/auth';
 import { getUserSettings } from '@/api/get-user-settings';
 import { useQuery } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
+import { useTranslation } from '@/i18n';
 
 const WORKPLACE_GEOFENCE_ID = 'workplace';
 const GEOFENCE_RADIUS = 100; // 100 meters
@@ -18,6 +19,7 @@ export function useGeofencing() {
   const { user } = useAuthContext();
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
+  const { t } = useTranslation();
 
   // Get user settings to check for workplace location
   const { data: settings } = useQuery({
@@ -135,8 +137,8 @@ export function useGeofencing() {
       // Send notification
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: '🏢 Chegou ao trabalho',
-          body: 'Você chegou ao local de trabalho. Toque para registrar o ponto.',
+          title: t('notifications.geofenceEntryTitle'),
+          body: t('notifications.geofenceEntryBody'),
           data: {
             type: 'geofence_enter',
             identifier: event.identifier,
@@ -162,8 +164,8 @@ export function useGeofencing() {
       // Send notification
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: '🚶 Saiu do trabalho',
-          body: 'Você saiu do local de trabalho. Toque para registrar a saída.',
+          title: t('notifications.geofenceExitTitle'),
+          body: t('notifications.geofenceExitBody'),
           data: {
             type: 'geofence_exit',
             identifier: event.identifier,

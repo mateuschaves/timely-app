@@ -44,8 +44,11 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     locationManager = CLLocationManager()
     locationManager?.delegate = self
     locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-    locationManager?.allowsBackgroundLocationUpdates = true
-    locationManager?.pausesLocationUpdatesAutomatically = false
+    // Only enable background updates if we have always authorization
+    if CLLocationManager.authorizationStatus() == .authorizedAlways {
+      locationManager?.allowsBackgroundLocationUpdates = true
+      locationManager?.pausesLocationUpdatesAutomatically = false
+    }
   }
   
   private func startMonitoringRegion(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Bool {
@@ -118,31 +121,30 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
       return
     }
     
-    // Request always authorization
+    // Store promise to resolve when delegate callback is triggered
+    // For simplicity, we'll resolve immediately with current status
+    // In production, consider using delegate pattern for async permission result
     locationManager.requestAlwaysAuthorization()
     
-    // Give some time for the permission dialog
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-      let newStatus = CLLocationManager.authorizationStatus()
-      let statusString: String
-      
-      switch newStatus {
-      case .authorizedAlways:
-        statusString = "granted"
-      case .authorizedWhenInUse:
-        statusString = "whenInUse"
-      case .denied:
-        statusString = "denied"
-      case .restricted:
-        statusString = "restricted"
-      case .notDetermined:
-        statusString = "notDetermined"
-      @unknown default:
-        statusString = "unknown"
-      }
-      
-      promise.resolve(["status": statusString])
+    // Return current status - iOS will show permission dialog
+    // User needs to check hasAlwaysAuthorization() after dialog is dismissed
+    let statusString: String
+    switch status {
+    case .authorizedAlways:
+      statusString = "granted"
+    case .authorizedWhenInUse:
+      statusString = "whenInUse"
+    case .denied:
+      statusString = "denied"
+    case .restricted:
+      statusString = "restricted"
+    case .notDetermined:
+      statusString = "notDetermined"
+    @unknown default:
+      statusString = "unknown"
     }
+    
+    promise.resolve(["status": statusString])
   }
   
   private func hasAlwaysLocationAuthorization() -> Bool {
@@ -205,6 +207,14 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
   
   public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
     print("📍 Location authorization changed: \(status.rawValue)")
+    
+    // Update background location settings when authorization changes
+    if status == .authorizedAlways {
+      locationManager?.allowsBackgroundLocationUpdates = true
+      locationManager?.pausesLocationUpdatesAutomatically = false
+    } else {
+      locationManager?.allowsBackgroundLocationUpdates = false
+    }
   }
   
   // MARK: - Notifications

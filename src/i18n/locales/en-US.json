@@ -217,7 +217,11 @@
         "lunchTitle": "Lunch time!",
         "lunchBody": "Have a good lunch!",
         "exitTitle": "Time to clock out!",
-        "exitBody": "Don't forget to record your exit."
+        "exitBody": "Don't forget to record your exit.",
+        "geofenceEntryTitle": "🏢 Arrived at work",
+        "geofenceEntryBody": "You've arrived at your workplace. Tap to clock in.",
+        "geofenceExitTitle": "🚶 Left work",
+        "geofenceExitBody": "You've left your workplace. Tap to clock out."
     },
     "onboarding": {
         "intro": {

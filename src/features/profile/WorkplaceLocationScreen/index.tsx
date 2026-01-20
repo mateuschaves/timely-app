@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Alert, ActivityIndicator, Platform } from 'react-native';
+import { Alert, ActivityIndicator, Platform, Linking } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
@@ -97,8 +97,7 @@ export function WorkplaceLocationScreen() {
               text: 'Abrir Configurações', 
               onPress: () => {
                 if (Platform.OS === 'ios') {
-                  // Open iOS settings
-                  // Linking.openURL('app-settings:');
+                  Linking.openURL('app-settings:');
                 }
               }
             },
