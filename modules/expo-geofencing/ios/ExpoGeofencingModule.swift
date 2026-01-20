@@ -166,8 +166,9 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
       "timestamp": Date().timeIntervalSince1970
     ])
     
-    // Send local notification
-    sendNotification(title: "Chegou ao trabalho", body: "Você chegou ao local de trabalho. Deseja registrar o ponto?", identifier: region.identifier, type: "enter")
+    // Send local notification (using English as default since user's language preference is not available in Swift)
+    // The React Native layer will handle proper i18n when user taps the notification
+    sendNotification(title: "Arrived at work", body: "You've arrived at your workplace. Tap to clock in.", identifier: region.identifier, type: "enter")
   }
   
   public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
@@ -183,8 +184,9 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
       "timestamp": Date().timeIntervalSince1970
     ])
     
-    // Send local notification
-    sendNotification(title: "Saiu do trabalho", body: "Você saiu do local de trabalho. Deseja registrar a saída?", identifier: region.identifier, type: "exit")
+    // Send local notification (using English as default since user's language preference is not available in Swift)
+    // The React Native layer will handle proper i18n when user taps the notification
+    sendNotification(title: "Left work", body: "You've left your workplace. Tap to clock out.", identifier: region.identifier, type: "exit")
   }
   
   public func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {

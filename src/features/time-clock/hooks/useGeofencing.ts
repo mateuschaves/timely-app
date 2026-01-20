@@ -152,7 +152,7 @@ export function useGeofencing() {
     } catch (error) {
       console.error('Error handling geofence entry:', error);
     }
-  }, []);
+  }, [t]);
 
   /**
    * Handle geofence exit (leaving work)
@@ -179,7 +179,7 @@ export function useGeofencing() {
     } catch (error) {
       console.error('Error handling geofence exit:', error);
     }
-  }, []);
+  }, [t]);
 
   /**
    * Handle geofence errors

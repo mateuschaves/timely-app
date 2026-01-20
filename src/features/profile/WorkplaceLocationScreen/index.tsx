@@ -8,6 +8,7 @@ import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUserSettings, WorkLocation } from '@/api/update-user-settings';
 import { useFeedback } from '@/utils/feedback';
+import { useTranslation } from '@/i18n';
 import {
   Container,
   Content,
@@ -36,6 +37,7 @@ export function WorkplaceLocationScreen() {
   const { theme } = useTheme();
   const { showSuccess, showError } = useFeedback();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   
   const {
     isAvailable,
@@ -55,10 +57,10 @@ export function WorkplaceLocationScreen() {
     mutationFn: updateUserSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userSettings'] });
-      showSuccess('Localização do trabalho salva com sucesso!');
+      showSuccess(t('profile.workplaceLocationSaved'));
     },
     onError: (error: any) => {
-      showError(error.message || 'Erro ao salvar localização');
+      showError(error.message || t('profile.workplaceLocationError'));
     },
   });
 
@@ -115,7 +117,7 @@ export function WorkplaceLocationScreen() {
   const handleToggleMonitoring = useCallback(async () => {
     if (isMonitoring) {
       stopMonitoring();
-      showSuccess('Detecção automática desativada');
+      showSuccess(t('profile.geofenceDeactivated'));
     } else {
       if (!hasPermission) {
         const granted = await requestPermission();
@@ -130,12 +132,12 @@ export function WorkplaceLocationScreen() {
       
       const success = await startMonitoring();
       if (success) {
-        showSuccess('Detecção automática ativada');
+        showSuccess(t('profile.geofenceActivated'));
       } else {
-        showError('Erro ao ativar detecção automática');
+        showError(t('profile.geofenceActivationError'));
       }
     }
-  }, [isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError]);
+  }, [isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
 
   if (!isAvailable) {
     return (
