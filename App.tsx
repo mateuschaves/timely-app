@@ -71,6 +71,74 @@ function NavigationContent() {
   const isProcessingRef = useRef(false);
   const initialUrlChecked = useRef(false);
 
+  // Define processDeeplink as a useCallback so it can be used in multiple effects
+  const processDeeplink = useCallback(async (url: string) => {
+    // Verifica se a URL é válida
+    if (!url) {
+      console.log('URL inválida, ignorando:', url);
+      return;
+    }
+
+    // Se for timely://clock (sem parâmetros), adiciona o horário atual do dispositivo
+    let processedUrl = url;
+    if (url === 'timely://clock' || url.startsWith('timely://clock?')) {
+      const currentTime = new Date().toISOString();
+      // Se já tiver query params, adiciona time=, senão cria novo
+      if (url.includes('?')) {
+        processedUrl = `${url}&time=${encodeURIComponent(currentTime)}`;
+      } else {
+        processedUrl = `timely://clock?time=${encodeURIComponent(currentTime)}`;
+      }
+      console.log('Deeplink timely://clock detectado, usando horário atual:', processedUrl);
+    } else if (!url.includes('time=') && !url.includes('hour=')) {
+      // Se não for timely://clock e não tiver time/hour, ignora
+      console.log('URL não contém parâmetro time ou hour, ignorando:', url);
+      return;
+    }
+
+    // Evita processar a mesma URL múltiplas vezes
+    if (lastProcessedUrl.current === processedUrl) {
+      console.log('Deeplink já foi processado, ignorando:', processedUrl);
+      return;
+    }
+
+    if (isProcessingRef.current) {
+      console.log('Deeplink já está sendo processado, ignorando:', processedUrl);
+      return;
+    }
+
+    isProcessingRef.current = true;
+    lastProcessedUrl.current = processedUrl;
+    console.log('Deeplink recebido:', processedUrl);
+
+    try {
+      // Determina a ação baseada no nextAction se não tiver type no deeplink
+      const parsedUrl = ExpoLinking.parse(processedUrl);
+      const params = parsedUrl.queryParams as { type?: string };
+      
+      // Se não tiver type no deeplink, usa nextAction para determinar a ação automaticamente
+      // nextAction já vem no formato 'clock-in' ou 'clock-out' do enum ClockAction
+      const actionToUse = params.type ? undefined : (nextAction as 'clock-in' | 'clock-out' | undefined);
+      
+      // Processa o deeplink e navega para History após sucesso
+      await handleDeeplink(processedUrl, () => {
+        // Navega para a tab History após bater o ponto
+        navigation.navigate('Main', { screen: 'History' });
+      }, actionToUse);
+    } catch (error) {
+      console.error('Erro ao processar deeplink:', error);
+    } finally {
+      // Reset após um tempo para permitir novos deeplinks
+      setTimeout(() => {
+        isProcessingRef.current = false;
+        // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
+        setTimeout(() => {
+          lastProcessedUrl.current = null;
+        }, 5000);
+      }, 1000);
+    }
+  }, [handleDeeplink, navigation, nextAction]);
+
   // Handle notification responses from geofencing
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -92,7 +160,7 @@ function NavigationContent() {
     });
 
     return () => subscription.remove();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, processDeeplink]);
 
   // Initialize geofencing when authenticated
   useEffect(() => {
@@ -114,73 +182,6 @@ function NavigationContent() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-
-    const processDeeplink = async (url: string) => {
-      // Verifica se a URL é válida
-      if (!url) {
-        console.log('URL inválida, ignorando:', url);
-        return;
-      }
-
-      // Se for timely://clock (sem parâmetros), adiciona o horário atual do dispositivo
-      let processedUrl = url;
-      if (url === 'timely://clock' || url.startsWith('timely://clock?')) {
-        const currentTime = new Date().toISOString();
-        // Se já tiver query params, adiciona time=, senão cria novo
-        if (url.includes('?')) {
-          processedUrl = `${url}&time=${encodeURIComponent(currentTime)}`;
-        } else {
-          processedUrl = `timely://clock?time=${encodeURIComponent(currentTime)}`;
-        }
-        console.log('Deeplink timely://clock detectado, usando horário atual:', processedUrl);
-      } else if (!url.includes('time=') && !url.includes('hour=')) {
-        // Se não for timely://clock e não tiver time/hour, ignora
-        console.log('URL não contém parâmetro time ou hour, ignorando:', url);
-        return;
-      }
-
-      // Evita processar a mesma URL múltiplas vezes
-      if (lastProcessedUrl.current === processedUrl) {
-        console.log('Deeplink já foi processado, ignorando:', processedUrl);
-        return;
-      }
-
-      if (isProcessingRef.current) {
-        console.log('Deeplink já está sendo processado, ignorando:', processedUrl);
-        return;
-      }
-
-      isProcessingRef.current = true;
-      lastProcessedUrl.current = processedUrl;
-      console.log('Deeplink recebido:', processedUrl);
-
-      try {
-        // Determina a ação baseada no nextAction se não tiver type no deeplink
-        const parsedUrl = Linking.parse(processedUrl);
-        const params = parsedUrl.queryParams as { type?: string };
-        
-        // Se não tiver type no deeplink, usa nextAction para determinar a ação automaticamente
-        // nextAction já vem no formato 'clock-in' ou 'clock-out' do enum ClockAction
-        const actionToUse = params.type ? undefined : (nextAction as 'clock-in' | 'clock-out' | undefined);
-        
-        // Processa o deeplink e navega para History após sucesso
-        await handleDeeplink(processedUrl, () => {
-          // Navega para a tab History após bater o ponto
-          navigation.navigate('Main', { screen: 'History' });
-        }, actionToUse);
-      } catch (error) {
-        console.error('Erro ao processar deeplink:', error);
-      } finally {
-        // Reset após um tempo para permitir novos deeplinks
-        setTimeout(() => {
-          isProcessingRef.current = false;
-          // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
-          setTimeout(() => {
-            lastProcessedUrl.current = null;
-          }, 5000);
-        }, 1000);
-      }
-    };
 
     // Tenta usar expo-linking, se não disponível usa React Native Linking
     let Linking: any;
@@ -245,7 +246,7 @@ function NavigationContent() {
           if (!isClockDeeplink) {
             // Valida se o parâmetro time tem um valor válido apenas para URLs que não são timely://clock
             try {
-              const parsed = Linking.parse(initialUrl);
+              const parsed = ExpoLinking.parse(initialUrl);
               const params = parsed.queryParams as { time?: string };
 
               if (!params.time || params.time.trim() === '') {
@@ -288,7 +289,7 @@ function NavigationContent() {
         subscription.remove();
       }
     };
-  }, [isAuthenticated, handleDeeplink, navigation]);
+  }, [isAuthenticated, processDeeplink]);
 
   // Não renderiza nada durante o loading - a splash screen fica visível
   if (isLoading || isOnboardingLoading) {
