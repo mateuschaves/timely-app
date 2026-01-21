@@ -74,6 +74,9 @@ export {
 // Services
 export { revenueCatService } from './services/RevenueCatService';
 
+// Components
+export { SubscriptionAuthSync } from './components/SubscriptionAuthSync';
+
 // Types
 export type {
   SubscriptionPackage,
