@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useAuthContext } from '@/features/auth';
+import { useAuthContext } from '@features/auth';
 import { useSubscriptionUser } from '../hooks/useSubscriptions';
 
 /**

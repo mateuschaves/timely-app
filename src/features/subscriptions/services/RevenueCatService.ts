@@ -1,5 +1,4 @@
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
-import { Platform } from 'react-native';
 import type {
   CustomerInfo,
   PurchasesOffering,
@@ -58,6 +57,7 @@ class RevenueCatService {
 
   /**
    * Get current offerings (subscription packages)
+   * @returns The current offering or null if no offering is available
    */
   public async getOfferings(): Promise<PurchasesOffering | null> {
     try {

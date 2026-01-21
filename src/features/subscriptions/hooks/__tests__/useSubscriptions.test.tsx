@@ -18,9 +18,10 @@ jest.mock('../../services/RevenueCatService', () => ({
   },
 }));
 
-const createWrapper = () => {
+const createWrapper = (skipInit = false) => {
+  const mockApiKey = skipInit ? undefined : 'test_api_key';
   return ({ children }: { children: React.ReactNode }) => (
-    <SubscriptionProvider>{children}</SubscriptionProvider>
+    <SubscriptionProvider apiKey={mockApiKey}>{children}</SubscriptionProvider>
   );
 };
 
@@ -32,7 +33,7 @@ describe('useSubscriptions', () => {
 
   it('should initialize with default state', () => {
     const { result } = renderHook(() => useSubscriptions(), {
-      wrapper: createWrapper(),
+      wrapper: createWrapper(true), // Skip auto-init
     });
 
     expect(result.current.customerInfo).toBeNull();

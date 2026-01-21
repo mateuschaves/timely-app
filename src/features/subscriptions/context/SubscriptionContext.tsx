@@ -6,7 +6,6 @@ import React, {
   useCallback,
   ReactNode,
 } from 'react';
-import { Platform } from 'react-native';
 import type {
   CustomerInfo,
   PurchasesOffering,
