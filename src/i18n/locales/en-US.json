@@ -224,9 +224,9 @@
         "exitTitle": "Time to clock out!",
         "exitBody": "Don't forget to record your exit.",
         "geofenceEntryTitle": "🏢 Arrived at work",
-        "geofenceEntryBody": "You've arrived at your workplace. Tap to clock in.",
+        "geofenceEntryBody": "We've created a draft clock-in entry for you to review.",
         "geofenceExitTitle": "🚶 Left work",
-        "geofenceExitBody": "You've left your workplace. Tap to clock out."
+        "geofenceExitBody": "We've created a draft clock-out entry for you to review."
     },
     "onboarding": {
         "intro": {

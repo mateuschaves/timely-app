@@ -168,7 +168,7 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     
     // Send local notification (using English as default since user's language preference is not available in Swift)
     // The React Native layer will handle proper i18n when user taps the notification
-    sendNotification(title: "Arrived at work", body: "You've arrived at your workplace. Tap to clock in.", identifier: region.identifier, type: "enter")
+    sendNotification(title: "Arrived at work", body: "We've created a draft clock-in entry for you to review.", identifier: region.identifier, type: "enter")
   }
   
   public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
@@ -186,7 +186,7 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     
     // Send local notification (using English as default since user's language preference is not available in Swift)
     // The React Native layer will handle proper i18n when user taps the notification
-    sendNotification(title: "Left work", body: "You've left your workplace. Tap to clock out.", identifier: region.identifier, type: "exit")
+    sendNotification(title: "Left work", body: "We've created a draft clock-out entry for you to review.", identifier: region.identifier, type: "exit")
   }
   
   public func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {

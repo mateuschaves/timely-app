@@ -8,7 +8,9 @@ import ExpoGeofencing, {
 } from '@/../modules/expo-geofencing';
 import { useAuthContext } from '@/features/auth';
 import { getUserSettings } from '@/api/get-user-settings';
-import { useQuery } from '@tanstack/react-query';
+import { clockInDraft } from '@/api/clock-in-draft';
+import { clockOutDraft } from '@/api/clock-out-draft';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import { useTranslation } from '@/i18n';
 
@@ -20,12 +22,34 @@ export function useGeofencing() {
   const [isMonitoring, setIsMonitoring] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   // Get user settings to check for workplace location
   const { data: settings } = useQuery({
     queryKey: ['userSettings', user?.id],
     queryFn: getUserSettings,
     enabled: !!user?.id,
+  });
+
+  // Mutations for creating draft entries
+  const clockInDraftMutation = useMutation({
+    mutationFn: clockInDraft,
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+    },
+  });
+
+  const clockOutDraftMutation = useMutation({
+    mutationFn: clockOutDraft,
+    onSuccess: () => {
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+    },
   });
 
   // Check if geofencing is available (iOS only for now)
@@ -134,7 +158,19 @@ export function useGeofencing() {
     console.log('📍 Entered workplace geofence:', event);
 
     try {
-      // Send notification
+      // Create draft clock-in entry automatically
+      const currentTime = new Date().toISOString();
+      await clockInDraftMutation.mutateAsync({
+        hour: currentTime,
+        location: {
+          type: 'Point',
+          coordinates: [event.longitude, event.latitude],
+        },
+      });
+
+      console.log('✅ Draft clock-in entry created');
+
+      // Send notification to inform user
       await Notifications.scheduleNotificationAsync({
         content: {
           title: t('notifications.geofenceEntryTitle'),
@@ -145,6 +181,7 @@ export function useGeofencing() {
             latitude: event.latitude,
             longitude: event.longitude,
             action: 'clock-in',
+            isDraft: true,
           },
         },
         trigger: null, // Send immediately
@@ -152,7 +189,7 @@ export function useGeofencing() {
     } catch (error) {
       console.error('Error handling geofence entry:', error);
     }
-  }, [t]);
+  }, [t, clockInDraftMutation]);
 
   /**
    * Handle geofence exit (leaving work)
@@ -161,7 +198,19 @@ export function useGeofencing() {
     console.log('📍 Exited workplace geofence:', event);
 
     try {
-      // Send notification
+      // Create draft clock-out entry automatically
+      const currentTime = new Date().toISOString();
+      await clockOutDraftMutation.mutateAsync({
+        hour: currentTime,
+        location: {
+          type: 'Point',
+          coordinates: [event.longitude, event.latitude],
+        },
+      });
+
+      console.log('✅ Draft clock-out entry created');
+
+      // Send notification to inform user
       await Notifications.scheduleNotificationAsync({
         content: {
           title: t('notifications.geofenceExitTitle'),
@@ -172,6 +221,7 @@ export function useGeofencing() {
             latitude: event.latitude,
             longitude: event.longitude,
             action: 'clock-out',
+            isDraft: true,
           },
         },
         trigger: null, // Send immediately
@@ -179,7 +229,7 @@ export function useGeofencing() {
     } catch (error) {
       console.error('Error handling geofence exit:', error);
     }
-  }, [t]);
+  }, [t, clockOutDraftMutation]);
 
   /**
    * Handle geofence errors

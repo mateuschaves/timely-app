@@ -224,9 +224,9 @@
         "exitTitle": "Hora de sair!",
         "exitBody": "Não se esqueça de registrar sua saída.",
         "geofenceEntryTitle": "🏢 Chegou ao trabalho",
-        "geofenceEntryBody": "Você chegou ao local de trabalho. Toque para registrar o ponto.",
+        "geofenceEntryBody": "Registramos um ponto de entrada em rascunho para você revisar.",
         "geofenceExitTitle": "🚶 Saiu do trabalho",
-        "geofenceExitBody": "Você saiu do local de trabalho. Toque para registrar a saída."
+        "geofenceExitBody": "Registramos um ponto de saída em rascunho para você revisar."
     },
     "onboarding": {
         "intro": {
