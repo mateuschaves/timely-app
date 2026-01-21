@@ -201,7 +201,9 @@ struct ClockIntentHelper {
                 ? "Einstempeln erfolgreich registriert!"
                 : "Ausstempeln erfolgreich registriert!"
         default: // pt-BR
-            return "Ponto de \(action) registrado com sucesso!"
+            return action == "entrada"
+                ? "Ponto de entrada registrado com sucesso!"
+                : "Ponto de saída registrado com sucesso!"
         }
     }
     
