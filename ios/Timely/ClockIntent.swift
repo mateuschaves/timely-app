@@ -52,10 +52,15 @@ struct ClockIntent: AppIntent {
             let action = response["action"] as? String ?? "ponto"
             let actionText = action == "clock-in" ? "entrada" : "saída"
             
-            // Envia uma notificação local
-            await ClockIntentHelper.sendNotification(action: actionText)
+            // Obtém o idioma do usuário
+            let userLanguage = ClockIntentHelper.getLanguage()
             
-            return .result(dialog: "Ponto de \(actionText) registrado com sucesso!")
+            // Envia uma notificação local com o idioma correto
+            await ClockIntentHelper.sendNotification(action: actionText, language: userLanguage)
+            
+            // Retorna a mensagem de diálogo localizada
+            let dialogMessage = ClockIntentHelper.getLocalizedDialogMessage(for: userLanguage, action: actionText)
+            return .result(dialog: IntentDialog(stringLiteral: dialogMessage))
         } catch ClockIntentError.apiError(let message) {
             print("❌ Erro na API: \(message)")
             throw ClockIntentError.apiError(message: message)
@@ -92,6 +97,7 @@ enum ClockIntentError: Error, CustomLocalizedStringResourceConvertible {
 struct ClockIntentHelper {
     private static let apiBaseURL = "https://timely-api-yfoa.onrender.com"
     private static let tokenKey = "@timely:token"
+    private static let languageKey = "timely_language"
     
     // Recupera o token do App Group UserDefaults
     static func getToken() -> String? {
@@ -135,6 +141,68 @@ struct ClockIntentHelper {
         }
         
         return nil
+    }
+    
+    // Recupera o idioma do App Group UserDefaults
+    static func getLanguage() -> String {
+        let appGroupID = "group.com.wazowsky.timelyapp"
+        
+        guard let sharedDefaults = UserDefaults(suiteName: appGroupID) else {
+            print("⚠️ Não foi possível acessar o App Group para obter idioma, usando pt-BR como padrão")
+            return "pt-BR"
+        }
+        
+        if let language = sharedDefaults.string(forKey: languageKey), !language.isEmpty {
+            print("✅ Idioma encontrado no App Group: \(language)")
+            return language
+        } else {
+            print("⚠️ Idioma não encontrado no App Group, usando pt-BR como padrão")
+            return "pt-BR"
+        }
+    }
+    
+    // Retorna as strings de notificação localizadas baseadas no idioma
+    static func getLocalizedNotificationStrings(for language: String, action: String) -> (title: String, body: String) {
+        let isEntry = action == "entrada"
+        
+        switch language {
+        case "en-US":
+            return isEntry 
+                ? (title: "Clock Registered", body: "Clock in registered successfully!")
+                : (title: "Clock Registered", body: "Clock out registered successfully!")
+        case "fr-FR":
+            return isEntry
+                ? (title: "Horloge Enregistrée", body: "Pointage d'entrée enregistré avec succès !")
+                : (title: "Horloge Enregistrée", body: "Pointage de sortie enregistré avec succès !")
+        case "de-DE":
+            return isEntry
+                ? (title: "Uhr Registriert", body: "Einstempeln erfolgreich registriert!")
+                : (title: "Uhr Registriert", body: "Ausstempeln erfolgreich registriert!")
+        default: // pt-BR
+            return isEntry
+                ? (title: "Ponto Registrado", body: "Ponto de entrada registrado com sucesso!")
+                : (title: "Ponto Registrado", body: "Ponto de saída registrado com sucesso!")
+        }
+    }
+    
+    // Retorna a mensagem de diálogo localizada
+    static func getLocalizedDialogMessage(for language: String, action: String) -> String {
+        switch language {
+        case "en-US":
+            return action == "entrada" 
+                ? "Clock in registered successfully!"
+                : "Clock out registered successfully!"
+        case "fr-FR":
+            return action == "entrada"
+                ? "Pointage d'entrée enregistré avec succès !"
+                : "Pointage de sortie enregistré avec succès !"
+        case "de-DE":
+            return action == "entrada"
+                ? "Einstempeln erfolgreich registriert!"
+                : "Ausstempeln erfolgreich registriert!"
+        default: // pt-BR
+            return "Ponto de \(action) registrado com sucesso!"
+        }
     }
     
     // Faz a chamada para bater o ponto
@@ -205,7 +273,7 @@ struct ClockIntentHelper {
     }
     
     // Envia uma notificação local quando o ponto é registrado
-    static func sendNotification(action: String) async {
+    static func sendNotification(action: String, language: String) async {
         let center = UNUserNotificationCenter.current()
         
         // Verifica se tem permissão para notificações
@@ -215,10 +283,13 @@ struct ClockIntentHelper {
             return
         }
         
+        // Obtém as strings localizadas
+        let localizedStrings = getLocalizedNotificationStrings(for: language, action: action)
+        
         // Cria o conteúdo da notificação
         let content = UNMutableNotificationContent()
-        content.title = "Ponto Registrado"
-        content.body = "Ponto de \(action) registrado com sucesso!"
+        content.title = localizedStrings.title
+        content.body = localizedStrings.body
         content.sound = .default
         content.badge = nil
         
@@ -232,7 +303,7 @@ struct ClockIntentHelper {
         // Envia a notificação
         do {
             try await center.add(request)
-            print("✅ Notificação enviada: Ponto de \(action) registrado")
+            print("✅ Notificação enviada em \(language): \(localizedStrings.title) - \(localizedStrings.body)")
         } catch {
             print("❌ Erro ao enviar notificação: \(error.localizedDescription)")
         }

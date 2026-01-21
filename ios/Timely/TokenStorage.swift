@@ -11,6 +11,7 @@ class TokenStorage: NSObject {
     
     private static let appGroupID = "group.com.wazowsky.timelyapp"
     private static let userDefaultsKey = "timely_token"
+    private static let languageKey = "timely_language"
     
     // Retorna o UserDefaults do App Group
     private static var sharedUserDefaults: UserDefaults? {
@@ -67,6 +68,40 @@ class TokenStorage: NSObject {
         
         if let token = sharedDefaults.string(forKey: TokenStorage.userDefaultsKey) {
             resolve(token)
+        } else {
+            resolve(nil)
+        }
+    }
+    
+    // Salva o idioma no UserDefaults do App Group para que o App Intent possa acessar
+    @objc
+    func saveLanguage(_ language: String, resolver resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+        print("💾 TokenStorage.saveLanguage chamado com idioma: \(language)")
+        
+        guard let sharedDefaults = TokenStorage.sharedUserDefaults else {
+            print("❌ Erro: Não foi possível acessar o App Group '\(TokenStorage.appGroupID)'")
+            reject("APP_GROUP_ERROR", "Não foi possível acessar o App Group", nil)
+            return
+        }
+        
+        sharedDefaults.set(language, forKey: TokenStorage.languageKey)
+        sharedDefaults.synchronize()
+        
+        print("✅ Idioma salvo com sucesso no App Group '\(TokenStorage.appGroupID)' com a chave '\(TokenStorage.languageKey)': \(language)")
+        resolve(nil)
+    }
+    
+    // Recupera o idioma do UserDefaults do App Group
+    @objc
+    func getLanguage(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
+        guard let sharedDefaults = TokenStorage.sharedUserDefaults else {
+            print("❌ Erro: Não foi possível acessar o App Group '\(TokenStorage.appGroupID)'")
+            resolve(nil)
+            return
+        }
+        
+        if let language = sharedDefaults.string(forKey: TokenStorage.languageKey) {
+            resolve(language)
         } else {
             resolve(nil)
         }

@@ -226,7 +226,10 @@
         "geofenceEntryTitle": "🏢 Chegou ao trabalho",
         "geofenceEntryBody": "Registramos um ponto de entrada em rascunho para você revisar.",
         "geofenceExitTitle": "🚶 Saiu do trabalho",
-        "geofenceExitBody": "Registramos um ponto de saída em rascunho para você revisar."
+        "geofenceExitBody": "Registramos um ponto de saída em rascunho para você revisar.",
+        "clockRegisteredTitle": "Ponto Registrado",
+        "clockInRegistered": "Ponto de entrada registrado com sucesso!",
+        "clockOutRegistered": "Ponto de saída registrado com sucesso!"
     },
     "onboarding": {
         "intro": {

@@ -226,7 +226,10 @@
         "geofenceEntryTitle": "🏢 Arrived at work",
         "geofenceEntryBody": "We've created a draft clock-in entry for you to review.",
         "geofenceExitTitle": "🚶 Left work",
-        "geofenceExitBody": "We've created a draft clock-out entry for you to review."
+        "geofenceExitBody": "We've created a draft clock-out entry for you to review.",
+        "clockRegisteredTitle": "Clock Registered",
+        "clockInRegistered": "Clock in registered successfully!",
+        "clockOutRegistered": "Clock out registered successfully!"
     },
     "onboarding": {
         "intro": {

@@ -217,7 +217,14 @@
     "lunchTitle": "Mittagspause!",
     "lunchBody": "Guten Appetit!",
     "exitTitle": "Zeit zum Ausstempeln!",
-    "exitBody": "Vergessen Sie nicht, Ihren Ausstempeln zu erfassen."
+    "exitBody": "Vergessen Sie nicht, Ihren Ausstempeln zu erfassen.",
+    "geofenceEntryTitle": "🏢 Am Arbeitsplatz angekommen",
+    "geofenceEntryBody": "Wir haben einen Entwurf zum Einstempeln für Sie erstellt.",
+    "geofenceExitTitle": "🚶 Arbeitsplatz verlassen",
+    "geofenceExitBody": "Wir haben einen Entwurf zum Ausstempeln für Sie erstellt.",
+    "clockRegisteredTitle": "Uhr Registriert",
+    "clockInRegistered": "Einstempeln erfolgreich registriert!",
+    "clockOutRegistered": "Ausstempeln erfolgreich registriert!"
   },
   "onboarding": {
     "intro": {
