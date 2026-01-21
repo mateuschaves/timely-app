@@ -77,7 +77,40 @@ O usuário precisa registrar manualmente o ponto toda vez que chega ao trabalho 
 - `onGeofenceExit` - Usuário saiu da região
 - `onGeofenceError` - Erro no monitoramento
 
-### 2. React Hook (`useGeofencing`)
+### 2. Draft API Endpoints
+
+**Localização**: `/src/api/clock-in-draft.ts` e `/src/api/clock-out-draft.ts`
+
+**Endpoints**:
+```typescript
+// Criar entrada em rascunho
+POST /clockin/draft
+Body: {
+  hour: string;              // ISO timestamp (obrigatório)
+  location?: {               // Coordenadas (opcional)
+    type: 'Point';
+    coordinates: [longitude, latitude];
+  }
+}
+
+// Criar saída em rascunho
+POST /clockin/draft
+Body: {
+  hour: string;              // ISO timestamp (obrigatório)
+  location?: {               // Coordenadas (opcional)
+    type: 'Point';
+    coordinates: [longitude, latitude];
+  }
+}
+```
+
+**Comportamento**:
+- Chamadas automaticamente quando geofence é cruzado
+- Criam entradas em modo rascunho
+- Usuário pode revisar e confirmar depois
+- Incluem localização automática do evento
+
+### 3. React Hook (`useGeofencing`)
 
 **Localização**: `/src/features/time-clock/hooks/useGeofencing.ts`
 
@@ -151,20 +184,17 @@ stopMonitoring(): Promise<boolean>      // Para monitoramento
 1. **Usuário entra na região de 100m do trabalho**
 2. **iOS detecta entrada** (app pode estar fechado)
 3. **iOS acorda o app brevemente**
-4. **App envia notificação**: "🏢 Chegou ao trabalho"
-5. **Usuário toca na notificação**
-6. **App abre e processa deeplink** `timely://clock?type=entry`
-7. **Registro de ponto criado** (via fluxo existente)
-8. **Usuário confirma/edita se necessário**
+4. **App cria automaticamente um ponto de entrada em RASCUNHO** via `POST /clockin/draft`
+5. **App envia notificação**: "🏢 Registramos um ponto de entrada em rascunho para você revisar"
+6. **Usuário pode revisar e confirmar o rascunho depois**
 
 #### Saindo do Trabalho
 
 1. **Usuário sai da região de 100m do trabalho**
 2. **iOS detecta saída**
-3. **App envia notificação**: "🚶 Saiu do trabalho"
-4. **Usuário toca na notificação**
-5. **App abre e processa deeplink** `timely://clock?type=exit`
-6. **Registro de saída criado**
+3. **App cria automaticamente um ponto de saída em RASCUNHO** via `POST /clockin/draft`
+4. **App envia notificação**: "🚶 Registramos um ponto de saída em rascunho para você revisar"
+5. **Usuário pode revisar e confirmar o rascunho depois**
 
 ## Configurações e Permissões
 
