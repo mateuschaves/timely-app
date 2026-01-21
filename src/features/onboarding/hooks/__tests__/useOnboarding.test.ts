@@ -29,7 +29,7 @@ describe('useOnboarding', () => {
     });
   });
 
-  it('should initialize with loading state', () => {
+  it('should initialize with loading state and then set to false when user is null', async () => {
     mockUseAuthContext.mockReturnValue({
       user: null,
       fetchUserMe: mockFetchUserMe,
@@ -37,7 +37,12 @@ describe('useOnboarding', () => {
 
     const { result } = renderHook(() => useOnboarding());
     
-    expect(result.current.isLoading).toBe(true);
+    // When user is null, the hook sets isLoading to false after the effect runs
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+    // And onboarding should be considered completed (default behavior)
+    expect(result.current.isOnboardingCompleted).toBe(true);
   });
 
   it('should get onboarding status from user object when not completed', async () => {

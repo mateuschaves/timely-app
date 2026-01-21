@@ -90,6 +90,7 @@ describe('useAuth', () => {
       email: 'test@example.com',
       name: 'Test User',
       appleUserId: 'apple123',
+      onboardingCompleted: false,
     });
     expect(result.current.isAuthenticated).toBe(true);
   });
@@ -166,6 +167,7 @@ describe('useAuth', () => {
       email: 'test@example.com',
       name: 'Test User',
       appleUserId: 'apple123',
+      onboardingCompleted: false,
     });
     expect(result.current.isAuthenticated).toBe(true);
   });
@@ -335,6 +337,7 @@ describe('useAuth', () => {
       email: 'updated@example.com',
       name: 'Updated User',
       appleUserId: 'apple123',
+      onboardingCompleted: false,
     });
     expect(result.current.user).toEqual(user);
     expect(result.current.isAuthenticated).toBe(true);
