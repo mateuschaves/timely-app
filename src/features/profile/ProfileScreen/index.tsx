@@ -236,6 +236,19 @@ export function ProfileScreen() {
                       </ChevronIcon>
                     </InfoValueContainer>
                   </SettingsRow>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('WorkplaceLocation')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>Localização do Trabalho</InfoLabel>
+                    </InfoLeft>
+                    <InfoValueContainer>
+                      <ChevronIcon>
+                        <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
+                      </ChevronIcon>
+                    </InfoValueContainer>
+                  </SettingsRow>
                 </InfoCard>
               </Section>
 

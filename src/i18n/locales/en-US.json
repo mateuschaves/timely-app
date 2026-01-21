@@ -184,6 +184,11 @@
         "holidayMultiplier": "Holiday Multiplier",
         "holidayMultiplierPlaceholder": "Ex: 100%",
         "privacyAndSecurity": "Privacy and Security",
+        "workplaceLocationSaved": "Workplace location saved successfully!",
+        "workplaceLocationError": "Error saving location",
+        "geofenceActivated": "Automatic detection activated",
+        "geofenceDeactivated": "Automatic detection deactivated",
+        "geofenceActivationError": "Error activating automatic detection",
         "deleteAccount": "Delete Account",
         "deleteAccountTitle": "Delete my account",
         "deleteAccountDescription": "Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.",
@@ -217,7 +222,11 @@
         "lunchTitle": "Lunch time!",
         "lunchBody": "Have a good lunch!",
         "exitTitle": "Time to clock out!",
-        "exitBody": "Don't forget to record your exit."
+        "exitBody": "Don't forget to record your exit.",
+        "geofenceEntryTitle": "🏢 Arrived at work",
+        "geofenceEntryBody": "We've created a draft clock-in entry for you to review.",
+        "geofenceExitTitle": "🚶 Left work",
+        "geofenceExitBody": "We've created a draft clock-out entry for you to review."
     },
     "onboarding": {
         "intro": {

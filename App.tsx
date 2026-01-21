@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo, useState, useCallback } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Linking as RNLinking } from 'react-native';
@@ -13,8 +13,10 @@ import { useOnboarding } from './src/features/onboarding';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
+import { useGeofencing } from './src/features/time-clock/hooks/useGeofencing';
 import { useLastEvent } from './src/features/home/hooks/useLastEvent';
 import { useNotifications } from './src/hooks/useNotifications';
+import * as Notifications from 'expo-notifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
 import './src/config/reactotron.d';
@@ -59,84 +61,127 @@ const linking = {
 function NavigationContent() {
   const { isAuthenticated, isLoading } = useAuthContext();
   const { isOnboardingCompleted, isLoading: isOnboardingLoading } = useOnboarding();
-  const { handleDeeplink } = useTimeClock();
+  const { handleDeeplink, clock } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
+  const { startMonitoring } = useGeofencing();
   useNotifications();
 
   const lastProcessedUrl = useRef<string | null>(null);
   const isProcessingRef = useRef(false);
   const initialUrlChecked = useRef(false);
 
+  // Define processDeeplink as a useCallback so it can be used in multiple effects
+  const processDeeplink = useCallback(async (url: string) => {
+    // Verifica se a URL é válida
+    if (!url) {
+      console.log('URL inválida, ignorando:', url);
+      return;
+    }
+
+    // Se for timely://clock (sem parâmetros), adiciona o horário atual do dispositivo
+    let processedUrl = url;
+    if (url === 'timely://clock' || url.startsWith('timely://clock?')) {
+      const currentTime = new Date().toISOString();
+      // Se já tiver query params, adiciona time=, senão cria novo
+      if (url.includes('?')) {
+        processedUrl = `${url}&time=${encodeURIComponent(currentTime)}`;
+      } else {
+        processedUrl = `timely://clock?time=${encodeURIComponent(currentTime)}`;
+      }
+      console.log('Deeplink timely://clock detectado, usando horário atual:', processedUrl);
+    } else if (!url.includes('time=') && !url.includes('hour=')) {
+      // Se não for timely://clock e não tiver time/hour, ignora
+      console.log('URL não contém parâmetro time ou hour, ignorando:', url);
+      return;
+    }
+
+    // Evita processar a mesma URL múltiplas vezes
+    if (lastProcessedUrl.current === processedUrl) {
+      console.log('Deeplink já foi processado, ignorando:', processedUrl);
+      return;
+    }
+
+    if (isProcessingRef.current) {
+      console.log('Deeplink já está sendo processado, ignorando:', processedUrl);
+      return;
+    }
+
+    isProcessingRef.current = true;
+    lastProcessedUrl.current = processedUrl;
+    console.log('Deeplink recebido:', processedUrl);
+
+    try {
+      // Determina a ação baseada no nextAction se não tiver type no deeplink
+      const parsedUrl = ExpoLinking.parse(processedUrl);
+      const params = parsedUrl.queryParams as { type?: string };
+      
+      // Se não tiver type no deeplink, usa nextAction para determinar a ação automaticamente
+      // nextAction já vem no formato 'clock-in' ou 'clock-out' do enum ClockAction
+      const actionToUse = params.type ? undefined : (nextAction as 'clock-in' | 'clock-out' | undefined);
+      
+      // Processa o deeplink e navega para History após sucesso
+      await handleDeeplink(processedUrl, () => {
+        // Navega para a tab History após bater o ponto
+        navigation.navigate('Main', { screen: 'History' });
+      }, actionToUse);
+    } catch (error) {
+      console.error('Erro ao processar deeplink:', error);
+    } finally {
+      // Reset após um tempo para permitir novos deeplinks
+      setTimeout(() => {
+        isProcessingRef.current = false;
+        // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
+        setTimeout(() => {
+          lastProcessedUrl.current = null;
+        }, 5000);
+      }, 1000);
+    }
+  }, [handleDeeplink, navigation, nextAction]);
+
+  // Handle notification responses from geofencing
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const processDeeplink = async (url: string) => {
-      // Verifica se a URL é válida
-      if (!url) {
-        console.log('URL inválida, ignorando:', url);
-        return;
-      }
-
-      // Se for timely://clock (sem parâmetros), adiciona o horário atual do dispositivo
-      let processedUrl = url;
-      if (url === 'timely://clock' || url.startsWith('timely://clock?')) {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      
+      if (data.type === 'geofence_enter' || data.type === 'geofence_exit') {
+        console.log('Geofence notification tapped:', data);
+        
+        // Create a deeplink URL to trigger clock in/out
+        const action = data.action || 'clock-in';
         const currentTime = new Date().toISOString();
-        // Se já tiver query params, adiciona time=, senão cria novo
-        if (url.includes('?')) {
-          processedUrl = `${url}&time=${encodeURIComponent(currentTime)}`;
-        } else {
-          processedUrl = `timely://clock?time=${encodeURIComponent(currentTime)}`;
-        }
-        console.log('Deeplink timely://clock detectado, usando horário atual:', processedUrl);
-      } else if (!url.includes('time=') && !url.includes('hour=')) {
-        // Se não for timely://clock e não tiver time/hour, ignora
-        console.log('URL não contém parâmetro time ou hour, ignorando:', url);
-        return;
+        const deeplink = `timely://clock?time=${encodeURIComponent(currentTime)}&type=${action === 'clock-in' ? 'entry' : 'exit'}`;
+        
+        // Process the deeplink
+        processDeeplink(deeplink);
       }
+    });
 
-      // Evita processar a mesma URL múltiplas vezes
-      if (lastProcessedUrl.current === processedUrl) {
-        console.log('Deeplink já foi processado, ignorando:', processedUrl);
-        return;
-      }
+    return () => subscription.remove();
+  }, [isAuthenticated, processDeeplink]);
 
-      if (isProcessingRef.current) {
-        console.log('Deeplink já está sendo processado, ignorando:', processedUrl);
-        return;
-      }
+  // Initialize geofencing when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) return;
 
-      isProcessingRef.current = true;
-      lastProcessedUrl.current = processedUrl;
-      console.log('Deeplink recebido:', processedUrl);
-
+    const initGeofencing = async () => {
       try {
-        // Determina a ação baseada no nextAction se não tiver type no deeplink
-        const parsedUrl = Linking.parse(processedUrl);
-        const params = parsedUrl.queryParams as { type?: string };
-        
-        // Se não tiver type no deeplink, usa nextAction para determinar a ação automaticamente
-        // nextAction já vem no formato 'clock-in' ou 'clock-out' do enum ClockAction
-        const actionToUse = params.type ? undefined : (nextAction as 'clock-in' | 'clock-out' | undefined);
-        
-        // Processa o deeplink e navega para History após sucesso
-        await handleDeeplink(processedUrl, () => {
-          // Navega para a tab History após bater o ponto
-          navigation.navigate('Main', { screen: 'History' });
-        }, actionToUse);
+        await startMonitoring();
       } catch (error) {
-        console.error('Erro ao processar deeplink:', error);
-      } finally {
-        // Reset após um tempo para permitir novos deeplinks
-        setTimeout(() => {
-          isProcessingRef.current = false;
-          // Limpa a URL após 5 segundos para permitir o mesmo deeplink novamente
-          setTimeout(() => {
-            lastProcessedUrl.current = null;
-          }, 5000);
-        }, 1000);
+        console.error('Error initializing geofencing:', error);
       }
     };
+
+    // Delay initialization slightly to allow app to fully load
+    setTimeout(() => {
+      initGeofencing();
+    }, 2000);
+  }, [isAuthenticated, startMonitoring]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
 
     // Tenta usar expo-linking, se não disponível usa React Native Linking
     let Linking: any;
@@ -201,7 +246,7 @@ function NavigationContent() {
           if (!isClockDeeplink) {
             // Valida se o parâmetro time tem um valor válido apenas para URLs que não são timely://clock
             try {
-              const parsed = Linking.parse(initialUrl);
+              const parsed = ExpoLinking.parse(initialUrl);
               const params = parsed.queryParams as { time?: string };
 
               if (!params.time || params.time.trim() === '') {
@@ -244,7 +289,7 @@ function NavigationContent() {
         subscription.remove();
       }
     };
-  }, [isAuthenticated, handleDeeplink, navigation]);
+  }, [isAuthenticated, processDeeplink]);
 
   // Não renderiza nada durante o loading - a splash screen fica visível
   if (isLoading || isOnboardingLoading) {

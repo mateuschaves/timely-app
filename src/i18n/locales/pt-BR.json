@@ -184,6 +184,11 @@
         "holidayMultiplier": "Multiplicador de Feriado",
         "holidayMultiplierPlaceholder": "Ex: 100%",
         "privacyAndSecurity": "Privacidade e Segurança",
+        "workplaceLocationSaved": "Localização do trabalho salva com sucesso!",
+        "workplaceLocationError": "Erro ao salvar localização",
+        "geofenceActivated": "Detecção automática ativada",
+        "geofenceDeactivated": "Detecção automática desativada",
+        "geofenceActivationError": "Erro ao ativar detecção automática",
         "deleteAccount": "Deletar Conta",
         "deleteAccountTitle": "Deletar minha conta",
         "deleteAccountDescription": "Tem certeza que deseja deletar sua conta? Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.",
@@ -217,7 +222,11 @@
         "lunchTitle": "Hora do almoço!",
         "lunchBody": "Tenha um bom almoço!",
         "exitTitle": "Hora de sair!",
-        "exitBody": "Não se esqueça de registrar sua saída."
+        "exitBody": "Não se esqueça de registrar sua saída.",
+        "geofenceEntryTitle": "🏢 Chegou ao trabalho",
+        "geofenceEntryBody": "Registramos um ponto de entrada em rascunho para você revisar.",
+        "geofenceExitTitle": "🚶 Saiu do trabalho",
+        "geofenceExitBody": "Registramos um ponto de saída em rascunho para você revisar."
     },
     "onboarding": {
         "intro": {
