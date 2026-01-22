@@ -162,49 +162,54 @@ struct ClockIntentHelper {
     }
     
     // Retorna as strings de notificação localizadas baseadas no idioma
+    // Usa NSLocalizedString com bundle.preferredLocalizations para garantir que a linguagem correta seja usada
     static func getLocalizedNotificationStrings(for language: String, action: String) -> (title: String, body: String) {
         let isEntry = action == "entrada"
         
+        // Mapeia o código de idioma do app (pt-BR, en-US, etc) para o código usado no Bundle (.lproj)
+        let localeCode = getLocaleCode(from: language)
+        
+        // Cria um Bundle com o idioma específico
+        let bundle = getLocalizedBundle(for: localeCode)
+        
+        let title = NSLocalizedString("notification.clockRegistered.title", 
+                                     bundle: bundle, 
+                                     comment: "Clock notification title")
+        let bodyKey = isEntry ? "notification.clockIn.body" : "notification.clockOut.body"
+        let body = NSLocalizedString(bodyKey, 
+                                    bundle: bundle, 
+                                    comment: "Clock notification body")
+        
+        return (title: title, body: body)
+    }
+    
+    // Retorna a mensagem de diálogo localizada usando NSLocalizedString
+    static func getLocalizedDialogMessage(for language: String, action: String) -> String {
+        let localeCode = getLocaleCode(from: language)
+        let bundle = getLocalizedBundle(for: localeCode)
+        
+        let key = action == "entrada" ? "dialog.clockIn.success" : "dialog.clockOut.success"
+        return NSLocalizedString(key, bundle: bundle, comment: "Clock dialog message")
+    }
+    
+    // Mapeia o código de idioma completo (pt-BR, en-US) para o código base (pt-BR, en, fr, de)
+    private static func getLocaleCode(from language: String) -> String {
         switch language {
-        case "en-US":
-            return isEntry 
-                ? (title: "Clock Registered", body: "Clock in registered successfully!")
-                : (title: "Clock Registered", body: "Clock out registered successfully!")
-        case "fr-FR":
-            return isEntry
-                ? (title: "Horloge Enregistrée", body: "Pointage d'entrée enregistré avec succès !")
-                : (title: "Horloge Enregistrée", body: "Pointage de sortie enregistré avec succès !")
-        case "de-DE":
-            return isEntry
-                ? (title: "Uhr Registriert", body: "Einstempeln erfolgreich registriert!")
-                : (title: "Uhr Registriert", body: "Ausstempeln erfolgreich registriert!")
-        default: // pt-BR
-            return isEntry
-                ? (title: "Ponto Registrado", body: "Ponto de entrada registrado com sucesso!")
-                : (title: "Ponto Registrado", body: "Ponto de saída registrado com sucesso!")
+        case "en-US": return "en"
+        case "fr-FR": return "fr"
+        case "de-DE": return "de"
+        default: return "pt-BR"  // pt-BR mantém o código completo
         }
     }
     
-    // Retorna a mensagem de diálogo localizada
-    static func getLocalizedDialogMessage(for language: String, action: String) -> String {
-        switch language {
-        case "en-US":
-            return action == "entrada" 
-                ? "Clock in registered successfully!"
-                : "Clock out registered successfully!"
-        case "fr-FR":
-            return action == "entrada"
-                ? "Pointage d'entrée enregistré avec succès !"
-                : "Pointage de sortie enregistré avec succès !"
-        case "de-DE":
-            return action == "entrada"
-                ? "Einstempeln erfolgreich registriert!"
-                : "Ausstempeln erfolgreich registriert!"
-        default: // pt-BR
-            return action == "entrada"
-                ? "Ponto de entrada registrado com sucesso!"
-                : "Ponto de saída registrado com sucesso!"
+    // Retorna um Bundle configurado para o idioma específico
+    private static func getLocalizedBundle(for localeCode: String) -> Bundle {
+        guard let path = Bundle.main.path(forResource: localeCode, ofType: "lproj"),
+              let bundle = Bundle(path: path) else {
+            print("⚠️ Bundle de localização não encontrado para '\(localeCode)', usando bundle principal")
+            return Bundle.main
         }
+        return bundle
     }
     
     // Faz a chamada para bater o ponto

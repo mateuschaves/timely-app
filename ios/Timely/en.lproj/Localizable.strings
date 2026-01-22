@@ -1,0 +1,8 @@
+/* Clock notifications */
+"notification.clockRegistered.title" = "Clock Registered";
+"notification.clockIn.body" = "Clock in registered successfully!";
+"notification.clockOut.body" = "Clock out registered successfully!";
+
+/* Dialog messages */
+"dialog.clockIn.success" = "Clock in registered successfully!";
+"dialog.clockOut.success" = "Clock out registered successfully!";

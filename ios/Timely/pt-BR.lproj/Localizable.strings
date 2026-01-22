@@ -1,0 +1,8 @@
+/* Clock notifications */
+"notification.clockRegistered.title" = "Ponto Registrado";
+"notification.clockIn.body" = "Ponto de entrada registrado com sucesso!";
+"notification.clockOut.body" = "Ponto de saída registrado com sucesso!";
+
+/* Dialog messages */
+"dialog.clockIn.success" = "Ponto de entrada registrado com sucesso!";
+"dialog.clockOut.success" = "Ponto de saída registrado com sucesso!";

@@ -1,0 +1,8 @@
+/* Clock notifications */
+"notification.clockRegistered.title" = "Horloge Enregistrée";
+"notification.clockIn.body" = "Pointage d'entrée enregistré avec succès !";
+"notification.clockOut.body" = "Pointage de sortie enregistré avec succès !";
+
+/* Dialog messages */
+"dialog.clockIn.success" = "Pointage d'entrée enregistré avec succès !";
+"dialog.clockOut.success" = "Pointage de sortie enregistré avec succès !";
