@@ -1,0 +1,8 @@
+/* Clock notifications */
+"notification.clockRegistered.title" = "Uhr Registriert";
+"notification.clockIn.body" = "Einstempeln erfolgreich registriert!";
+"notification.clockOut.body" = "Ausstempeln erfolgreich registriert!";
+
+/* Dialog messages */
+"dialog.clockIn.success" = "Einstempeln erfolgreich registriert!";
+"dialog.clockOut.success" = "Ausstempeln erfolgreich registriert!";

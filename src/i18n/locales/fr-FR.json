@@ -217,7 +217,14 @@
     "lunchTitle": "Heure du déjeuner !",
     "lunchBody": "Bon appétit !",
     "exitTitle": "Il est temps de sortir !",
-    "exitBody": "N'oubliez pas d'enregistrer votre sortie."
+    "exitBody": "N'oubliez pas d'enregistrer votre sortie.",
+    "geofenceEntryTitle": "🏢 Arrivé au travail",
+    "geofenceEntryBody": "Nous avons créé un pointage d'entrée brouillon pour que vous la révisiez.",
+    "geofenceExitTitle": "🚶 Parti du travail",
+    "geofenceExitBody": "Nous avons créé un pointage de sortie brouillon pour que vous la révisiez.",
+    "clockRegisteredTitle": "Horloge Enregistrée",
+    "clockInRegistered": "Pointage d'entrée enregistré avec succès !",
+    "clockOutRegistered": "Pointage de sortie enregistré avec succès !"
   },
   "onboarding": {
     "intro": {

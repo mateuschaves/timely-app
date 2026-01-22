@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform, NativeModules } from 'react-native';
 
 import ptBR from './locales/pt-BR.json';
 import enUS from './locales/en-US.json';
@@ -69,11 +70,28 @@ i18n
   try {
     const savedLanguage = await AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE);
     
+    let effectiveLanguage: SupportedLanguage;
+    
     if (savedLanguage === 'system') {
-      const systemLang = getInitialLanguage();
-      i18n.changeLanguage(systemLang);
+      effectiveLanguage = getInitialLanguage();
+      i18n.changeLanguage(effectiveLanguage);
     } else if (savedLanguage && SUPPORTED_LANGUAGES.includes(savedLanguage as SupportedLanguage)) {
+      effectiveLanguage = savedLanguage as SupportedLanguage;
       i18n.changeLanguage(savedLanguage);
+    } else {
+      effectiveLanguage = getInitialLanguage();
+    }
+    
+    // No iOS, salva o idioma efetivo no App Group UserDefaults
+    if (Platform.OS === 'ios') {
+      try {
+        if (NativeModules.TokenStorage && typeof NativeModules.TokenStorage.saveLanguage === 'function') {
+          await NativeModules.TokenStorage.saveLanguage(effectiveLanguage);
+          console.log('✅ Idioma inicial salvo no App Group UserDefaults:', effectiveLanguage);
+        }
+      } catch (e) {
+        console.warn('⚠️ Não foi possível salvar idioma no App Group UserDefaults:', e);
+      }
     }
   } catch (error) {
     console.error('Erro ao carregar idioma salvo:', error);
