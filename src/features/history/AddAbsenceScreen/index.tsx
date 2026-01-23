@@ -79,7 +79,7 @@ export function AddAbsenceScreen() {
 
   const handleSave = async () => {
     if (!reason.trim()) {
-      Alert.alert(t('common.error'), t('history.absenceReason') + ' é obrigatório');
+      Alert.alert(t('common.error'), t('history.absenceReasonRequired'));
       return;
     }
 
@@ -156,7 +156,7 @@ export function AddAbsenceScreen() {
       <Container>
         <Header>
           <BackButton onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color={theme.text} />
+            <Ionicons name="chevron-back" size={24} color={theme.text.primary} />
           </BackButton>
           <HeaderTitle>{t('history.addAbsenceTitle')}</HeaderTitle>
         </Header>
@@ -166,7 +166,7 @@ export function AddAbsenceScreen() {
             <InputLabel>{t('history.absenceDate')}</InputLabel>
             <PickerButton onPress={openDatePicker}>
               <PickerValue>{formattedDate}</PickerValue>
-              <Ionicons name="calendar-outline" size={20} color={theme.text} />
+              <Ionicons name="calendar-outline" size={20} color={theme.text.primary} />
             </PickerButton>
           </InputContainer>
 
@@ -176,7 +176,7 @@ export function AddAbsenceScreen() {
               value={reason}
               onChangeText={setReason}
               placeholder={t('history.absenceReasonPlaceholder')}
-              placeholderTextColor={theme.textSecondary}
+              placeholderTextColor={theme.text.secondary}
               editable={!isSaving}
               maxLength={100}
             />
@@ -188,7 +188,7 @@ export function AddAbsenceScreen() {
               value={description}
               onChangeText={setDescription}
               placeholder={t('history.absenceDescriptionPlaceholder')}
-              placeholderTextColor={theme.textSecondary}
+              placeholderTextColor={theme.text.secondary}
               editable={!isSaving}
               multiline
               numberOfLines={4}

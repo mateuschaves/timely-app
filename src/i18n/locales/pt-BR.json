@@ -125,7 +125,8 @@
     "absenceReasonPlaceholder": "Ex: Consulta médica",
     "absenceSuccess": "Justificativa adicionada com sucesso!",
     "absenceError": "Erro ao adicionar justificativa. Tente novamente.",
-    "absenceClockRecordsExist": "Já existem registros de ponto para esta data"
+    "absenceClockRecordsExist": "Já existem registros de ponto para esta data",
+    "absenceReasonRequired": "O motivo é obrigatório"
   },
   "profile": {
     "title": "Perfil",

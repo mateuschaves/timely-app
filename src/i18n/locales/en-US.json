@@ -125,7 +125,8 @@
     "absenceReasonPlaceholder": "E.g.: Medical appointment",
     "absenceSuccess": "Justification added successfully!",
     "absenceError": "Error adding justification. Please try again.",
-    "absenceClockRecordsExist": "Clock records already exist for this date"
+    "absenceClockRecordsExist": "Clock records already exist for this date",
+    "absenceReasonRequired": "Reason is required"
   },
   "profile": {
     "title": "Profile",

@@ -125,7 +125,8 @@
     "absenceReasonPlaceholder": "Z.B.: Arzttermin",
     "absenceSuccess": "Begründung erfolgreich hinzugefügt!",
     "absenceError": "Fehler beim Hinzufügen der Begründung. Bitte versuchen Sie es erneut.",
-    "absenceClockRecordsExist": "Für dieses Datum existieren bereits Zeiterfassungen"
+    "absenceClockRecordsExist": "Für dieses Datum existieren bereits Zeiterfassungen",
+    "absenceReasonRequired": "Der Grund ist erforderlich"
   },
   "profile": {
     "title": "Profil",
