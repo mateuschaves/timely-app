@@ -6,6 +6,7 @@ import { useAuthContext } from '@/features/auth';
 import { deleteUserMe, DeleteUserMeRequest } from '@/api/delete-user-me';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
+import { Button } from '@/components';
 import {
     Container,
     Content,
@@ -23,8 +24,6 @@ import {
     RadioButtonSelected,
     CustomReasonContainer,
     CustomReasonInput,
-    DeleteButton,
-    DeleteButtonText,
     WarningText,
 } from './styles';
 
@@ -164,15 +163,15 @@ export function DeleteAccountScreen() {
 
                     <WarningText>{t('profile.deleteAccountWarning')}</WarningText>
 
-                    <DeleteButton
+                    <Button
+                        destructive
                         onPress={handleDelete}
-                        disabled={isDeleting || !selectedReason || (selectedReason === 'other' && !customReason.trim())}
-                        activeOpacity={0.7}
+                        disabled={!selectedReason || (selectedReason === 'other' && !customReason.trim())}
+                        isLoading={isDeleting}
+                        style={{ marginBottom: 40 }}
                     >
-                        <DeleteButtonText>
-                            {isDeleting ? t('common.loading') : t('profile.deleteAccountButton')}
-                        </DeleteButtonText>
-                    </DeleteButton>
+                        {t('profile.deleteAccountButton')}
+                    </Button>
                 </ScrollContent>
             </Content>
         </Container>

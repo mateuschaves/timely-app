@@ -14,6 +14,7 @@ import { format, parseISO, isValid, startOfMonth, endOfMonth, eachDayOfInterval,
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Button } from '@/components';
 import {
     Container,
     Content,
@@ -33,8 +34,6 @@ import {
     SectionDivider,
     TimePickerTitle,
     TimePickerWrapper,
-    SaveButton,
-    SaveButtonText,
     HolidayRow,
     HolidayInfo,
     HolidayDate,
@@ -1109,9 +1108,13 @@ export function WorkSettingsScreen() {
                         </SettingSection>
                     </SettingsCard>
 
-                    <SaveButton onPress={handleSave} disabled={updateSettingsMutation.isPending} activeOpacity={0.7}>
-                        <SaveButtonText>{updateSettingsMutation.isPending ? t('common.loading') : t('common.save')}</SaveButtonText>
-                    </SaveButton>
+                    <Button 
+                        onPress={handleSave} 
+                        isLoading={updateSettingsMutation.isPending}
+                        style={{ marginTop: spacing.sm }}
+                    >
+                        {t('common.save')}
+                    </Button>
                 </ScrollView>
             </Content>
             <Modal

@@ -7,6 +7,7 @@ import { updateUserMe } from '@/api/update-user-me';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useFeedback } from '@/utils/feedback';
+import { Button } from '@/components';
 import {
     Container,
     Content,
@@ -15,8 +16,6 @@ import {
     BackButton,
     InputContainer,
     Input,
-    SaveButton,
-    SaveButtonText,
 } from './styles';
 
 export function EditNameScreen() {
@@ -87,9 +86,13 @@ export function EditNameScreen() {
                         editable={!isSaving}
                     />
                 </InputContainer>
-                <SaveButton testID="edit-name-save-button" onPress={handleSave} disabled={isSaving} activeOpacity={0.7}>
-                    <SaveButtonText>{isSaving ? t('common.loading') : t('common.save')}</SaveButtonText>
-                </SaveButton>
+                <Button 
+                    testID="edit-name-save-button" 
+                    onPress={handleSave} 
+                    isLoading={isSaving}
+                >
+                    {t('common.save')}
+                </Button>
             </Content>
         </Container>
     );

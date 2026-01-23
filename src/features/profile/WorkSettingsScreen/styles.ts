@@ -137,22 +137,6 @@ export const TimeHint = styled.Text<{ theme: any }>`
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.primary)};
-  border-radius: ${borderRadius.lg}px;
-  padding: ${spacing.md}px ${spacing.lg}px;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${spacing.sm}px;
-  opacity: ${(props: { disabled?: boolean }) => (props.disabled ? 0.6 : 1)};
-`;
-
-export const SaveButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => (theme.colorScheme === 'dark' ? theme.text.primary : theme.text.inverse)};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-`;
-
 export const HolidayRow = styled.View`
   flex-direction: row;
   align-items: center;

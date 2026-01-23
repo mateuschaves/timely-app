@@ -6,16 +6,14 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuthContext } from '../context/AuthContext';
 import { useTranslation } from '@/i18n';
 import { AuthStackParamList } from '@/navigation/AuthNavigator';
+import { Button } from '@/components';
 import {
   Container,
   Content,
   Logo,
   Title,
   Subtitle,
-  AppleButton,
-  ButtonText,
   ErrorText,
-  LoadingIndicator,
   TermsText,
   TermsLink,
 } from './styles';
@@ -61,16 +59,13 @@ export function LoginScreen() {
         {error && <ErrorText>{error}</ErrorText>}
 
         {Platform.OS === 'ios' && (
-          <AppleButton
+          <Button
             onPress={handleAppleSignIn}
-            disabled={isLoading}
+            isLoading={isLoading}
+            style={{ marginTop: 20 }}
           >
-            {isLoading ? (
-              <LoadingIndicator />
-            ) : (
-              <ButtonText>{t('auth.continueWithApple')}</ButtonText>
-            )}
-          </AppleButton>
+            {t('auth.continueWithApple')}
+          </Button>
         )}
 
         <TermsText>
