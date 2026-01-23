@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
+import React from 'react';
 import { spacing, borderRadius, typography } from '@/theme';
 
 export const StyledButton = styled.TouchableOpacity<{
@@ -44,11 +45,21 @@ export const ButtonText = styled.Text<{
     variant === 'secondary' ? typography.weights.medium : typography.weights.semibold};
 `;
 
-export const LoadingIndicator = styled(ActivityIndicator).attrs<{ 
-  theme: any;
+// Create a loading indicator component that doesn't use styled-components wrapper
+export const LoadingIndicator: React.FC<{
   variant?: 'primary' | 'secondary' | 'outline';
-}>(({ theme, variant }) => ({
-  color: variant === 'secondary' ? theme.text.secondary : 
-         variant === 'outline' ? theme.primary : theme.text.inverse,
-  size: 'small',
-}))``;
+  theme?: any;
+}> = ({ variant = 'primary', theme }) => {
+  const getColor = (variant: string, theme: any) => {
+    if (variant === 'secondary') return theme?.text?.secondary;
+    if (variant === 'outline') return theme?.primary;
+    return theme?.text?.inverse;
+  };
+
+  return (
+    <ActivityIndicator
+      color={getColor(variant, theme)}
+      size="small"
+    />
+  );
+};

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ButtonProps } from './types';
 import { StyledButton, ButtonText, LoadingIndicator } from './styles';
+import { useTheme } from '@/theme/context/ThemeContext';
 
 /**
  * Reusable Button component with theme-aware styling, loading states, and destructive action support
@@ -31,6 +32,8 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...touchableOpacityProps
 }) => {
+  const { theme } = useTheme();
+  
   // Prevent interaction when loading or disabled
   const isDisabled = disabled || isLoading;
 
@@ -43,7 +46,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
     >
       {isLoading ? (
-        <LoadingIndicator variant={variant} />
+        <LoadingIndicator variant={variant} theme={theme} />
       ) : (
         <ButtonText variant={variant} destructive={destructive}>{title}</ButtonText>
       )}
