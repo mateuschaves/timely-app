@@ -115,7 +115,17 @@
     "pdfGenerationError": "Erreur lors de la génération du rapport. Veuillez réessayer.",
     "previewUnavailable": "Aperçu non disponible.",
     "downloadSuccess": "PDF enregistré avec succès.",
-    "downloadError": "Erreur lors de l'enregistrement du PDF."
+    "downloadError": "Erreur lors de l'enregistrement du PDF.",
+    "addAbsence": "Ajouter Justificatif",
+    "addAbsenceTitle": "Justificatif d'Absence",
+    "absenceDate": "Date",
+    "absenceReason": "Raison",
+    "absenceDescription": "Description",
+    "absenceDescriptionPlaceholder": "Ajouter des détails sur l'absence (optionnel)",
+    "absenceReasonPlaceholder": "Ex: Rendez-vous médical",
+    "absenceSuccess": "Justificatif ajouté avec succès!",
+    "absenceError": "Erreur lors de l'ajout du justificatif. Veuillez réessayer.",
+    "absenceClockRecordsExist": "Des enregistrements d'horaires existent déjà pour cette date"
   },
   "profile": {
     "title": "Profil",
