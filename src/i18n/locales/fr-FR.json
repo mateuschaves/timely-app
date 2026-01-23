@@ -44,7 +44,8 @@
   "navigation": {
     "home": "Accueil",
     "history": "Historique",
-    "profile": "Profil"
+    "profile": "Profil",
+    "absences": "Justificatifs"
   },
   "home": {
     "clockIn": "Pointage - Entrée",
@@ -266,5 +267,12 @@
       "skipFailed": "Impossible de passer l'intégration. Veuillez réessayer.",
       "completeFailed": "Impossible de terminer l'intégration. Veuillez réessayer."
     }
+  },
+  "absences": {
+    "title": "Justificatifs",
+    "empty": "Aucun justificatif trouvé",
+    "reason": "Raison",
+    "description": "Description",
+    "addNew": "Ajouter Justificatif"
   }
 }

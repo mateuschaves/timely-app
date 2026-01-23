@@ -44,7 +44,8 @@
   "navigation": {
     "home": "Startseite",
     "history": "Verlauf",
-    "profile": "Profil"
+    "profile": "Profil",
+    "absences": "Begründungen"
   },
   "home": {
     "clockIn": "Stempeln - Ein",
@@ -266,5 +267,12 @@
       "skipFailed": "Onboarding konnte nicht übersprungen werden. Bitte versuchen Sie es erneut.",
       "completeFailed": "Onboarding konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "absences": {
+    "title": "Begründungen",
+    "empty": "Keine Begründungen gefunden",
+    "reason": "Grund",
+    "description": "Beschreibung",
+    "addNew": "Begründung Hinzufügen"
   }
 }

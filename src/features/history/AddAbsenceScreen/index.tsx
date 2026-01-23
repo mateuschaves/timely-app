@@ -4,11 +4,10 @@ import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
-import { useQueryClient } from '@tanstack/react-query';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { createAbsence } from '@/api';
 import { format } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
+import { useCreateAbsence } from '@/features/absences/hooks/useAbsences';
 import {
   Container,
   Header,
@@ -43,9 +42,9 @@ export function AddAbsenceScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute<AddAbsenceRouteProp>();
-  const queryClient = useQueryClient();
   const { showSuccess, showError } = useFeedback();
   const { theme, colorScheme } = useTheme();
+  const createAbsenceMutation = useCreateAbsence();
   
   const initialDate = route.params?.date ? new Date(route.params.date) : new Date();
   
@@ -53,7 +52,6 @@ export function AddAbsenceScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [reason, setReason] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [isSaving, setIsSaving] = useState(false);
 
   const handleDateChange = (event: DateTimePickerEvent, pickedDate?: Date) => {
     if (Platform.OS !== 'ios') {
@@ -68,7 +66,7 @@ export function AddAbsenceScreen() {
   const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '';
 
   const openDatePicker = () => {
-    if (isSaving) return;
+    if (createAbsenceMutation.isPending) return;
     Keyboard.dismiss();
     setShowDatePicker(true);
   };
@@ -83,35 +81,31 @@ export function AddAbsenceScreen() {
       return;
     }
 
-    try {
-      setIsSaving(true);
-
-      await createAbsence({
+    createAbsenceMutation.mutate(
+      {
         date: formattedDate,
         reason: reason.trim(),
         description: description.trim() || undefined,
-      });
-
-      showSuccess(t('history.absenceSuccess'));
-      
-      // Invalidate queries to refresh the history
-      queryClient.invalidateQueries({ queryKey: ['clock-history'] });
-      
-      navigation.goBack();
-    } catch (error: any) {
-      console.error('Error creating absence:', error);
-      
-      // Check if the error is about existing clock records
-      const errorMessage = error?.response?.data?.message || error?.message || '';
-      
-      if (errorMessage.toLowerCase().includes('clock') || errorMessage.toLowerCase().includes('registro')) {
-        showError(t('history.absenceClockRecordsExist'));
-      } else {
-        showError(t('history.absenceError'));
+      },
+      {
+        onSuccess: () => {
+          showSuccess(t('history.absenceSuccess'));
+          navigation.goBack();
+        },
+        onError: (error: any) => {
+          console.error('Error creating absence:', error);
+          
+          // Check if the error is about existing clock records
+          const errorMessage = error?.response?.data?.message || error?.message || '';
+          
+          if (errorMessage.toLowerCase().includes('clock') || errorMessage.toLowerCase().includes('registro')) {
+            showError(t('history.absenceClockRecordsExist'));
+          } else {
+            showError(t('history.absenceError'));
+          }
+        },
       }
-    } finally {
-      setIsSaving(false);
-    }
+    );
   };
 
   const renderDatePicker = () => {
@@ -177,7 +171,7 @@ export function AddAbsenceScreen() {
               onChangeText={setReason}
               placeholder={t('history.absenceReasonPlaceholder')}
               placeholderTextColor={theme.text.secondary}
-              editable={!isSaving}
+              editable={!createAbsenceMutation.isPending}
               maxLength={100}
             />
           </InputContainer>
@@ -189,7 +183,7 @@ export function AddAbsenceScreen() {
               onChangeText={setDescription}
               placeholder={t('history.absenceDescriptionPlaceholder')}
               placeholderTextColor={theme.text.secondary}
-              editable={!isSaving}
+              editable={!createAbsenceMutation.isPending}
               multiline
               numberOfLines={4}
               textAlignVertical="top"
@@ -199,8 +193,8 @@ export function AddAbsenceScreen() {
           </InputContainer>
 
           <ButtonContainer>
-            <SaveButton onPress={handleSave} disabled={isSaving}>
-              <SaveButtonText>{isSaving ? t('common.loading') : t('common.save')}</SaveButtonText>
+            <SaveButton onPress={handleSave} disabled={createAbsenceMutation.isPending}>
+              <SaveButtonText>{createAbsenceMutation.isPending ? t('common.loading') : t('common.save')}</SaveButtonText>
             </SaveButton>
           </ButtonContainer>
         </Content>

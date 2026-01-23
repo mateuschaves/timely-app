@@ -44,7 +44,8 @@
   "navigation": {
     "home": "Home",
     "history": "History",
-    "profile": "Profile"
+    "profile": "Profile",
+    "absences": "Absences"
   },
   "home": {
     "clockIn": "Clock In",
@@ -271,5 +272,12 @@
       "skipFailed": "Unable to skip onboarding. Please try again.",
       "completeFailed": "Unable to complete onboarding. Please try again."
     }
+  },
+  "absences": {
+    "title": "Absences",
+    "empty": "No absences found",
+    "reason": "Reason",
+    "description": "Description",
+    "addNew": "Add Absence"
   }
 }

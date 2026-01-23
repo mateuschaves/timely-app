@@ -44,7 +44,8 @@
   "navigation": {
     "home": "Início",
     "history": "Histórico",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "absences": "Justificativas"
   },
   "home": {
     "clockIn": "Bater Ponto - Entrada",
@@ -271,5 +272,12 @@
       "skipFailed": "Não foi possível pular o onboarding. Tente novamente.",
       "completeFailed": "Não foi possível finalizar o onboarding. Tente novamente."
     }
+  },
+  "absences": {
+    "title": "Justificativas",
+    "empty": "Nenhuma justificativa encontrada",
+    "reason": "Motivo",
+    "description": "Descrição",
+    "addNew": "Adicionar Justificativa"
   }
 }
