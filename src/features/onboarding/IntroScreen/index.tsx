@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslation } from '@/i18n';
 import { useOnboarding } from '../hooks/useOnboarding';
 import { OnboardingStackParamList } from '../types';
+import { Button } from '@/components/Button';
 import {
   Container,
   Content,
@@ -13,10 +14,6 @@ import {
   Title,
   Body,
   ButtonContainer,
-  PrimaryButton,
-  PrimaryButtonText,
-  SecondaryButton,
-  SecondaryButtonText,
 } from './styles';
 
 type NavigationProp = NativeStackNavigationProp<OnboardingStackParamList, 'Intro'>;
@@ -68,13 +65,16 @@ export function IntroScreen() {
         <Body>{t('onboarding.intro.body')}</Body>
 
         <ButtonContainer>
-          <PrimaryButton onPress={handleContinue} activeOpacity={0.8}>
-            <PrimaryButtonText>{t('onboarding.intro.primaryCta')}</PrimaryButtonText>
-          </PrimaryButton>
+          <Button 
+            title={t('onboarding.intro.primaryCta')}
+            onPress={handleContinue}
+          />
 
-          <SecondaryButton onPress={handleSkip} activeOpacity={0.6}>
-            <SecondaryButtonText>{t('onboarding.intro.secondaryCta')}</SecondaryButtonText>
-          </SecondaryButton>
+          <Button 
+            title={t('onboarding.intro.secondaryCta')}
+            variant="secondary"
+            onPress={handleSkip}
+          />
         </ButtonContainer>
       </Content>
     </Container>

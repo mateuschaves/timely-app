@@ -15,12 +15,19 @@ import { StyledButton, ButtonText, LoadingIndicator } from './styles';
  * 
  * // Destructive action
  * <Button title="Delete" destructive onPress={handleDelete} />
+ * 
+ * // Secondary variant
+ * <Button title="Skip" variant="secondary" onPress={handleSkip} />
+ * 
+ * // Outline variant
+ * <Button title="Cancel" variant="outline" onPress={handleCancel} />
  * ```
  */
 export const Button: React.FC<ButtonProps> = ({
   title,
   isLoading = false,
   destructive = false,
+  variant = 'primary',
   disabled,
   ...touchableOpacityProps
 }) => {
@@ -32,12 +39,13 @@ export const Button: React.FC<ButtonProps> = ({
       {...touchableOpacityProps}
       disabled={isDisabled}
       destructive={destructive}
+      variant={variant}
       activeOpacity={0.7}
     >
       {isLoading ? (
-        <LoadingIndicator />
+        <LoadingIndicator variant={variant} />
       ) : (
-        <ButtonText>{title}</ButtonText>
+        <ButtonText variant={variant} destructive={destructive}>{title}</ButtonText>
       )}
     </StyledButton>
   );

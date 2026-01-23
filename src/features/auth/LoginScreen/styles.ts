@@ -1,6 +1,5 @@
 import styled from 'styled-components/native';
-import { ActivityIndicator } from 'react-native';
-import { spacing, borderRadius, typography } from '@/theme';
+import { spacing, typography } from '@/theme';
 
 export const Container = styled.View<{ theme: any }>`
   flex: 1;
@@ -36,34 +35,12 @@ export const Subtitle = styled.Text<{ theme: any }>`
   text-align: center;
 `;
 
-export const AppleButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
-  width: 100%;
-  height: 50px;
-  background-color: ${({ theme }) => theme.primary};
-  border-radius: ${borderRadius.md}px;
-  justify-content: center;
-  align-items: center;
-  margin-top: ${spacing.lg}px;
-  opacity: ${props => (props.disabled ? 0.6 : 1)};
-`;
-
-export const ButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => theme.text.inverse};
-  font-size: ${typography.sizes.lg}px;
-  font-weight: ${typography.weights.semibold};
-`;
-
 export const ErrorText = styled.Text<{ theme: any }>`
   color: ${({ theme }) => theme.status.error};
   font-size: ${typography.sizes.sm}px;
   margin-bottom: ${spacing.sm}px;
   text-align: center;
 `;
-
-export const LoadingIndicator = styled(ActivityIndicator).attrs<{ theme: any }>(({ theme }) => ({
-  color: theme.text.inverse,
-  size: 'small',
-}))``;
 
 export const TermsText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.xs}px;

@@ -17,4 +17,12 @@ export interface ButtonProps extends TouchableOpacityProps {
    * When true, applies red styling using theme.action.danger
    */
   destructive?: boolean;
+  
+  /**
+   * The visual variant of the button
+   * - 'primary': Filled button with primary color (default)
+   * - 'secondary': Transparent button with secondary text color
+   * - 'outline': Button with border and no background
+   */
+  variant?: 'primary' | 'secondary' | 'outline';
 }

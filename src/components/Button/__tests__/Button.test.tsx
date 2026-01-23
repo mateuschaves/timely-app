@@ -203,4 +203,33 @@ describe('Button', () => {
     const button = getByTestId('button');
     expect(button.props.activeOpacity).toBe(0.7);
   });
+
+  it('should render secondary variant button', () => {
+    const { getByText, getByTestID } = render(
+      <Button title="Skip" variant="secondary" testID="button" />,
+      { wrapper: createWrapper }
+    );
+
+    expect(getByText('Skip')).toBeTruthy();
+  });
+
+  it('should render outline variant button', () => {
+    const { getByText } = render(
+      <Button title="Cancel" variant="outline" />,
+      { wrapper: createWrapper }
+    );
+
+    expect(getByText('Cancel')).toBeTruthy();
+  });
+
+  it('should default to primary variant when not specified', () => {
+    const { getByTestId } = render(
+      <Button title="Submit" testID="button" />,
+      { wrapper: createWrapper }
+    );
+
+    const button = getByTestId('button');
+    // Component defaults to 'primary' variant
+    expect(button.props.variant).toBe('primary');
+  });
 });
