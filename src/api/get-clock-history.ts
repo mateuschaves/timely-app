@@ -36,6 +36,11 @@ export interface ClockHistoryDay {
   hoursDifferenceFormatted?: string;
   status?: 'over' | 'under' | 'exact';
   events: ClockHistoryEvent[];
+  absence?: {
+    id: string;
+    reason: string;
+    description?: string;
+  } | null;
 }
 
 export interface ClockHistoryMonthSummary {

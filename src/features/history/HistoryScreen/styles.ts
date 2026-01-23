@@ -611,6 +611,44 @@ export const HolidayBadgeText = styled.Text`
   color: ${({ theme }) => theme.status.warning};
 `;
 
+export const AbsenceBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${({ theme }) => theme.status.info}20;
+  padding: ${spacing.xs}px ${spacing.sm}px;
+  border-radius: ${borderRadius.sm}px;
+  margin-left: ${spacing.sm}px;
+  gap: ${spacing.xs / 2}px;
+`;
+
+export const AbsenceBadgeText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.status.info};
+`;
+
+export const AbsenceCard = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  border-radius: ${borderRadius.md}px;
+  padding: ${spacing.md}px;
+  margin: ${spacing.sm}px ${spacing.lg}px;
+  border-left-width: 3px;
+  border-left-color: ${({ theme }) => theme.status.info};
+`;
+
+export const AbsenceReason = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.text.primary};
+  margin-bottom: ${spacing.xs}px;
+`;
+
+export const AbsenceDescription = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.sm}px;
+  color: ${({ theme }) => theme.text.secondary};
+  line-height: 20px;
+`;
+
 export const GenerateReportButton = styled.TouchableOpacity<{ disabled?: boolean; theme?: any }>`
   flex-direction: row;
   align-items: center;
@@ -640,4 +678,25 @@ export const GenerateReportSecondaryButton = styled(GenerateReportButton)`
 
 export const GenerateReportSecondaryButtonText = styled(GenerateReportButtonText)`
   color: ${(props: any) => props.theme.primary};
+`;
+
+export const AddAbsenceButton = styled.TouchableOpacity<{ theme: any }>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: ${spacing.xs}px;
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-radius: ${borderRadius.md}px;
+  margin: ${spacing.md}px ${spacing.lg}px;
+  min-height: 40px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.light};
+  border-style: dashed;
+`;
+
+export const AddAbsenceButtonText = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${({ theme }) => theme.text.secondary};
 `;
