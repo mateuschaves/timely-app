@@ -69,6 +69,8 @@ import {
     NotesText,
     NotesShowMore,
     NotesShowMoreText,
+    AddAbsenceButton,
+    AddAbsenceButtonText,
 } from './styles';
 import { HistorySkeletonLoader } from './SkeletonLoader';
 
@@ -475,6 +477,16 @@ export function HistoryScreen() {
                             })
                             .filter(Boolean)}
                     </EventsList>
+                )}
+
+                {isExpanded && (!item.events || item.events.length === 0) && (
+                    <AddAbsenceButton
+                        onPress={() => navigation.navigate('AddAbsence', { date: item.date })}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="add-circle-outline" size={18} color={theme.text.secondary} />
+                        <AddAbsenceButtonText>{t('history.addAbsence')}</AddAbsenceButtonText>
+                    </AddAbsenceButton>
                 )}
             </DayCard>
         );

@@ -641,3 +641,24 @@ export const GenerateReportSecondaryButton = styled(GenerateReportButton)`
 export const GenerateReportSecondaryButtonText = styled(GenerateReportButtonText)`
   color: ${(props: any) => props.theme.primary};
 `;
+
+export const AddAbsenceButton = styled.TouchableOpacity<{ theme: any }>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: ${spacing.xs}px;
+  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#2a2a2a' : theme.background.secondary)};
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-radius: ${borderRadius.md}px;
+  margin: ${spacing.md}px ${spacing.lg}px;
+  min-height: 40px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.light};
+  border-style: dashed;
+`;
+
+export const AddAbsenceButtonText = styled.Text<{ theme: any }>`
+  font-size: ${typography.sizes.sm}px;
+  font-weight: ${typography.weights.medium};
+  color: ${({ theme }) => theme.text.secondary};
+`;

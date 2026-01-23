@@ -16,4 +16,5 @@ export * from './update-user-me';
 export * from './update-user-settings';
 export * from './delete-user-me';
 export * from './generate-monthly-pdf';
+export * from './create-absence';
 
