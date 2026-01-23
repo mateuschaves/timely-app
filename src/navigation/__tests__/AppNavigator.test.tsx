@@ -82,12 +82,19 @@ jest.mock('@/features/profile', () => ({
   AppearanceScreen: () => null,
   EditNameScreen: () => null,
   WorkSettingsScreen: () => null,
+  WorkplaceLocationScreen: () => null,
   PrivacyAndSecurityScreen: () => null,
   DeleteAccountScreen: () => null,
 }));
 
 jest.mock('@/features/history', () => ({
   EditEventScreen: () => null,
+  ReportPreviewScreen: () => null,
+  AddAbsenceScreen: () => null,
+}));
+
+jest.mock('@/features/absences', () => ({
+  AbsencesListScreen: () => null,
 }));
 
 jest.mock('../BottomTabNavigator', () => ({
