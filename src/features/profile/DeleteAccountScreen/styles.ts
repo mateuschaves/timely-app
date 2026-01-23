@@ -128,21 +128,3 @@ export const WarningText = styled.Text<{ theme: any }>`
   line-height: ${typography.sizes.sm * 1.5}px;
 `;
 
-export const DeleteButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
-  background-color: ${({ theme }) => theme.status.error};
-  border-radius: ${borderRadius.lg}px;
-  padding: ${spacing.md}px ${spacing.lg}px;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  opacity: ${props => (props.disabled ? 0.6 : 1)};
-  margin-bottom: ${spacing.xl}px;
-`;
-
-export const DeleteButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => theme.text.inverse};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  letter-spacing: 0.1px;
-`;
-

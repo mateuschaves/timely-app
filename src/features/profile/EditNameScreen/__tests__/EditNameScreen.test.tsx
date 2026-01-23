@@ -371,16 +371,16 @@ describe('EditNameScreen', () => {
   it('should disable input when saving', async () => {
     mockUpdateUserMe.mockImplementation(() => new Promise(() => { })); // Never resolves
 
-    const { getByText, getByTestId } = render(<EditNameScreen />, { wrapper: createWrapper() });
+    const { getByTestId, UNSAFE_getByType } = render(<EditNameScreen />, { wrapper: createWrapper() });
 
     const input = getByTestId('edit-name-input');
     fireEvent.changeText(input, 'New Name');
 
-    const saveButton = getByText('common.save');
+    const saveButton = getByTestId('edit-name-save-button');
     fireEvent.press(saveButton);
 
     await waitFor(() => {
-      expect(getByText('common.loading')).toBeTruthy();
+      expect(UNSAFE_getByType('ActivityIndicator')).toBeTruthy();
       expect(input.props.editable).toBe(false);
     });
   });

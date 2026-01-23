@@ -10,6 +10,7 @@ import { updateClockEvent, deleteClockEvent } from '@/api';
 import { ClockHistoryEvent } from '@/api/get-clock-history';
 import { format, parseISO } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
+import { Button } from '@/components/Button';
 import {
   Container,
   Header,
@@ -28,10 +29,6 @@ import {
   PickerActionButton,
   PickerActionText,
   ButtonContainer,
-  SaveButton,
-  SaveButtonText,
-  DeleteButton,
-  DeleteButtonText,
 } from './styles';
 
 type EditEventRouteParams = {
@@ -285,17 +282,20 @@ export function EditEventScreen() {
         </InputContainer>
 
         <ButtonContainer>
-          <SaveButton onPress={handleSave} disabled={isSaving || isDeleting} activeOpacity={0.7}>
-            <SaveButtonText>
-              {isSaving ? t('common.loading') : t('common.save')}
-            </SaveButtonText>
-          </SaveButton>
+          <Button
+            title={t('common.save')}
+            onPress={handleSave}
+            isLoading={isSaving}
+            disabled={isDeleting}
+          />
 
-          <DeleteButton onPress={handleDelete} disabled={isSaving || isDeleting} activeOpacity={0.7}>
-            <DeleteButtonText>
-              {isDeleting ? t('common.loading') : t('common.delete')}
-            </DeleteButtonText>
-          </DeleteButton>
+          <Button
+            title={t('common.delete')}
+            onPress={handleDelete}
+            isLoading={isDeleting}
+            destructive
+            disabled={isSaving}
+          />
         </ButtonContainer>
       </Content>
       </TouchableWithoutFeedback>

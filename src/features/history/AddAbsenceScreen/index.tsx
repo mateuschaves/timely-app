@@ -8,6 +8,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { format } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
 import { useCreateAbsence } from '@/features/absences/hooks/useAbsences';
+import { Button } from '@/components/Button';
 import {
   Container,
   Header,
@@ -26,8 +27,6 @@ import {
   PickerActionButton,
   PickerActionText,
   ButtonContainer,
-  SaveButton,
-  SaveButtonText,
 } from './styles';
 
 type AddAbsenceRouteParams = {
@@ -193,9 +192,11 @@ export function AddAbsenceScreen() {
           </InputContainer>
 
           <ButtonContainer>
-            <SaveButton onPress={handleSave} disabled={createAbsenceMutation.isPending}>
-              <SaveButtonText>{createAbsenceMutation.isPending ? t('common.loading') : t('common.save')}</SaveButtonText>
-            </SaveButton>
+            <Button
+              title={t('common.save')}
+              onPress={handleSave}
+              isLoading={createAbsenceMutation.isPending}
+            />
           </ButtonContainer>
         </Content>
 
