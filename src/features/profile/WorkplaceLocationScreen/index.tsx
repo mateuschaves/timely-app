@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUserSettings, WorkLocation } from '@/api/update-user-settings';
 import { useFeedback } from '@/utils/feedback';
 import { useTranslation } from '@/i18n';
+import { Button } from '@/components/Button';
 import {
   Container,
   Content,
@@ -22,8 +23,6 @@ import {
   Row,
   Label,
   Value,
-  Button,
-  ButtonText,
   StatusBadge,
   StatusText,
   WarningBox,
@@ -214,30 +213,26 @@ export function WorkplaceLocationScreen() {
           </Card>
 
           {!workplaceLocation ? (
-            <Button onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
-              {isSetting || isLoadingLocation ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <>
-                  <ButtonText>Usar Localização Atual</ButtonText>
-                </>
-              )}
-            </Button>
+            <Button 
+              title="Usar Localização Atual"
+              onPress={handleSetCurrentLocation}
+              disabled={isSetting || isLoadingLocation}
+              isLoading={isSetting || isLoadingLocation}
+            />
           ) : (
             <>
-              <Button onPress={handleToggleMonitoring}>
-                <ButtonText>
-                  {isMonitoring ? 'Desativar Detecção' : 'Ativar Detecção'}
-                </ButtonText>
-              </Button>
+              <Button 
+                title={isMonitoring ? 'Desativar Detecção' : 'Ativar Detecção'}
+                onPress={handleToggleMonitoring}
+              />
 
-              <Button variant="secondary" onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
-                {isSetting || isLoadingLocation ? (
-                  <ActivityIndicator color={theme.colors.text} />
-                ) : (
-                  <ButtonText variant="secondary">Atualizar Localização</ButtonText>
-                )}
-              </Button>
+              <Button 
+                title="Atualizar Localização"
+                variant="secondary"
+                onPress={handleSetCurrentLocation}
+                disabled={isSetting || isLoadingLocation}
+                isLoading={isSetting || isLoadingLocation}
+              />
             </>
           )}
         </Section>

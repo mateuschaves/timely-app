@@ -102,24 +102,6 @@ export const EmptyStateText = styled.Text<{ theme: any }>`
   text-align: center;
 `;
 
-export const AddButton = styled.TouchableOpacity<{ theme: any }>`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: ${spacing.xs}px;
-  background-color: ${({ theme }) => theme.primary};
-  padding: ${spacing.md}px ${spacing.lg}px;
-  border-radius: ${borderRadius.lg}px;
-  margin-bottom: ${spacing.md}px;
-  min-height: 48px;
-`;
-
-export const AddButtonText = styled.Text<{ theme: any }>`
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  color: ${({ theme }) => theme.text.inverse};
-`;
-
 export const LoadingContainer = styled.View`
   flex: 1;
   align-items: center;

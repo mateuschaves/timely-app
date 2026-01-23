@@ -11,6 +11,7 @@ import { STORAGE_KEYS } from '@/config/storage';
 import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/Button';
 import {
   Container,
   Content,
@@ -28,8 +29,6 @@ import {
   InfoLabel,
   InfoValueContainer,
   InfoValue,
-  Button,
-  ButtonText,
   EmptyState,
   EmptyStateText,
   SettingsRow,
@@ -286,9 +285,11 @@ export function ProfileScreen() {
                 </InfoCard>
               </Section>
 
-              <Button onPress={handleSignOut}>
-                <ButtonText>{t('profile.logout')}</ButtonText>
-              </Button>
+              <Button 
+                title={t('profile.logout')}
+                destructive
+                onPress={handleSignOut}
+              />
             </>
           ) : (
             <EmptyState>

@@ -197,33 +197,6 @@ export const ConfirmModalActions = styled.View`
   align-items: center;
 `;
 
-export const ConfirmButton = styled.TouchableOpacity<{ theme: any }>`
-  background-color: ${({ theme }) => theme.primary};
-  padding: ${spacing.md}px ${spacing.xl}px;
-  border-radius: ${borderRadius.md}px;
-  opacity: ${props => (props.disabled ? 0.6 : 1)};
-`;
-
-export const CancelButton = styled.TouchableOpacity<{ theme: any }>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding: ${spacing.md}px ${spacing.xl}px;
-  border-radius: ${borderRadius.md}px;
-`;
-
-export const ConfirmButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => theme.text.inverse};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  text-align: center;
-`;
-
-export const CancelButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => theme.text.primary};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  text-align: center;
-`;
-
 export const WorkSettingsCard = styled.TouchableOpacity<{ theme: any }>`
   background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#2A2415' : '#FFF8DC'};
   border-radius: ${borderRadius.lg}px;

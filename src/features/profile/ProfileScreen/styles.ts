@@ -122,27 +122,6 @@ export const InfoValueContainer = styled.View`
   flex-shrink: 0;
 `;
 
-export const Button = styled.TouchableOpacity<{ theme: any }>`
-  background-color: ${({ theme }) => theme.colorScheme === 'dark' ? '#1a1a1a' : theme.background.secondary};
-  border-radius: ${borderRadius.lg}px;
-  padding: ${spacing.md}px ${spacing.lg}px;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${spacing.sm}px;
-  shadow-color: ${({ theme }) => theme.shadows.sm.shadowColor};
-  shadow-offset: ${({ theme }) => theme.shadows.sm.shadowOffset.width}px ${({ theme }) => theme.shadows.sm.shadowOffset.height}px;
-  shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
-  shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
-  elevation: ${({ theme }) => theme.shadows.sm.elevation};
-`;
-
-export const ButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => theme.status.error};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.medium};
-  letter-spacing: 0.1px;
-`;
-
 export const EmptyState = styled.View`
   align-items: center;
   justify-content: center;

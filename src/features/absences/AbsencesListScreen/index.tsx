@@ -9,6 +9,7 @@ import { AbsenceDay, AbsenceEntry } from '@/api/get-absences';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { capitalizeFirstLetter } from '@/utils/string';
+import { Button } from '@/components/Button';
 import {
   Container,
   MonthNavigation,
@@ -24,8 +25,6 @@ import {
   AbsenceDescription,
   EmptyState,
   EmptyStateText,
-  AddButton,
-  AddButtonText,
   LoadingContainer,
 } from './styles';
 import { ActivityIndicator } from 'react-native';
@@ -177,10 +176,10 @@ export function AbsencesListScreen() {
             </EmptyState>
           }
           ListHeaderComponent={
-            <AddButton onPress={handleAddAbsence} activeOpacity={0.7}>
-              <Ionicons name="add-circle" size={20} color={theme.text.inverse} />
-              <AddButtonText>{t('absences.addNew')}</AddButtonText>
-            </AddButton>
+            <Button 
+              title={t('absences.addNew')}
+              onPress={handleAddAbsence}
+            />
           }
         />
       )}

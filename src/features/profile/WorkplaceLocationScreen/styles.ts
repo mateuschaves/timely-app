@@ -74,22 +74,6 @@ export const Value = styled.Text`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const Button = styled.TouchableOpacity<{ variant?: 'primary' | 'secondary' }>`
-  background-color: ${({ theme, variant }) => 
-    variant === 'secondary' ? theme.colors.surface : theme.colors.primary};
-  padding: ${spacing.md}px;
-  border-radius: 12px;
-  align-items: center;
-  margin-top: ${spacing.md}px;
-`;
-
-export const ButtonText = styled.Text<{ variant?: 'primary' | 'secondary' }>`
-  color: ${({ theme, variant }) => 
-    variant === 'secondary' ? theme.colors.text : '#FFFFFF'};
-  font-size: 16px;
-  font-weight: 600;
-`;
-
 export const StatusBadge = styled.View<{ active?: boolean }>`
   background-color: ${({ theme, active }) => 
     active ? theme.colors.success + '20' : theme.colors.error + '20'};
