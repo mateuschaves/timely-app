@@ -9,12 +9,8 @@ export const StyledButton = styled.TouchableOpacity<{
 }>`
   width: 100%;
   height: 50px;
-  background-color: ${({ theme, destructive, disabled }) => {
-    if (disabled) {
-      return destructive ? theme.action.danger : theme.action.primary;
-    }
-    return destructive ? theme.action.danger : theme.action.primary;
-  }};
+  background-color: ${({ theme, destructive }) =>
+    destructive ? theme.action.danger : theme.action.primary};
   border-radius: ${borderRadius.md}px;
   justify-content: center;
   align-items: center;
