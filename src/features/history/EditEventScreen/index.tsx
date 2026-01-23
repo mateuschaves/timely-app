@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { updateClockEvent, deleteClockEvent } from '@/api';
+import { updateClockEvent, deleteClockEvent, confirmClockEvent } from '@/api';
 import { ClockHistoryEvent } from '@/api/get-clock-history';
 import { format, parseISO } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
@@ -32,6 +32,8 @@ import {
   SaveButtonText,
   DeleteButton,
   DeleteButtonText,
+  ConfirmButton,
+  ConfirmButtonText,
 } from './styles';
 
 type EditEventRouteParams = {
@@ -56,6 +58,7 @@ export function EditEventScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [notes, setNotes] = useState<string>('');
 
   useEffect(() => {
@@ -218,6 +221,33 @@ export function EditEventScreen() {
     );
   };
 
+  const handleConfirm = async () => {
+    try {
+      setIsConfirming(true);
+      Keyboard.dismiss();
+
+      await confirmClockEvent(event.id);
+
+      // Invalidar e refetch imediatamente
+      await queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
+      await queryClient.refetchQueries({ queryKey: ['clockHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
+
+      showSuccess(t('history.confirmEventSuccess'));
+      navigation.goBack();
+    } catch (error: any) {
+      console.error('Erro ao confirmar evento:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        t('history.confirmEventError');
+      Alert.alert(t('common.error'), errorMessage);
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   return (
     <Container>
       <Header>
@@ -235,7 +265,7 @@ export function EditEventScreen() {
       <Content>
         <InputContainer>
           <InputLabel>{t('history.date')}</InputLabel>
-          <PickerButton onPress={openDatePicker} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+          <PickerButton onPress={openDatePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
             <PickerValue placeholder={!formattedDate}>
               {formattedDate || 'YYYY-MM-DD'}
             </PickerValue>
@@ -244,7 +274,7 @@ export function EditEventScreen() {
 
         <InputContainer>
           <InputLabel>{t('history.hour')}</InputLabel>
-          <PickerButton onPress={openTimePicker} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+          <PickerButton onPress={openTimePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
             <PickerValue placeholder={!formattedTime}>
               {formattedTime || 'HH:mm'}
             </PickerValue>
@@ -259,7 +289,7 @@ export function EditEventScreen() {
               onChangeText={setNotes}
               placeholder={t('history.notes')}
               placeholderTextColor={theme.text.tertiary}
-              editable={!isSaving && !isDeleting}
+              editable={!isSaving && !isDeleting && !isConfirming}
               multiline
               numberOfLines={3}
               style={{ minHeight: 80, textAlignVertical: 'top', paddingRight: notes?.length ? 48 : 16 }}
@@ -267,7 +297,7 @@ export function EditEventScreen() {
             {!!notes?.length && (
               <TouchableOpacity
                 onPress={() => setNotes('')}
-                disabled={isSaving || isDeleting}
+                disabled={isSaving || isDeleting || isConfirming}
                 activeOpacity={0.7}
                 style={{
                   position: 'absolute',
@@ -285,13 +315,22 @@ export function EditEventScreen() {
         </InputContainer>
 
         <ButtonContainer>
-          <SaveButton onPress={handleSave} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+          {event.isDraft && (
+            <ConfirmButton onPress={handleConfirm} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
+              <Ionicons name="checkmark-circle" size={20} color={theme.text.inverse} />
+              <ConfirmButtonText>
+                {isConfirming ? t('common.loading') : t('history.confirmEvent')}
+              </ConfirmButtonText>
+            </ConfirmButton>
+          )}
+
+          <SaveButton onPress={handleSave} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
             <SaveButtonText>
               {isSaving ? t('common.loading') : t('common.save')}
             </SaveButtonText>
           </SaveButton>
 
-          <DeleteButton onPress={handleDelete} disabled={isSaving || isDeleting} activeOpacity={0.7}>
+          <DeleteButton onPress={handleDelete} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
             <DeleteButtonText>
               {isDeleting ? t('common.loading') : t('common.delete')}
             </DeleteButtonText>

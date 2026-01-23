@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { spacing } from '@/theme';
 
-export const Container = styled.View`
+export const Container = styled(SafeAreaView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.background};
 `;
@@ -84,8 +85,14 @@ export const Button = styled.TouchableOpacity<{ variant?: 'primary' | 'secondary
 `;
 
 export const ButtonText = styled.Text<{ variant?: 'primary' | 'secondary' }>`
-  color: ${({ theme, variant }) => 
-    variant === 'secondary' ? theme.colors.text : '#FFFFFF'};
+  color: ${({ theme, variant }) => {
+    if (variant === 'secondary') {
+      // Para botões secundários, usar text.primary que sempre tem contraste adequado
+      // No modo escuro será branco (#ffffff), no claro será preto (#000000)
+      return theme.text?.primary || theme.colors.text || '#000000';
+    }
+    return '#FFFFFF';
+  }};
   font-size: 16px;
   font-weight: 600;
 `;

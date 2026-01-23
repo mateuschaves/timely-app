@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { ListRenderItem } from 'react-native';
+import { ListRenderItem, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import { ClockAction } from '@/api/types';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { capitalizeFirstLetter } from '@/utils/string';
+import { spacing } from '@/theme';
 import {
     Container,
     ScrollContent,
@@ -64,6 +65,10 @@ import {
     OrderIssueText,
     HolidayBadge,
     HolidayBadgeText,
+    DraftBadge,
+    DraftBadgeText,
+    DraftWarning,
+    DraftWarningText,
     NotesContainer,
     NotesBubble,
     NotesText,
@@ -283,9 +288,17 @@ export function HistoryScreen() {
                 <EventRow>
                     <EventIndicator type={isEntry ? 'entry' : 'exit'} />
                     <EventContent>
-                        <EventType type={isEntry ? 'entry' : 'exit'}>
-                            {isEntry ? t('history.entry') : t('history.exit')}
-                        </EventType>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
+                            <EventType type={isEntry ? 'entry' : 'exit'}>
+                                {isEntry ? t('history.entry') : t('history.exit')}
+                            </EventType>
+                            {event.isDraft && (
+                                <DraftBadge>
+                                    <Ionicons name="document-text-outline" size={12} color={theme.primary} />
+                                    <DraftBadgeText>{t('history.draft')}</DraftBadgeText>
+                                </DraftBadge>
+                            )}
+                        </View>
                         <EventTime>{formattedHour}</EventTime>
                     </EventContent>
                     <EventEditButton
@@ -296,6 +309,13 @@ export function HistoryScreen() {
                         <Ionicons name="create-outline" size={20} color={theme.text.secondary} />
                     </EventEditButton>
                 </EventRow>
+
+                {event.isDraft && (
+                    <DraftWarning>
+                        <Ionicons name="alert-circle-outline" size={16} color={theme.primary} />
+                        <DraftWarningText>{t('history.draftNeedsConfirmation')}</DraftWarningText>
+                    </DraftWarning>
+                )}
 
                 {event.notes && (
                     <NotesContainer>
@@ -355,7 +375,17 @@ export function HistoryScreen() {
                         <EventRow>
                             <EventIndicator type="exit" />
                             <EventContent>
-                                <EventType type="exit">{t('history.exit')}</EventType>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' }}>
+                                    <EventType type="exit">
+                                        {t('history.exit')}
+                                    </EventType>
+                                    {nextEvent.isDraft && (
+                                        <DraftBadge>
+                                            <Ionicons name="document-text-outline" size={12} color={theme.primary} />
+                                            <DraftBadgeText>{t('history.draft')}</DraftBadgeText>
+                                        </DraftBadge>
+                                    )}
+                                </View>
                                 <EventTime>{format(parseISO(nextEvent.hour), 'HH:mm', { locale: dateLocale })}</EventTime>
                             </EventContent>
                             <EventEditButton
@@ -366,6 +396,12 @@ export function HistoryScreen() {
                                 <Ionicons name="create-outline" size={20} color={theme.text.secondary} />
                             </EventEditButton>
                         </EventRow>
+                        {nextEvent.isDraft && (
+                            <DraftWarning>
+                                <Ionicons name="alert-circle-outline" size={16} color={theme.primary} />
+                                <DraftWarningText>{t('history.draftNeedsConfirmation')}</DraftWarningText>
+                            </DraftWarning>
+                        )}
                     </>
                 )}
 

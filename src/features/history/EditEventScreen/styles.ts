@@ -175,3 +175,22 @@ export const DeleteButtonText = styled.Text<{ theme: any }>`
   letter-spacing: 0.1px;
 `;
 
+export const ConfirmButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
+  background-color: ${({ theme }) => theme.primary};
+  border-radius: ${borderRadius.lg}px;
+  padding: ${spacing.md}px ${spacing.lg}px;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  opacity: ${props => (props.disabled ? 0.6 : 1)};
+  flex-direction: row;
+  gap: ${spacing.sm}px;
+`;
+
+export const ConfirmButtonText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.text.inverse};
+  font-size: ${typography.sizes.md}px;
+  font-weight: ${typography.weights.semibold};
+  letter-spacing: 0.1px;
+`;
+

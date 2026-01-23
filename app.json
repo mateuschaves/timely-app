@@ -26,7 +26,10 @@
         "NSLocationAlwaysUsageDescription": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
         "ITSAppUsesNonExemptEncryption": false,
         "NSSupportsLiveActivities": true,
-        "UIBackgroundModes": ["location", "remote-notification"]
+        "UIBackgroundModes": [
+          "location",
+          "remote-notification"
+        ]
       }
     },
     "plugins": [
@@ -54,7 +57,8 @@
           "locationWhenInUsePermission": "Precisamos da sua localização para registrar o ponto com precisão.",
           "isIosBackgroundLocationEnabled": true
         }
-      ]
+      ],
+      "expo-maps"
     ],
     "updates": {
       "enabled": true,

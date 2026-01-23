@@ -611,6 +611,44 @@ export const HolidayBadgeText = styled.Text`
   color: ${({ theme }) => theme.status.warning};
 `;
 
+export const DraftBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${({ theme }) => theme.primary}20;
+  padding: ${spacing.xs}px ${spacing.sm}px;
+  border-radius: ${borderRadius.sm}px;
+  margin-left: ${spacing.sm}px;
+  gap: ${spacing.xs / 2}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.primary}40;
+`;
+
+export const DraftBadgeText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.semibold};
+  color: ${({ theme }) => theme.primary};
+`;
+
+export const DraftWarning = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${({ theme }) => theme.primary}15;
+  padding: ${spacing.sm}px ${spacing.md}px;
+  border-radius: ${borderRadius.sm}px;
+  margin-top: ${spacing.xs}px;
+  margin-bottom: ${spacing.xs}px;
+  gap: ${spacing.xs}px;
+  border-left-width: 3px;
+  border-left-color: ${({ theme }) => theme.primary};
+`;
+
+export const DraftWarningText = styled.Text`
+  font-size: ${typography.sizes.xs}px;
+  font-weight: ${typography.weights.medium};
+  color: ${({ theme }) => theme.primary};
+  flex: 1;
+`;
+
 export const GenerateReportButton = styled.TouchableOpacity<{ disabled?: boolean; theme?: any }>`
   flex-direction: row;
   align-items: center;

@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { Alert, ActivityIndicator, Platform, Linking } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
@@ -9,6 +9,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateUserSettings, WorkLocation } from '@/api/update-user-settings';
 import { useFeedback } from '@/utils/feedback';
 import { useTranslation } from '@/i18n';
+import { MapLocationPicker } from './MapLocationPicker';
+import { LocationCoordinates } from '@/api/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/config/storage';
+import { MapPreview } from './MapPreview';
+import { spacing } from '@/theme';
 import {
   Container,
   Content,
@@ -52,6 +58,27 @@ export function WorkplaceLocationScreen() {
   const { requestLocationPermission, isLoading: isLoadingLocation } = useLocation();
   
   const [isSetting, setIsSetting] = useState(false);
+  const [showMapPicker, setShowMapPicker] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<LocationCoordinates | null>(null);
+  const [selectedRadius, setSelectedRadius] = useState<number>(100);
+  const [storedRadius, setStoredRadius] = useState<number | null>(null);
+
+  // Load stored radius on mount
+  useEffect(() => {
+    const loadRadius = async () => {
+      try {
+        const radius = await AsyncStorage.getItem(STORAGE_KEYS.WORKPLACE_RADIUS);
+        if (radius) {
+          const radiusValue = parseInt(radius, 10);
+          setStoredRadius(radiusValue);
+          setSelectedRadius(radiusValue);
+        }
+      } catch (error) {
+        console.error('Error loading radius:', error);
+      }
+    };
+    loadRadius();
+  }, []);
 
   const updateSettingsMutation = useMutation({
     mutationFn: updateUserSettings,
@@ -78,10 +105,14 @@ export function WorkplaceLocationScreen() {
         return;
       }
 
-      // Save workplace location
+      // Save workplace location (without radius - API doesn't store it)
       await updateSettingsMutation.mutateAsync({
         workLocation: location,
       });
+
+      // Save radius locally for native geofencing
+      await AsyncStorage.setItem(STORAGE_KEYS.WORKPLACE_RADIUS, '100');
+      setStoredRadius(100);
 
       // Request always permission for geofencing
       const permissionGranted = await requestPermission();
@@ -114,6 +145,58 @@ export function WorkplaceLocationScreen() {
     }
   }, [requestLocationPermission, updateSettingsMutation, requestPermission, startMonitoring, showError]);
 
+  const handleMapLocationChange = useCallback((location: LocationCoordinates, radius: number) => {
+    setSelectedLocation(location);
+    setSelectedRadius(radius);
+  }, []);
+
+  const handleSaveMapLocation = useCallback(async () => {
+    if (!selectedLocation) return;
+
+    setIsSetting(true);
+    try {
+      // Save workplace location (without radius - API doesn't store it)
+      await updateSettingsMutation.mutateAsync({
+        workLocation: selectedLocation,
+      });
+
+      // Save radius locally for native geofencing
+      await AsyncStorage.setItem(STORAGE_KEYS.WORKPLACE_RADIUS, selectedRadius.toString());
+      setStoredRadius(selectedRadius);
+
+      // Request always permission for geofencing
+      const permissionGranted = await requestPermission();
+      
+      if (permissionGranted) {
+        // Start monitoring
+        await startMonitoring();
+      } else {
+        Alert.alert(
+          'Permissão adicional necessária',
+          'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização. Você pode habilitar isso nas configurações do dispositivo.',
+          [
+            { text: 'Agora não', style: 'cancel' },
+            { 
+              text: 'Abrir Configurações', 
+              onPress: () => {
+                if (Platform.OS === 'ios') {
+                  Linking.openURL('app-settings:');
+                }
+              }
+            },
+          ]
+        );
+      }
+
+      setShowMapPicker(false);
+    } catch (error) {
+      console.error('Error saving workplace location:', error);
+      showError('Erro ao salvar localização do trabalho');
+    } finally {
+      setIsSetting(false);
+    }
+  }, [selectedLocation, selectedRadius, updateSettingsMutation, requestPermission, startMonitoring, showError]);
+
   const handleToggleMonitoring = useCallback(async () => {
     if (isMonitoring) {
       stopMonitoring();
@@ -144,13 +227,13 @@ export function WorkplaceLocationScreen() {
       <Container>
         <Header>
           <BackButton onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+            <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
           </BackButton>
           <HeaderTitle>Localização do Trabalho</HeaderTitle>
         </Header>
         <Content>
           <WarningBox>
-            <Ionicons name="information-circle" size={24} color={theme.colors.warning} />
+            <Ionicons name="information-circle" size={24} color={theme.status.warning} />
             <WarningText>
               Detecção automática de chegada ao trabalho não está disponível neste dispositivo. 
               Este recurso requer iOS.
@@ -165,7 +248,7 @@ export function WorkplaceLocationScreen() {
     <Container>
       <Header>
         <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
         <HeaderTitle>Localização do Trabalho</HeaderTitle>
       </Header>
@@ -192,20 +275,25 @@ export function WorkplaceLocationScreen() {
               <>
                 <Row style={{ marginTop: 16 }}>
                   <Label>Localização Salva</Label>
-                  <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+                  <Ionicons name="checkmark-circle" size={20} color={theme.status.success} />
                 </Row>
-                <LocationInfo>
-                  <CoordinatesText>
-                    Lat: {workplaceLocation.coordinates[1].toFixed(6)}{'\n'}
-                    Lon: {workplaceLocation.coordinates[0].toFixed(6)}
-                  </CoordinatesText>
-                </LocationInfo>
+                <MapPreview
+                  location={workplaceLocation}
+                  radius={storedRadius || undefined}
+                />
+                {storedRadius && (
+                  <View style={{ marginTop: spacing.sm }}>
+                    <Text style={[styles.radiusText, { color: theme.text.secondary }]}>
+                      Raio de detecção: {storedRadius}m
+                    </Text>
+                  </View>
+                )}
               </>
             )}
 
             {!workplaceLocation && (
               <WarningBox style={{ marginTop: 16 }}>
-                <Ionicons name="alert-circle" size={20} color={theme.colors.warning} />
+                <Ionicons name="alert-circle" size={20} color={theme.status.warning} />
                 <WarningText>
                   Nenhuma localização configurada. Defina a localização do trabalho para ativar a detecção automática.
                 </WarningText>
@@ -214,15 +302,18 @@ export function WorkplaceLocationScreen() {
           </Card>
 
           {!workplaceLocation ? (
-            <Button onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
-              {isSetting || isLoadingLocation ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <>
-                  <ButtonText>Usar Localização Atual</ButtonText>
-                </>
-              )}
-            </Button>
+            <>
+              <Button onPress={() => setShowMapPicker(true)} disabled={isSetting}>
+                <ButtonText>Selecionar no Mapa</ButtonText>
+              </Button>
+              <Button variant="secondary" onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
+                {isSetting || isLoadingLocation ? (
+                  <ActivityIndicator color={theme.text.primary} />
+                ) : (
+                  <ButtonText variant="secondary">Usar Localização Atual</ButtonText>
+                )}
+              </Button>
+            </>
           ) : (
             <>
               <Button onPress={handleToggleMonitoring}>
@@ -231,9 +322,13 @@ export function WorkplaceLocationScreen() {
                 </ButtonText>
               </Button>
 
+              <Button variant="secondary" onPress={() => setShowMapPicker(true)} disabled={isSetting}>
+                <ButtonText variant="secondary">Alterar no Mapa</ButtonText>
+              </Button>
+
               <Button variant="secondary" onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
                 {isSetting || isLoadingLocation ? (
-                  <ActivityIndicator color={theme.colors.text} />
+                  <ActivityIndicator color={theme.text.primary} />
                 ) : (
                   <ButtonText variant="secondary">Atualizar Localização</ButtonText>
                 )}
@@ -257,7 +352,7 @@ export function WorkplaceLocationScreen() {
 
         {!hasPermission && workplaceLocation && (
           <WarningBox>
-            <Ionicons name="alert-circle" size={24} color={theme.colors.warning} />
+            <Ionicons name="alert-circle" size={24} color={theme.status.warning} />
             <WarningText>
               Permissão "Sempre" de localização não concedida. A detecção automática não funcionará com o app fechado. 
               Habilite nas configurações do dispositivo.
@@ -265,6 +360,32 @@ export function WorkplaceLocationScreen() {
           </WarningBox>
         )}
       </Content>
+
+      <Modal
+        visible={showMapPicker}
+        animationType="slide"
+        presentationStyle="fullScreen"
+        onRequestClose={() => setShowMapPicker(false)}
+      >
+        <MapLocationPicker
+          initialLocation={workplaceLocation || undefined}
+          initialRadius={storedRadius || 100}
+          onLocationChange={handleMapLocationChange}
+          onClose={async () => {
+            setShowMapPicker(false);
+            if (selectedLocation) {
+              await handleSaveMapLocation();
+            }
+          }}
+        />
+      </Modal>
     </Container>
   );
 }
+
+const styles = StyleSheet.create({
+  radiusText: {
+    fontSize: 12,
+    textAlign: 'center',
+  },
+});
