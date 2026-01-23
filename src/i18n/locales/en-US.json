@@ -127,7 +127,8 @@
     "absenceSuccess": "Justification added successfully!",
     "absenceError": "Error adding justification. Please try again.",
     "absenceClockRecordsExist": "Clock records already exist for this date",
-    "absenceReasonRequired": "Reason is required"
+    "absenceReasonRequired": "Reason is required",
+    "absenceJustified": "Justified"
   },
   "profile": {
     "title": "Profile",

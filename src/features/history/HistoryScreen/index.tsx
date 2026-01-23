@@ -7,6 +7,7 @@ import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
 import { getClockHistory, ClockHistoryDay, ClockHistoryEvent, GetClockHistoryResponse } from '@/api/get-clock-history';
+import { getAbsences } from '@/api/get-absences';
 import { ClockAction } from '@/api/types';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,6 +65,11 @@ import {
     OrderIssueText,
     HolidayBadge,
     HolidayBadgeText,
+    AbsenceBadge,
+    AbsenceBadgeText,
+    AbsenceCard,
+    AbsenceReason,
+    AbsenceDescription,
     NotesContainer,
     NotesBubble,
     NotesText,
@@ -146,11 +152,43 @@ export function HistoryScreen() {
         return Intl.DateTimeFormat().resolvedOptions().timeZone;
     }, []);
 
-    const { data, isLoading } = useQuery<GetClockHistoryResponse>({
+    const { data: clockHistoryData, isLoading: isLoadingClockHistory } = useQuery<GetClockHistoryResponse>({
         queryKey: ['clockHistory', startDate, endDate, deviceTimezone],
         queryFn: () => getClockHistory({ startDate, endDate, timezone: deviceTimezone }),
         refetchOnWindowFocus: true,
     });
+
+    const { data: absencesData, isLoading: isLoadingAbsences } = useQuery({
+        queryKey: ['absences', startDate, endDate],
+        queryFn: () => getAbsences({ startDate, endDate }),
+        refetchOnWindowFocus: true,
+    });
+
+    const isLoading = isLoadingClockHistory || isLoadingAbsences;
+
+    // Merge clock history with absences
+    const data = useMemo(() => {
+        if (!clockHistoryData) return clockHistoryData;
+
+        const mergedData = { ...clockHistoryData };
+        
+        if (absencesData?.data) {
+            mergedData.data = clockHistoryData.data.map(day => {
+                const absencesForDay = absencesData.data.find(absenceDay => absenceDay.date === day.date);
+                
+                if (absencesForDay?.absences && absencesForDay.absences.length > 0) {
+                    return {
+                        ...day,
+                        absences: absencesForDay.absences,
+                    };
+                }
+                
+                return day;
+            });
+        }
+
+        return mergedData;
+    }, [clockHistoryData, absencesData]);
 
     // Atualiza os dados quando a tela entrar em foco
     useFocusEffect(
@@ -414,6 +452,12 @@ export function HistoryScreen() {
                                 <HolidayBadgeText>{t('history.holiday')}</HolidayBadgeText>
                             </HolidayBadge>
                         )}
+                        {item.absences && item.absences.length > 0 && (
+                            <AbsenceBadge>
+                                <Ionicons name="document-text" size={12} color={theme.status.info} />
+                                <AbsenceBadgeText>{t('history.absenceJustified')}</AbsenceBadgeText>
+                            </AbsenceBadge>
+                        )}
                     </DayDateContainer>
                     <DayHeaderRight>
                         {!isIncomplete && (
@@ -433,7 +477,7 @@ export function HistoryScreen() {
                                 </DayStatusText>
                             </DayStatusBadge>
                         )}
-                        {item.events && item.events.length > 0 && (
+                        {((item.events && item.events.length > 0) || (item.absences && item.absences.length > 0)) && (
                             <DayExpandIcon>
                                 <Ionicons
                                     name={isExpanded ? "chevron-up" : "chevron-down"}
@@ -479,7 +523,22 @@ export function HistoryScreen() {
                     </EventsList>
                 )}
 
-                {isExpanded && (!item.events || item.events.length === 0) && (
+                {isExpanded && item.absences && item.absences.length > 0 && (
+                    <>
+                        {item.absences.map((absence) => (
+                            <AbsenceCard key={absence.id}>
+                                <AbsenceReason>
+                                    <Ionicons name="document-text" size={16} color={theme.status.info} /> {absence.reason}
+                                </AbsenceReason>
+                                {absence.description && (
+                                    <AbsenceDescription>{absence.description}</AbsenceDescription>
+                                )}
+                            </AbsenceCard>
+                        ))}
+                    </>
+                )}
+
+                {isExpanded && (!item.events || item.events.length === 0) && (!item.absences || item.absences.length === 0) && (
                     <AddAbsenceButton
                         onPress={() => navigation.navigate('AddAbsence', { date: item.date })}
                         activeOpacity={0.7}

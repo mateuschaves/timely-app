@@ -127,7 +127,8 @@
     "absenceSuccess": "Justificatif ajouté avec succès!",
     "absenceError": "Erreur lors de l'ajout du justificatif. Veuillez réessayer.",
     "absenceClockRecordsExist": "Des enregistrements d'horaires existent déjà pour cette date",
-    "absenceReasonRequired": "La raison est obligatoire"
+    "absenceReasonRequired": "La raison est obligatoire",
+    "absenceJustified": "Justifiée"
   },
   "profile": {
     "title": "Profil",
