@@ -105,13 +105,13 @@ describe('AddAbsenceScreen', () => {
     } as any);
 
     const TestWrapper = createTestWrapper();
-    const { getByText } = render(
+    const { UNSAFE_getByType } = render(
       <TestWrapper>
         <AddAbsenceScreen />
       </TestWrapper>
     );
 
-    expect(getByText(/carregando|loading/i)).toBeTruthy();
+    expect(UNSAFE_getByType('ActivityIndicator')).toBeTruthy();
   });
 
   it('should have date pre-filled from route params', () => {

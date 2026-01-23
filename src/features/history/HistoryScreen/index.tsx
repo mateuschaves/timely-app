@@ -11,6 +11,7 @@ import { ClockAction } from '@/api/types';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { capitalizeFirstLetter } from '@/utils/string';
+import { Button } from '@/components/Button';
 import {
     Container,
     ScrollContent,
@@ -27,8 +28,6 @@ import {
     SummaryDifferenceRow,
     SummaryDifferenceLabel,
     SummaryDifferenceValue,
-    GenerateReportButton,
-    GenerateReportButtonText,
     DaysList,
     DayCard,
     DayHeader,
@@ -584,12 +583,10 @@ export function HistoryScreen() {
                                     </SummaryDifferenceRow>
                                 )}
 
-                                <GenerateReportButton onPress={handleNavigateToReportPreview} activeOpacity={0.7}>
-                                    <Ionicons name="document-text" size={16} color={theme.text.inverse} />
-                                    <GenerateReportButtonText>
-                                        {t('history.generateReport')}
-                                    </GenerateReportButtonText>
-                                </GenerateReportButton>
+                                <Button 
+                                    title={t('history.generateReport')}
+                                    onPress={handleNavigateToReportPreview}
+                                />
                             </MonthSummaryCard>
                         </ListHeaderContainer>
                     }

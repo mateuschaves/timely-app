@@ -17,7 +17,8 @@ import { useTheme } from '@/theme/context/ThemeContext';
 import { spacing } from '@/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { getForegroundPermissionsAsync } from 'expo-location';
-import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, ConfirmButton, CancelButton, ConfirmButtonText, CancelButtonText, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage, WorkSettingsCardCloseButton } from './styles';
+import { Button } from '@/components/Button';
+import { Container, WelcomeCard, WelcomeMessage, LastEventInfo, LastEventTime, ButtonContainer, ClockButton, ClockButtonInner, ClockButtonText, ClockButtonLoadingContainer, ConfirmModal, ConfirmModalContent, ConfirmModalTitle, ConfirmModalMessage, ConfirmModalActions, WorkSettingsCard, WorkSettingsCardContent, WorkSettingsCardIcon, WorkSettingsCardMessage, WorkSettingsCardCloseButton } from './styles';
 
 
 export function HomeScreen() {
@@ -505,12 +506,20 @@ export function HomeScreen() {
               {getConfirmMessage()}
             </ConfirmModalMessage>
             <ConfirmModalActions>
-              <CancelButton onPress={handleCancelConfirm} style={{ marginRight: spacing.sm }}>
-                <CancelButtonText>{t('common.cancel')}</CancelButtonText>
-              </CancelButton>
-              <ConfirmButton onPress={handleClock} disabled={isClocking}>
-                <ConfirmButtonText>{t('common.confirm')}</ConfirmButtonText>
-              </ConfirmButton>
+              <View style={{ flex: 1, marginRight: spacing.sm }}>
+                <Button 
+                  title={t('common.cancel')}
+                  variant="outline"
+                  onPress={handleCancelConfirm}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Button 
+                  title={t('common.confirm')}
+                  onPress={handleClock}
+                  disabled={isClocking}
+                />
+              </View>
             </ConfirmModalActions>
           </ConfirmModalContent>
         </ConfirmModal>

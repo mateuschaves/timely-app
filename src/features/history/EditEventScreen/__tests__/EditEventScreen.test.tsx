@@ -349,13 +349,14 @@ describe('EditEventScreen', () => {
   it('should disable delete button when deleting', async () => {
     mockDeleteClockEvent.mockImplementation(() => new Promise(() => { })); // Never resolves
 
-    const { getByText } = render(<EditEventScreen />, { wrapper: createWrapper() });
+    const { getByText, UNSAFE_getAllByType } = render(<EditEventScreen />, { wrapper: createWrapper() });
 
     const deleteButton = getByText('common.delete');
     fireEvent.press(deleteButton);
 
     await waitFor(() => {
-      expect(getByText('common.loading')).toBeTruthy();
+      const activityIndicators = UNSAFE_getAllByType('ActivityIndicator');
+      expect(activityIndicators.length).toBeGreaterThan(0);
     });
   });
 });
