@@ -1,21 +1,24 @@
 import styled from 'styled-components/native';
 import { ActivityIndicator } from 'react-native';
-import { spacing, borderRadius, typography } from '@/theme';
+import { spacing, borderRadius, typography, lightColors } from '@/theme';
+
+// Define proper theme type based on the application's theme structure
+type AppTheme = typeof lightColors;
 
 interface StyledButtonProps {
   disabled?: boolean;
   destructive?: boolean;
-  theme: any;
+  theme: AppTheme;
 }
 
 interface ButtonTextProps {
   destructive?: boolean;
-  theme: any;
+  theme: AppTheme;
 }
 
 interface LoadingIndicatorProps {
   destructive?: boolean;
-  theme: any;
+  theme: AppTheme;
 }
 
 export const StyledButton = styled.TouchableOpacity<StyledButtonProps>`
@@ -30,13 +33,12 @@ export const StyledButton = styled.TouchableOpacity<StyledButtonProps>`
 `;
 
 export const ButtonText = styled.Text<ButtonTextProps>`
-  color: ${({ theme, destructive }) => 
-    destructive ? theme.text.inverse : theme.text.inverse};
+  color: ${({ theme }) => theme.text.inverse};
   font-size: ${typography.sizes.lg}px;
   font-weight: ${typography.weights.semibold};
 `;
 
-export const LoadingIndicator = styled(ActivityIndicator).attrs<LoadingIndicatorProps>(({ theme, destructive }) => ({
+export const LoadingIndicator = styled(ActivityIndicator).attrs<LoadingIndicatorProps>(({ theme }) => ({
   color: theme.text.inverse,
   size: 'small',
 }))``;

@@ -37,7 +37,7 @@ export function Button({
       {...rest}
     >
       {isLoading ? (
-        <LoadingIndicator destructive={destructive} />
+        <LoadingIndicator destructive={destructive} testID="button-loading-indicator" />
       ) : (
         <ButtonText destructive={destructive}>{children}</ButtonText>
       )}

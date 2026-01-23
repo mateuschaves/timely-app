@@ -41,7 +41,7 @@ describe('Button Component', () => {
   });
 
   it('should show loading indicator when isLoading is true', () => {
-    const { queryByText, UNSAFE_getByType } = render(
+    const { queryByText, getByTestId } = render(
       <TestWrapper>
         <Button isLoading>Click me</Button>
       </TestWrapper>
@@ -51,8 +51,7 @@ describe('Button Component', () => {
     expect(queryByText('Click me')).toBeNull();
     
     // ActivityIndicator should be rendered
-    const activityIndicator = UNSAFE_getByType('ActivityIndicator' as any);
-    expect(activityIndicator).toBeTruthy();
+    expect(getByTestId('button-loading-indicator')).toBeTruthy();
   });
 
   it('should disable button when isLoading is true', () => {
@@ -81,7 +80,7 @@ describe('Button Component', () => {
   });
 
   it('should render destructive button with loading state', () => {
-    const { queryByText, UNSAFE_getByType } = render(
+    const { queryByText, getByTestId } = render(
       <TestWrapper>
         <Button destructive isLoading>Delete</Button>
       </TestWrapper>
@@ -91,8 +90,7 @@ describe('Button Component', () => {
     expect(queryByText('Delete')).toBeNull();
     
     // ActivityIndicator should be rendered
-    const activityIndicator = UNSAFE_getByType('ActivityIndicator' as any);
-    expect(activityIndicator).toBeTruthy();
+    expect(getByTestId('button-loading-indicator')).toBeTruthy();
   });
 
   it('should pass through additional TouchableOpacity props', () => {
