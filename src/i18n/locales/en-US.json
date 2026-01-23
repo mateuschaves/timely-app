@@ -220,7 +220,8 @@
     "deleteAccountConfirmTitle": "Confirm deletion",
     "deleteAccountConfirmMessage": "Are you absolutely sure you want to delete your account? This action is permanent and all your data will be lost.",
     "deleteAccountConfirmButton": "Yes, delete account",
-    "deleteAccountError": "Error deleting account. Please try again."
+    "deleteAccountError": "Error deleting account. Please try again.",
+    "absences": "Absence Justifications"
   },
   "errors": {
     "generic": "An error occurred. Please try again.",

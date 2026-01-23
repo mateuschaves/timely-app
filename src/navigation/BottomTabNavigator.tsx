@@ -7,12 +7,10 @@ import { useTheme } from '@/theme/context/ThemeContext';
 import { HomeScreen } from '@/features/home';
 import { HistoryScreen } from '@/features/history';
 import { ProfileScreen } from '@/features/profile';
-import { AbsencesListScreen } from '@/features/absences';
 
 export type BottomTabParamList = {
   Home: undefined;
   History: undefined;
-  Absences: undefined;
   Profile: undefined;
 };
 
@@ -53,16 +51,6 @@ export function BottomTabNavigator() {
           title: t('navigation.history'),
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons name={focused ? "time" : "time-outline"} size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Absences"
-        component={AbsencesListScreen}
-        options={{
-          title: t('navigation.absences'),
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? "calendar" : "calendar-outline"} size={size} color={color} />
           ),
         }}
       />

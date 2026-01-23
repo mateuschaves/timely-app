@@ -215,7 +215,8 @@
     "deleteAccountConfirmTitle": "Löschung bestätigen",
     "deleteAccountConfirmMessage": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion ist dauerhaft und alle Ihre Daten gehen verloren.",
     "deleteAccountConfirmButton": "Ja, Konto löschen",
-    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut."
+    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut.",
+    "absences": "Abwesenheitsbegründungen"
   },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",

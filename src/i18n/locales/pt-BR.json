@@ -220,7 +220,8 @@
     "deleteAccountConfirmTitle": "Confirmar exclusão",
     "deleteAccountConfirmMessage": "Tem certeza absoluta que deseja deletar sua conta? Esta ação é permanente e todos os seus dados serão perdidos.",
     "deleteAccountConfirmButton": "Sim, deletar conta",
-    "deleteAccountError": "Erro ao deletar conta. Tente novamente."
+    "deleteAccountError": "Erro ao deletar conta. Tente novamente.",
+    "absences": "Justificativas de Ausência"
   },
   "errors": {
     "generic": "Ocorreu um erro. Tente novamente.",

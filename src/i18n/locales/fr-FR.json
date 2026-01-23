@@ -215,7 +215,8 @@
     "deleteAccountConfirmTitle": "Confirmer la suppression",
     "deleteAccountConfirmMessage": "Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est permanente et toutes vos données seront perdues.",
     "deleteAccountConfirmButton": "Oui, supprimer le compte",
-    "deleteAccountError": "Erreur lors de la suppression du compte. Veuillez réessayer."
+    "deleteAccountError": "Erreur lors de la suppression du compte. Veuillez réessayer.",
+    "absences": "Justificatifs d'Absence"
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",

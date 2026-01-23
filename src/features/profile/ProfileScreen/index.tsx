@@ -252,6 +252,23 @@ export function ProfileScreen() {
                 </InfoCard>
               </Section>
 
+              {/* Justificativas de Ausência */}
+              <Section>
+                <InfoCard>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('AbsencesList')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>{t('profile.absences')}</InfoLabel>
+                    </InfoLeft>
+                    <ChevronIcon>
+                      <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
+                    </ChevronIcon>
+                  </SettingsRow>
+                </InfoCard>
+              </Section>
+
               {/* Privacidade e Segurança */}
               <Section>
                 <InfoCard>
