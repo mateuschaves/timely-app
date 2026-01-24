@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Slider, Platform } from 'react-native';
-import { GoogleMaps, AppleMaps } from 'expo-maps';
+import { View, StyleSheet, TouchableOpacity, Text, Platform } from 'react-native';
+import Slider from '@react-native-community/slider';
+import MapView, { Marker, Circle, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { spacing, borderRadius, typography } from '@/theme';
@@ -13,9 +14,11 @@ interface MapLocationPickerProps {
   onClose: () => void;
 }
 
-const MIN_RADIUS = 50; // 50 meters
-const MAX_RADIUS = 500; // 500 meters
-const DEFAULT_RADIUS = 100; // 100 meters
+const MIN_RADIUS = 50;
+const MAX_RADIUS = 500;
+const DEFAULT_RADIUS = 100;
+const FALLBACK_LAT = -23.5505;
+const FALLBACK_LNG = -46.6333;
 
 export function MapLocationPicker({
   initialLocation,
@@ -24,60 +27,61 @@ export function MapLocationPicker({
   onClose,
 }: MapLocationPickerProps) {
   const { theme } = useTheme();
-  const googleMapRef = useRef<GoogleMaps.MapView>(null);
-  const appleMapRef = useRef<AppleMaps.MapView>(null);
+  const mapRef = useRef<MapView>(null);
+
   const [selectedLocation, setSelectedLocation] = useState<LocationCoordinates | null>(
-    initialLocation || null
+    initialLocation ?? null
   );
   const [radius, setRadius] = useState(initialRadius);
-  
-  const defaultCoordinates = {
-    latitude: initialLocation?.coordinates[1] || -23.5505,
-    longitude: initialLocation?.coordinates[0] || -46.6333,
+
+  const defaultCoords = {
+    latitude:
+      typeof initialLocation?.coordinates?.[1] === 'number'
+        ? initialLocation.coordinates[1]
+        : FALLBACK_LAT,
+    longitude:
+      typeof initialLocation?.coordinates?.[0] === 'number'
+        ? initialLocation.coordinates[0]
+        : FALLBACK_LNG,
   };
 
-  const [cameraPosition, setCameraPosition] = useState({
-    coordinates: defaultCoordinates,
-    zoom: 15,
+  const [region, setRegion] = useState({
+    latitude: defaultCoords.latitude,
+    longitude: defaultCoords.longitude,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
   });
 
   useEffect(() => {
-    if (initialLocation) {
-      const coords = {
-        latitude: initialLocation.coordinates[1],
-        longitude: initialLocation.coordinates[0],
-      };
-      const newCameraPosition = {
-        coordinates: coords,
-        zoom: 15,
-      };
-      setCameraPosition(newCameraPosition);
-      
-      // Update camera position on map
-      if (Platform.OS === 'android' && googleMapRef.current) {
-        googleMapRef.current.setCameraPosition(newCameraPosition);
-      } else if (Platform.OS === 'ios' && appleMapRef.current) {
-        appleMapRef.current.setCameraPosition(newCameraPosition);
-      }
-    }
+    if (!initialLocation?.coordinates?.length) return;
+    const lat =
+      typeof initialLocation.coordinates[1] === 'number' ? initialLocation.coordinates[1] : FALLBACK_LAT;
+    const lng =
+      typeof initialLocation.coordinates[0] === 'number' ? initialLocation.coordinates[0] : FALLBACK_LNG;
+    const r = {
+      latitude: lat,
+      longitude: lng,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    };
+    setRegion(r);
+    mapRef.current?.animateToRegion(r, 500);
   }, [initialLocation]);
 
-  const handleMapClick = (event: { coordinates: { latitude: number; longitude: number } }) => {
-    const { latitude, longitude } = event.coordinates;
-    const newLocation: LocationCoordinates = {
+  const handleMapPress = (e: { nativeEvent: { coordinate: { latitude: number; longitude: number } } }) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    const loc: LocationCoordinates = {
       type: 'Point',
       coordinates: [longitude, latitude],
     };
-    setSelectedLocation(newLocation);
-    onLocationChange(newLocation, radius);
+    setSelectedLocation(loc);
+    onLocationChange(loc, radius);
   };
 
   const handleRadiusChange = (value: number) => {
-    const newRadius = Math.round(value);
-    setRadius(newRadius);
-    if (selectedLocation) {
-      onLocationChange(selectedLocation, newRadius);
-    }
+    const r = Math.round(value);
+    setRadius(r);
+    if (selectedLocation) onLocationChange(selectedLocation, r);
   };
 
   const handleConfirm = () => {
@@ -89,113 +93,83 @@ export function MapLocationPicker({
 
   const handleUseCurrentLocation = async () => {
     try {
-      const { getCurrentPositionAsync, requestForegroundPermissionsAsync, getForegroundPermissionsAsync } = await import('expo-location');
-      
+      const {
+        getCurrentPositionAsync,
+        requestForegroundPermissionsAsync,
+        getForegroundPermissionsAsync,
+      } = await import('expo-location');
+
       const { status } = await getForegroundPermissionsAsync();
       if (status !== 'granted') {
         const { status: newStatus } = await requestForegroundPermissionsAsync();
-        if (newStatus !== 'granted') {
-          return;
-        }
+        if (newStatus !== 'granted') return;
       }
 
       const location = await getCurrentPositionAsync({});
-      const newLocation: LocationCoordinates = {
+      const loc: LocationCoordinates = {
         type: 'Point',
         coordinates: [location.coords.longitude, location.coords.latitude],
       };
-      
-      setSelectedLocation(newLocation);
-      
-      const newCameraPosition = {
-        coordinates: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        },
-        zoom: 15,
+      setSelectedLocation(loc);
+
+      const r = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
       };
-      
-      setCameraPosition(newCameraPosition);
-      
-      // Update camera position on map
-      if (Platform.OS === 'android' && googleMapRef.current) {
-        googleMapRef.current.setCameraPosition(newCameraPosition);
-      } else if (Platform.OS === 'ios' && appleMapRef.current) {
-        appleMapRef.current.setCameraPosition(newCameraPosition);
-      }
-      
-      onLocationChange(newLocation, radius);
-    } catch (error) {
-      console.error('Error getting current location:', error);
+      setRegion(r);
+      mapRef.current?.animateToRegion(r, 500);
+      onLocationChange(loc, radius);
+    } catch (err) {
+      console.error('Error getting current location:', err);
     }
   };
 
-  const coordinates = selectedLocation
+  const coords = selectedLocation
     ? {
-        latitude: selectedLocation.coordinates[1],
-        longitude: selectedLocation.coordinates[0],
+        latitude:
+          typeof selectedLocation.coordinates?.[1] === 'number'
+            ? selectedLocation.coordinates[1]
+            : defaultCoords.latitude,
+        longitude:
+          typeof selectedLocation.coordinates?.[0] === 'number'
+            ? selectedLocation.coordinates[0]
+            : defaultCoords.longitude,
       }
-    : defaultCoordinates;
+    : defaultCoords;
 
-  const markers = selectedLocation
-    ? [
-        {
-          id: 'selected',
-          coordinates,
-        },
-      ]
-    : [];
-
-  const circles = selectedLocation
-    ? [
-        {
-          id: 'radius',
-          center: coordinates,
-          radius,
-          color: `${theme.primary}30`,
-          lineColor: theme.primary,
-          lineWidth: 2,
-        },
-      ]
-    : undefined;
+  const primary = theme?.primary ?? '#000000';
 
   return (
     <View style={styles.container}>
-      {Platform.OS === 'android' ? (
-        <GoogleMaps.View
-          ref={googleMapRef}
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          onMapClick={handleMapClick}
-          markers={markers}
-          circles={circles}
-          uiSettings={{
-            myLocationButtonEnabled: false,
-          }}
-          properties={{
-            mapType: GoogleMaps.MapType.NORMAL,
-            isMyLocationEnabled: true,
-          }}
-        />
-      ) : (
-        <AppleMaps.View
-          ref={appleMapRef}
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          onMapClick={handleMapClick}
-          markers={markers}
-          circles={circles}
-          uiSettings={{
-            myLocationButtonEnabled: false,
-          }}
-          properties={{
-            mapType: AppleMaps.MapType.STANDARD,
-            isMyLocationEnabled: true,
-          }}
-        />
-      )}
+      <MapView
+        ref={mapRef}
+        {...(Platform.OS === 'android' ? { provider: PROVIDER_GOOGLE } : {})}
+        style={styles.map}
+        initialRegion={region}
+        onPress={handleMapPress}
+        showsUserLocation
+        showsMyLocationButton={false}
+        mapType="standard"
+      >
+        {selectedLocation && (
+          <>
+            <Marker
+              coordinate={{ latitude: coords.latitude, longitude: coords.longitude }}
+              pinColor={primary}
+            />
+            <Circle
+              center={{ latitude: coords.latitude, longitude: coords.longitude }}
+              radius={Number.isFinite(radius) && radius > 0 ? radius : DEFAULT_RADIUS}
+              strokeColor={primary}
+              fillColor={`${primary}30`}
+              strokeWidth={2}
+            />
+          </>
+        )}
+      </MapView>
 
-      {/* Header with close button */}
       <View style={[styles.header, { backgroundColor: theme.background.primary }]}>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close" size={24} color={theme.text.primary} />
@@ -206,9 +180,7 @@ export function MapLocationPicker({
         <View style={{ width: 40 }} />
       </View>
 
-      {/* Controls overlay */}
       <View style={[styles.controlsContainer, { backgroundColor: theme.background.primary }]}>
-        {/* Current location button */}
         <TouchableOpacity
           onPress={handleUseCurrentLocation}
           style={[styles.currentLocationButton, { backgroundColor: theme.primary }]}
@@ -216,7 +188,6 @@ export function MapLocationPicker({
           <Ionicons name="locate" size={20} color={theme.text.inverse} />
         </TouchableOpacity>
 
-        {/* Radius control */}
         <View style={styles.radiusContainer}>
           <View style={styles.radiusHeader}>
             <Ionicons name="radio-button-on" size={16} color={theme.primary} />
@@ -245,7 +216,6 @@ export function MapLocationPicker({
           </View>
         </View>
 
-        {/* Confirm button */}
         <TouchableOpacity
           onPress={handleConfirm}
           disabled={!selectedLocation}
@@ -272,12 +242,8 @@ export function MapLocationPicker({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  map: { flex: 1 },
   header: {
     position: 'absolute',
     top: 0,
@@ -293,9 +259,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(0,0,0,0.1)',
     zIndex: 1,
   },
-  closeButton: {
-    padding: spacing.xs,
-  },
+  closeButton: { padding: spacing.xs },
   headerTitle: {
     fontSize: typography.sizes.lg,
     fontWeight: typography.weights.semibold,
@@ -324,9 +288,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  radiusContainer: {
-    marginBottom: spacing.md,
-  },
+  radiusContainer: { marginBottom: spacing.md },
   radiusHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -337,18 +299,13 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.md,
     fontWeight: typography.weights.medium,
   },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
+  slider: { width: '100%', height: 40 },
   radiusLimits: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: spacing.xs,
   },
-  radiusLimitText: {
-    fontSize: typography.sizes.xs,
-  },
+  radiusLimitText: { fontSize: typography.sizes.xs },
   confirmButton: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,

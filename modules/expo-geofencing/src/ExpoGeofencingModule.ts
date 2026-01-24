@@ -74,62 +74,57 @@ class ExpoGeofencingModule extends NativeModule {
 
 // Create module instance with error handling
 let ExpoGeofencing: ExpoGeofencingModule;
+let geofencingFallbackWarned = false;
+
+function warnFallback() {
+  if (!geofencingFallbackWarned) {
+    geofencingFallbackWarned = true;
+    console.warn(
+      '[ExpoGeofencing] Native module not available (e.g. Expo Go). Use a development build for geofencing.'
+    );
+  }
+}
 
 try {
-  console.log('🔍 Attempting to load ExpoGeofencing native module...');
   ExpoGeofencing = requireNativeModule<ExpoGeofencingModule>('ExpoGeofencing');
-  console.log('✅ ExpoGeofencing module loaded:', !!ExpoGeofencing);
-  console.log('🔍 Module type:', typeof ExpoGeofencing);
-  console.log('🔍 Module keys:', ExpoGeofencing ? Object.keys(ExpoGeofencing) : 'null');
-  
-  // Verify the module has the expected methods
   if (!ExpoGeofencing || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
-    console.error('❌ ExpoGeofencing module loaded but methods are not available');
-    console.error('❌ hasAlwaysAuthorization type:', typeof ExpoGeofencing?.hasAlwaysAuthorization);
     throw new Error('ExpoGeofencing module methods not available');
   }
-  console.log('✅ ExpoGeofencing module methods verified');
-} catch (error) {
-  console.error('❌ Failed to load ExpoGeofencing native module:', error);
-  console.error('❌ Error details:', error instanceof Error ? error.message : String(error));
-  if (error instanceof Error) {
-    console.error('❌ Stack trace:', error.stack);
-  }
-  // Create a fallback module that returns safe defaults
+} catch {
   ExpoGeofencing = {
     startMonitoring: () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return false;
     },
     stopMonitoring: () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return false;
     },
     stopAllMonitoring: () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return false;
     },
     getMonitoredRegions: () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return [];
     },
     requestAlwaysAuthorization: async () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return { status: 'notDetermined' as const };
     },
     hasAlwaysAuthorization: () => {
-      console.warn('ExpoGeofencing native module is not available');
+      warnFallback();
       return false;
     },
   } as ExpoGeofencingModule;
 }
 
-// Create event emitter for geofence events
+// Create event emitter for geofence events (only when native module is available)
 let emitter: EventEmitter | null = null;
 try {
   emitter = new EventEmitter(ExpoGeofencing);
-} catch (error) {
-  console.error('Failed to create EventEmitter for ExpoGeofencing:', error);
+} catch {
+  emitter = null;
 }
 
 export default ExpoGeofencing;

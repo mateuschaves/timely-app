@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import { GoogleMaps, AppleMaps } from 'expo-maps';
+import MapView, { Marker, Circle, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { LocationCoordinates } from '@/api/types';
 import { spacing, borderRadius } from '@/theme';
@@ -11,93 +11,45 @@ interface MapPreviewProps {
   height?: number;
 }
 
+const FALLBACK_LAT = -23.5505;
+const FALLBACK_LNG = -46.6333;
+
 export function MapPreview({ location, radius, height = 200 }: MapPreviewProps) {
   const { theme } = useTheme();
 
-  const coordinates = {
-    latitude: location.coordinates[1],
-    longitude: location.coordinates[0],
-  };
-
-  const cameraPosition = {
-    coordinates,
-    zoom: 15,
-  };
-
-  const markers = [
-    {
-      id: 'workplace',
-      coordinates,
-    },
-  ];
-
-  const circles = radius
-    ? [
-        {
-          id: 'radius',
-          center: coordinates,
-          radius,
-          color: `${theme.primary}30`,
-          lineColor: theme.primary,
-          lineWidth: 2,
-        },
-      ]
-    : undefined;
-
-  if (Platform.OS === 'android') {
-    return (
-      <View style={[styles.container, { height }]}>
-        <GoogleMaps.View
-          style={styles.map}
-          cameraPosition={cameraPosition}
-          markers={markers}
-          circles={circles}
-          uiSettings={{
-            scrollGesturesEnabled: false,
-            zoomGesturesEnabled: false,
-            tiltGesturesEnabled: false,
-            rotationGesturesEnabled: false,
-            zoomControlsEnabled: false,
-          }}
-          properties={{
-            mapType: GoogleMaps.MapType.NORMAL,
-          }}
-        />
-      </View>
-    );
-  }
-
-  // iOS - Apple Maps
-  const appleCircles = radius
-    ? [
-        {
-          id: 'radius',
-          center: coordinates,
-          radius,
-          color: `${theme.primary}30`,
-          lineColor: theme.primary,
-          lineWidth: 2,
-        },
-      ]
-    : undefined;
+  const lat = typeof location?.coordinates?.[1] === 'number' ? location.coordinates[1] : FALLBACK_LAT;
+  const lng = typeof location?.coordinates?.[0] === 'number' ? location.coordinates[0] : FALLBACK_LNG;
+  const primary = theme?.primary ?? '#000000';
+  const safeRadius = typeof radius === 'number' && Number.isFinite(radius) && radius > 0 ? radius : 0;
 
   return (
     <View style={[styles.container, { height }]}>
-      <AppleMaps.View
+      <MapView
+        {...(Platform.OS === 'android' ? { provider: PROVIDER_GOOGLE } : {})}
         style={styles.map}
-        cameraPosition={cameraPosition}
-        markers={markers}
-        circles={appleCircles}
-        uiSettings={{
-          scrollGesturesEnabled: false,
-          zoomGesturesEnabled: false,
-          tiltGesturesEnabled: false,
-          rotationGesturesEnabled: false,
+        initialRegion={{
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         }}
-        properties={{
-          mapType: AppleMaps.MapType.STANDARD,
-        }}
-      />
+        scrollEnabled={false}
+        zoomEnabled={false}
+        pitchEnabled={false}
+        rotateEnabled={false}
+        mapType="standard"
+      >
+        <Marker coordinate={{ latitude: lat, longitude: lng }} pinColor={primary} />
+        {safeRadius > 0 && (
+          <Circle
+            center={{ latitude: lat, longitude: lng }}
+            radius={safeRadius}
+            strokeColor={primary}
+            fillColor={`${primary}30`}
+            strokeWidth={2}
+          />
+        )}
+      </MapView>
     </View>
   );
 }

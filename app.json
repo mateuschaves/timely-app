@@ -57,8 +57,7 @@
           "locationWhenInUsePermission": "Precisamos da sua localização para registrar o ponto com precisão.",
           "isIosBackgroundLocationEnabled": true
         }
-      ],
-      "expo-maps"
+      ]
     ],
     "updates": {
       "enabled": true,
@@ -75,6 +74,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.timelyapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+        }
+      },
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
