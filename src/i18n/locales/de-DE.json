@@ -130,8 +130,8 @@
     "absenceDescription": "Beschreibung",
     "absenceDescriptionPlaceholder": "Fügen Sie Details zur Abwesenheit hinzu (optional)",
     "absenceReasonPlaceholder": "Z.B.: Arzttermin",
-    "absenceSuccess": "Begründung erfolgreich hinzugefügt!",
-    "absenceError": "Fehler beim Hinzufügen der Begründung. Bitte versuchen Sie es erneut.",
+    "absenceCreated": "Begründung erfolgreich hinzugefügt!",
+    "absenceCreatedError": "Fehler beim Hinzufügen der Begründung. Bitte versuchen Sie es erneut.",
     "absenceClockRecordsExist": "Für dieses Datum existieren bereits Zeiterfassungen",
     "absenceReasonRequired": "Der Grund ist erforderlich",
     "absenceJustified": "Begründet"

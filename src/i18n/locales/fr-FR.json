@@ -130,8 +130,8 @@
     "absenceDescription": "Description",
     "absenceDescriptionPlaceholder": "Ajouter des détails sur l'absence (optionnel)",
     "absenceReasonPlaceholder": "Ex: Rendez-vous médical",
-    "absenceSuccess": "Justificatif ajouté avec succès!",
-    "absenceError": "Erreur lors de l'ajout du justificatif. Veuillez réessayer.",
+    "absenceCreated": "Justificatif ajouté avec succès!",
+    "absenceCreatedError": "Erreur lors de l'ajout du justificatif. Veuillez réessayer.",
     "absenceClockRecordsExist": "Des enregistrements d'horaires existent déjà pour cette date",
     "absenceReasonRequired": "La raison est obligatoire",
     "absenceJustified": "Justifiée"

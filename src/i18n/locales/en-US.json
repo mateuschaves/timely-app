@@ -121,7 +121,18 @@
     "pdfGenerationError": "Error generating report. Please try again.",
     "previewUnavailable": "Preview unavailable.",
     "downloadSuccess": "PDF saved successfully.",
-    "downloadError": "Error saving PDF."
+    "downloadError": "Error saving PDF.",
+    "addAbsence": "Add Absence",
+    "addAbsenceTitle": "Absence Justification",
+    "absenceDate": "Date",
+    "absenceReason": "Reason",
+    "absenceDescription": "Description",
+    "absenceDescriptionPlaceholder": "Add details about the absence (optional)",
+    "absenceReasonPlaceholder": "E.g.: Doctor's appointment",
+    "absenceCreated": "Absence registered successfully!",
+    "absenceCreatedError": "Error registering absence. Please try again.",
+    "absenceReasonRequired": "Reason is required",
+    "absenceJustified": "Justified"
   },
   "profile": {
     "title": "Profile",

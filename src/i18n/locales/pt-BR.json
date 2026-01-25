@@ -121,7 +121,16 @@
     "pdfGenerationError": "Erro ao gerar relatório. Tente novamente.",
     "previewUnavailable": "Prévia indisponível.",
     "downloadSuccess": "PDF salvo com sucesso.",
-    "downloadError": "Erro ao salvar PDF."
+    "downloadError": "Erro ao salvar PDF.",
+    "addAbsenceTitle": "Justificativa de Falta",
+    "absenceDate": "Data",
+    "absenceReason": "Motivo",
+    "absenceDescription": "Descrição",
+    "absenceDescriptionPlaceholder": "Adicione detalhes sobre a falta (opcional)",
+    "absenceReasonPlaceholder": "Ex: Consulta médica",
+    "absenceCreated": "Falta justificada registrada com sucesso!",
+    "absenceCreatedError": "Erro ao registrar falta. Tente novamente.",
+    "absenceReasonRequired": "O motivo é obrigatório"
   },
   "profile": {
     "title": "Perfil",

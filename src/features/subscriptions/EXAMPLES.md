@@ -437,8 +437,8 @@ import React from 'react';
 import { SubscriptionProvider } from '@features/subscriptions';
 
 const REVENUECAT_API_KEY = Platform.select({
-  ios: 'appl_xxxxxxxxxxxxxxxx',
-  android: 'goog_xxxxxxxxxxxxxxxx',
+  ios: 'test_YVLYOxJIIWXPufinNXuknZzCrbk',
+  android: 'test_YVLYOxJIIWXPufinNXuknZzCrbk',
 });
 
 function App() {
