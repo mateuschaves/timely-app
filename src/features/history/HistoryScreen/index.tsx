@@ -618,10 +618,19 @@ export function HistoryScreen() {
                                     </SummaryDifferenceRow>
                                 )}
 
-                                <Button
-                                    title={t('history.generateReport')}
-                                    onPress={handleNavigateToReportPreview}
-                                />
+                                <View style={{ marginTop: spacing.lg }}>
+                                    <Button
+                                        title={t('history.generateReport')}
+                                        leftIcon={
+                                            <Ionicons
+                                                name="document-text-outline"
+                                                size={20}
+                                                color={theme.text.inverse}
+                                            />
+                                        }
+                                        onPress={handleNavigateToReportPreview}
+                                    />
+                                </View>
                             </MonthSummaryCard>
                         </ListHeaderContainer>
                     }

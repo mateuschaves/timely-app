@@ -174,3 +174,20 @@ export const BadgeText = styled.Text<{ theme: any }>`
   letter-spacing: 0.3px;
 `;
 
+export const BetaBadge = styled.View<{ theme: any }>`
+  background-color: ${({ theme }) => (theme.primary || '#007AFF') + '20'};
+  border-radius: ${borderRadius.sm}px;
+  padding-horizontal: ${spacing.sm}px;
+  padding-vertical: 2px;
+  margin-left: ${spacing.sm}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => (theme.primary || '#007AFF') + '50'};
+`;
+
+export const BetaBadgeText = styled.Text<{ theme: any }>`
+  color: ${({ theme }) => theme.primary || '#007AFF'};
+  font-size: 10px;
+  font-weight: ${typography.weights.semibold};
+  letter-spacing: 0.5px;
+`;
+

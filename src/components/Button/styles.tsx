@@ -8,9 +8,15 @@ export const StyledButton = styled.TouchableOpacity<{
   disabled?: boolean;
   destructive?: boolean;
   variant?: 'primary' | 'secondary' | 'outline';
+  compact?: boolean;
 }>`
-  width: 100%;
-  height: 50px;
+  width: ${props => (props.compact ? 'auto' : '100%')};
+  min-width: ${props => (props.compact ? '140px' : 'auto')};
+  height: ${props => (props.compact ? '44px' : '50px')};
+  padding-horizontal: ${props => (props.compact ? `${spacing.lg}px` : '0')};
+  align-self: ${props => (props.compact ? 'center' : 'stretch')};
+  flex-direction: row;
+  gap: ${spacing.sm}px;
   background-color: ${({ theme, destructive, variant }) => {
     if (variant === 'outline' || variant === 'secondary') return 'transparent';
     return destructive ? theme.action.danger : theme.action.primary;

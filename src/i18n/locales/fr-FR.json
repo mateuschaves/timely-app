@@ -11,7 +11,8 @@
     "close": "Fermer",
     "back": "Retour",
     "next": "Suivant",
-    "done": "Terminé"
+    "done": "Terminé",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -202,6 +203,7 @@
     "holidayMultiplier": "Multiplicateur de jour férié",
     "holidayMultiplierPlaceholder": "Ex.: 100 %",
     "privacyAndSecurity": "Confidentialité et sécurité",
+    "workplaceLocation": "Localisation du lieu de travail",
     "workplaceLocationSaved": "Localisation du lieu de travail enregistrée avec succès !",
     "workplaceLocationError": "Erreur lors de l'enregistrement de la localisation",
     "geofenceActivated": "Détection automatique activée",
@@ -290,6 +292,7 @@
     "empty": "Aucun justificatif trouvé",
     "reason": "Raison",
     "description": "Description",
-    "addNew": "Ajouter Justificatif"
+    "addNew": "Ajouter Justificatif",
+    "selectMonth": "Sélectionner le mois"
   }
 }

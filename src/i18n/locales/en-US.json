@@ -11,7 +11,8 @@
     "close": "Close",
     "back": "Back",
     "next": "Next",
-    "done": "Done"
+    "done": "Done",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -189,6 +190,8 @@
     "holidayMultiplier": "Holiday Multiplier",
     "holidayMultiplierPlaceholder": "Ex: 100%",
     "privacyAndSecurity": "Privacy and Security",
+    "absences": "Absences",
+    "workplaceLocation": "Workplace Location",
     "workplaceLocationSaved": "Workplace location saved successfully!",
     "workplaceLocationError": "Error saving location",
     "geofenceActivated": "Automatic detection activated",
@@ -276,6 +279,7 @@
     "empty": "No absences found",
     "reason": "Reason",
     "description": "Description",
-    "addNew": "Add Absence"
+    "addNew": "Add Absence",
+    "selectMonth": "Select month"
   }
 }

@@ -11,7 +11,8 @@
     "close": "Fechar",
     "back": "Voltar",
     "next": "Próximo",
-    "done": "Concluído"
+    "done": "Concluído",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -189,6 +190,8 @@
     "holidayMultiplier": "Multiplicador de Feriado",
     "holidayMultiplierPlaceholder": "Ex: 100%",
     "privacyAndSecurity": "Privacidade e Segurança",
+    "absences": "Faltas Justificadas",
+    "workplaceLocation": "Localização do Trabalho",
     "workplaceLocationSaved": "Localização do trabalho salva com sucesso!",
     "workplaceLocationError": "Erro ao salvar localização",
     "geofenceActivated": "Detecção automática ativada",
@@ -276,6 +279,7 @@
     "empty": "Nenhuma justificativa encontrada",
     "reason": "Motivo",
     "description": "Descrição",
-    "addNew": "Adicionar Justificativa"
+    "addNew": "Adicionar Justificativa",
+    "selectMonth": "Selecionar mês"
   }
 }

@@ -36,6 +36,8 @@ import {
   Badge,
   BadgeIcon,
   BadgeText,
+  BetaBadge,
+  BetaBadgeText,
 } from './styles';
 
 type NavigationProp = NativeStackNavigationProp<AppStackParamList>;
@@ -240,7 +242,10 @@ export function ProfileScreen() {
                     activeOpacity={0.7}
                   >
                     <InfoLeft>
-                      <InfoLabel>Localização do Trabalho</InfoLabel>
+                      <InfoLabel>{t('profile.workplaceLocation')}</InfoLabel>
+                      <BetaBadge>
+                        <BetaBadgeText>{t('common.beta')}</BetaBadgeText>
+                      </BetaBadge>
                     </InfoLeft>
                     <InfoValueContainer>
                       <ChevronIcon>
@@ -260,6 +265,9 @@ export function ProfileScreen() {
                   >
                     <InfoLeft>
                       <InfoLabel>{t('profile.absences')}</InfoLabel>
+                      <BetaBadge>
+                        <BetaBadgeText>{t('common.beta')}</BetaBadgeText>
+                      </BetaBadge>
                     </InfoLeft>
                     <ChevronIcon>
                       <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
