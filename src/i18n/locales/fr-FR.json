@@ -11,7 +11,8 @@
     "close": "Fermer",
     "back": "Retour",
     "next": "Suivant",
-    "done": "Terminé"
+    "done": "Terminé",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -104,6 +105,11 @@
     "deleteEventSuccess": "Événement supprimé avec succès !",
     "orderIssue": "Les événements de ce jour sont dans le désordre. Veuillez vérifier les heures.",
     "holiday": "Jour férié",
+    "draft": "Brouillon",
+    "draftNeedsConfirmation": "Nécessite une confirmation",
+    "confirmEvent": "Confirmer le pointage",
+    "confirmEventSuccess": "Pointage confirmé avec succès !",
+    "confirmEventError": "Erreur lors de la confirmation du pointage. Veuillez réessayer.",
     "notesShowMore": "Afficher plus",
     "clearNotes": "Supprimer le commentaire",
     "generateReport": "Générer le rapport",
@@ -197,6 +203,17 @@
     "holidayMultiplier": "Multiplicateur de jour férié",
     "holidayMultiplierPlaceholder": "Ex.: 100 %",
     "privacyAndSecurity": "Confidentialité et sécurité",
+    "workplaceLocation": "Localisation du lieu de travail",
+    "workplaceLocationSaved": "Localisation du lieu de travail enregistrée avec succès !",
+    "workplaceLocationError": "Erreur lors de l'enregistrement de la localisation",
+    "geofenceActivated": "Détection automatique activée",
+    "geofenceDeactivated": "Détection automatique désactivée",
+    "geofenceActivationError": "Erreur lors de l'activation de la détection automatique",
+    "location": "Localisation",
+    "currentLocation": "Position actuelle",
+    "searchAddress": "Rechercher ou saisir une adresse",
+    "detectionRadius": "Rayon de détection",
+    "automaticDetection": "Détection automatique",
     "deleteAccount": "Supprimer le compte",
     "deleteAccountTitle": "Supprimer mon compte",
     "deleteAccountDescription": "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible. Toutes vos données seront définitivement supprimées.",
@@ -275,6 +292,7 @@
     "empty": "Aucun justificatif trouvé",
     "reason": "Raison",
     "description": "Description",
-    "addNew": "Ajouter Justificatif"
+    "addNew": "Ajouter Justificatif",
+    "selectMonth": "Sélectionner le mois"
   }
 }

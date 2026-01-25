@@ -11,7 +11,8 @@
     "close": "Close",
     "back": "Back",
     "next": "Next",
-    "done": "Done"
+    "done": "Done",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -44,8 +45,7 @@
   "navigation": {
     "home": "Home",
     "history": "History",
-    "profile": "Profile",
-    "absences": "Absences"
+    "profile": "Profile"
   },
   "home": {
     "clockIn": "Clock In",
@@ -104,6 +104,11 @@
     "deleteEventSuccess": "Event deleted successfully!",
     "orderIssue": "Events for this day are out of order. Please check the times.",
     "holiday": "Holiday",
+    "draft": "Draft",
+    "draftNeedsConfirmation": "Needs confirmation",
+    "confirmEvent": "Confirm Entry",
+    "confirmEventSuccess": "Entry confirmed successfully!",
+    "confirmEventError": "Error confirming entry. Please try again.",
     "notesShowMore": "Show more",
     "clearNotes": "Remove comment",
     "generateReport": "Generate Report",
@@ -116,19 +121,7 @@
     "pdfGenerationError": "Error generating report. Please try again.",
     "previewUnavailable": "Preview unavailable.",
     "downloadSuccess": "PDF saved successfully.",
-    "downloadError": "Error saving PDF.",
-    "addAbsence": "Add Justification",
-    "addAbsenceTitle": "Absence Justification",
-    "absenceDate": "Date",
-    "absenceReason": "Reason",
-    "absenceDescription": "Description",
-    "absenceDescriptionPlaceholder": "Add details about the absence (optional)",
-    "absenceReasonPlaceholder": "E.g.: Medical appointment",
-    "absenceSuccess": "Justification added successfully!",
-    "absenceError": "Error adding justification. Please try again.",
-    "absenceClockRecordsExist": "Clock records already exist for this date",
-    "absenceReasonRequired": "Reason is required",
-    "absenceJustified": "Justified"
+    "downloadError": "Error saving PDF."
   },
   "profile": {
     "title": "Profile",
@@ -197,11 +190,18 @@
     "holidayMultiplier": "Holiday Multiplier",
     "holidayMultiplierPlaceholder": "Ex: 100%",
     "privacyAndSecurity": "Privacy and Security",
+    "absences": "Absences",
+    "workplaceLocation": "Workplace Location",
     "workplaceLocationSaved": "Workplace location saved successfully!",
     "workplaceLocationError": "Error saving location",
     "geofenceActivated": "Automatic detection activated",
     "geofenceDeactivated": "Automatic detection deactivated",
     "geofenceActivationError": "Error activating automatic detection",
+    "location": "Location",
+    "currentLocation": "Current Location",
+    "searchAddress": "Search or Enter Address",
+    "detectionRadius": "Detection radius",
+    "automaticDetection": "Automatic detection",
     "deleteAccount": "Delete Account",
     "deleteAccountTitle": "Delete my account",
     "deleteAccountDescription": "Are you sure you want to delete your account? This action cannot be undone. All your data will be permanently removed.",
@@ -220,8 +220,7 @@
     "deleteAccountConfirmTitle": "Confirm deletion",
     "deleteAccountConfirmMessage": "Are you absolutely sure you want to delete your account? This action is permanent and all your data will be lost.",
     "deleteAccountConfirmButton": "Yes, delete account",
-    "deleteAccountError": "Error deleting account. Please try again.",
-    "absences": "Absence Justifications"
+    "deleteAccountError": "Error deleting account. Please try again."
   },
   "errors": {
     "generic": "An error occurred. Please try again.",
@@ -280,6 +279,7 @@
     "empty": "No absences found",
     "reason": "Reason",
     "description": "Description",
-    "addNew": "Add Absence"
+    "addNew": "Add Absence",
+    "selectMonth": "Select month"
   }
 }

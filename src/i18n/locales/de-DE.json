@@ -11,7 +11,8 @@
     "close": "Schließen",
     "back": "Zurück",
     "next": "Weiter",
-    "done": "Fertig"
+    "done": "Fertig",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -104,6 +105,11 @@
     "deleteEventSuccess": "Ereignis erfolgreich gelöscht!",
     "orderIssue": "Die Ereignisse dieses Tages sind nicht in der richtigen Reihenfolge. Bitte überprüfen Sie die Zeiten.",
     "holiday": "Feiertag",
+    "draft": "Entwurf",
+    "draftNeedsConfirmation": "Bestätigung erforderlich",
+    "confirmEvent": "Eintrag bestätigen",
+    "confirmEventSuccess": "Eintrag erfolgreich bestätigt!",
+    "confirmEventError": "Fehler beim Bestätigen des Eintrags. Bitte versuchen Sie es erneut.",
     "notesShowMore": "Mehr anzeigen",
     "clearNotes": "Kommentar entfernen",
     "generateReport": "Bericht generieren",
@@ -197,6 +203,17 @@
     "holidayMultiplier": "Feiertags-Multiplikator",
     "holidayMultiplierPlaceholder": "Z. B.: 100 %",
     "privacyAndSecurity": "Datenschutz und Sicherheit",
+    "workplaceLocation": "Arbeitsplatzstandort",
+    "workplaceLocationSaved": "Arbeitsplatzstandort erfolgreich gespeichert!",
+    "workplaceLocationError": "Fehler beim Speichern des Standorts",
+    "geofenceActivated": "Automatische Erkennung aktiviert",
+    "geofenceDeactivated": "Automatische Erkennung deaktiviert",
+    "geofenceActivationError": "Fehler beim Aktivieren der automatischen Erkennung",
+    "location": "Standort",
+    "currentLocation": "Aktueller Standort",
+    "searchAddress": "Adresse suchen oder eingeben",
+    "detectionRadius": "Erkennungsradius",
+    "automaticDetection": "Automatische Erkennung",
     "deleteAccount": "Konto löschen",
     "deleteAccountTitle": "Mein Konto löschen",
     "deleteAccountDescription": "Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden. Alle Ihre Daten werden dauerhaft entfernt.",
@@ -275,6 +292,7 @@
     "empty": "Keine Begründungen gefunden",
     "reason": "Grund",
     "description": "Beschreibung",
-    "addNew": "Begründung Hinzufügen"
+    "addNew": "Begründung Hinzufügen",
+    "selectMonth": "Monat auswählen"
   }
 }

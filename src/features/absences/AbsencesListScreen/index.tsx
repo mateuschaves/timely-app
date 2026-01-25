@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ListRenderItem } from 'react-native';
+import { ListRenderItem, Modal } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { startOfMonth, endOfMonth, format, parseISO, subMonths, addMonths } from 'date-fns';
@@ -12,9 +12,22 @@ import { capitalizeFirstLetter } from '@/utils/string';
 import { Button } from '@/components/Button';
 import {
   Container,
-  MonthNavigation,
-  MonthNavigationButton,
-  MonthNavigationText,
+  Header,
+  BackButton,
+  HeaderTitle,
+  ListHeaderWrapper,
+  MonthChip,
+  MonthChipLeft,
+  MonthChipText,
+  MonthPickerModalWrapper,
+  MonthPickerModalOverlay,
+  MonthPickerModalContent,
+  MonthPickerModalHeader,
+  MonthPickerModalTitle,
+  MonthPickerCloseButton,
+  MonthPickerList,
+  MonthOption,
+  MonthOptionText,
   DaysList,
   DayCard,
   DayHeader,
@@ -53,12 +66,15 @@ const getDateLocale = (language: string) => {
   }
 };
 
+const MONTHS_PICKER_RANGE = 24;
+
 export function AbsencesListScreen() {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const { theme } = useTheme();
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
 
   const { startDate, endDate, month } = useMemo(() => getMonthRange(currentMonth), [currentMonth]);
 
@@ -70,23 +86,26 @@ export function AbsencesListScreen() {
     return format(month, 'MMMM yyyy', { locale: dateLocale });
   }, [month, dateLocale]);
 
-  const handlePreviousMonth = () => {
-    setCurrentMonth((prev) => subMonths(prev, 1));
-    setExpandedDays(new Set());
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth((prev) => addMonths(prev, 1));
-    setExpandedDays(new Set());
-  };
-
-  const canGoNextMonth = useMemo(() => {
+  const availableMonths = useMemo(() => {
     const today = new Date();
-    const nextMonth = addMonths(currentMonth, 1);
-    const nextMonthStart = startOfMonth(nextMonth);
-    const todayStart = startOfMonth(today);
-    return nextMonthStart <= todayStart;
-  }, [currentMonth]);
+    const from = subMonths(startOfMonth(today), MONTHS_PICKER_RANGE - 1);
+    const months: { date: Date; label: string }[] = [];
+    let d = from;
+    while (d <= today) {
+      months.push({
+        date: d,
+        label: format(d, 'MMMM yyyy', { locale: dateLocale }),
+      });
+      d = addMonths(d, 1);
+    }
+    return months.reverse();
+  }, [dateLocale]);
+
+  const handleSelectMonth = (date: Date) => {
+    setCurrentMonth(startOfMonth(date));
+    setExpandedDays(new Set());
+    setShowMonthPicker(false);
+  };
 
   const toggleDay = (date: string) => {
     const newExpanded = new Set(expandedDays);
@@ -138,27 +157,27 @@ export function AbsencesListScreen() {
     );
   };
 
+  const listHeader = (
+    <ListHeaderWrapper>
+      <MonthChip onPress={() => setShowMonthPicker(true)} activeOpacity={0.7}>
+        <MonthChipLeft>
+          <Ionicons name="calendar-outline" size={20} color={theme.text.primary} />
+          <MonthChipText>{currentMonthFormatted}</MonthChipText>
+        </MonthChipLeft>
+        <Ionicons name="chevron-down" size={20} color={theme.text.secondary} />
+      </MonthChip>
+      <Button title={t('absences.addNew')} onPress={handleAddAbsence} />
+    </ListHeaderWrapper>
+  );
+
   return (
     <Container>
-      <MonthNavigation>
-        <MonthNavigationButton onPress={handlePreviousMonth} activeOpacity={0.7}>
-          <Ionicons name="chevron-back" size={24} color={theme.text.primary} />
-        </MonthNavigationButton>
-
-        <MonthNavigationText>{currentMonthFormatted}</MonthNavigationText>
-
-        <MonthNavigationButton
-          onPress={handleNextMonth}
-          activeOpacity={0.7}
-          disabled={!canGoNextMonth}
-        >
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={canGoNextMonth ? theme.text.primary : theme.text.tertiary}
-          />
-        </MonthNavigationButton>
-      </MonthNavigation>
+      <Header>
+        <BackButton onPress={() => navigation.goBack()} activeOpacity={0.7}>
+          <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
+        </BackButton>
+        <HeaderTitle>{t('absences.title')}</HeaderTitle>
+      </Header>
 
       {isLoading ? (
         <LoadingContainer>
@@ -175,14 +194,55 @@ export function AbsencesListScreen() {
               <EmptyStateText>{t('absences.empty')}</EmptyStateText>
             </EmptyState>
           }
-          ListHeaderComponent={
-            <Button 
-              title={t('absences.addNew')}
-              onPress={handleAddAbsence}
-            />
-          }
+          ListHeaderComponent={listHeader}
         />
       )}
+
+      <Modal
+        visible={showMonthPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowMonthPicker(false)}
+      >
+        <MonthPickerModalWrapper>
+          <MonthPickerModalOverlay
+            activeOpacity={1}
+            onPress={() => setShowMonthPicker(false)}
+          />
+          <MonthPickerModalContent>
+          <MonthPickerModalHeader>
+            <MonthPickerModalTitle>{t('absences.selectMonth')}</MonthPickerModalTitle>
+            <MonthPickerCloseButton onPress={() => setShowMonthPicker(false)}>
+              <Ionicons name="close" size={24} color={theme.text.primary} />
+            </MonthPickerCloseButton>
+          </MonthPickerModalHeader>
+          <MonthPickerList>
+            {availableMonths.map(({ date, label }) => {
+              const isSelected =
+                format(date, 'yyyy-MM') === format(currentMonth, 'yyyy-MM');
+              return (
+                <MonthOption
+                  key={label}
+                  onPress={() => handleSelectMonth(date)}
+                  activeOpacity={0.7}
+                  selected={isSelected}
+                >
+                  <MonthOptionText selected={isSelected}>{label}</MonthOptionText>
+                  {isSelected && (
+                    <Ionicons
+                      name="checkmark"
+                      size={20}
+                      color={theme.primary}
+                      style={{ marginLeft: 'auto' }}
+                    />
+                  )}
+                </MonthOption>
+              );
+            })}
+          </MonthPickerList>
+        </MonthPickerModalContent>
+        </MonthPickerModalWrapper>
+      </Modal>
     </Container>
   );
 }

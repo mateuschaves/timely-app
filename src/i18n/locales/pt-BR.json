@@ -11,7 +11,8 @@
     "close": "Fechar",
     "back": "Voltar",
     "next": "Próximo",
-    "done": "Concluído"
+    "done": "Concluído",
+    "beta": "Beta"
   },
   "auth": {
     "title": "Timely",
@@ -44,8 +45,7 @@
   "navigation": {
     "home": "Início",
     "history": "Histórico",
-    "profile": "Perfil",
-    "absences": "Justificativas"
+    "profile": "Perfil"
   },
   "home": {
     "clockIn": "Bater Ponto - Entrada",
@@ -104,6 +104,11 @@
     "deleteEventSuccess": "Evento excluído com sucesso!",
     "orderIssue": "Os eventos deste dia estão fora de ordem. Verifique os horários.",
     "holiday": "Feriado",
+    "draft": "Rascunho",
+    "draftNeedsConfirmation": "Precisa confirmar",
+    "confirmEvent": "Confirmar Ponto",
+    "confirmEventSuccess": "Ponto confirmado com sucesso!",
+    "confirmEventError": "Erro ao confirmar ponto. Tente novamente.",
     "notesShowMore": "Ver mais",
     "clearNotes": "Remover comentário",
     "generateReport": "Gerar Relatório",
@@ -116,19 +121,7 @@
     "pdfGenerationError": "Erro ao gerar relatório. Tente novamente.",
     "previewUnavailable": "Prévia indisponível.",
     "downloadSuccess": "PDF salvo com sucesso.",
-    "downloadError": "Erro ao salvar PDF.",
-    "addAbsence": "Adicionar Justificativa",
-    "addAbsenceTitle": "Justificativa de Ausência",
-    "absenceDate": "Data",
-    "absenceReason": "Motivo",
-    "absenceDescription": "Descrição",
-    "absenceDescriptionPlaceholder": "Adicione detalhes sobre a ausência (opcional)",
-    "absenceReasonPlaceholder": "Ex: Consulta médica",
-    "absenceSuccess": "Justificativa adicionada com sucesso!",
-    "absenceError": "Erro ao adicionar justificativa. Tente novamente.",
-    "absenceClockRecordsExist": "Já existem registros de ponto para esta data",
-    "absenceReasonRequired": "O motivo é obrigatório",
-    "absenceJustified": "Justificada"
+    "downloadError": "Erro ao salvar PDF."
   },
   "profile": {
     "title": "Perfil",
@@ -197,11 +190,18 @@
     "holidayMultiplier": "Multiplicador de Feriado",
     "holidayMultiplierPlaceholder": "Ex: 100%",
     "privacyAndSecurity": "Privacidade e Segurança",
+    "absences": "Faltas Justificadas",
+    "workplaceLocation": "Localização do Trabalho",
     "workplaceLocationSaved": "Localização do trabalho salva com sucesso!",
     "workplaceLocationError": "Erro ao salvar localização",
     "geofenceActivated": "Detecção automática ativada",
     "geofenceDeactivated": "Detecção automática desativada",
     "geofenceActivationError": "Erro ao ativar detecção automática",
+    "location": "Localização",
+    "currentLocation": "Localização Atual",
+    "searchAddress": "Buscar ou Digitar Endereço",
+    "detectionRadius": "Raio de detecção",
+    "automaticDetection": "Detecção automática",
     "deleteAccount": "Deletar Conta",
     "deleteAccountTitle": "Deletar minha conta",
     "deleteAccountDescription": "Tem certeza que deseja deletar sua conta? Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.",
@@ -220,8 +220,7 @@
     "deleteAccountConfirmTitle": "Confirmar exclusão",
     "deleteAccountConfirmMessage": "Tem certeza absoluta que deseja deletar sua conta? Esta ação é permanente e todos os seus dados serão perdidos.",
     "deleteAccountConfirmButton": "Sim, deletar conta",
-    "deleteAccountError": "Erro ao deletar conta. Tente novamente.",
-    "absences": "Justificativas de Ausência"
+    "deleteAccountError": "Erro ao deletar conta. Tente novamente."
   },
   "errors": {
     "generic": "Ocorreu um erro. Tente novamente.",
@@ -280,6 +279,7 @@
     "empty": "Nenhuma justificativa encontrada",
     "reason": "Motivo",
     "description": "Descrição",
-    "addNew": "Adicionar Justificativa"
+    "addNew": "Adicionar Justificativa",
+    "selectMonth": "Selecionar mês"
   }
 }

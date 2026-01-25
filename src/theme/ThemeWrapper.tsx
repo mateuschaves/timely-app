@@ -23,6 +23,21 @@ export function ThemeWrapper({ children }: ThemeWrapperProps) {
     
     return {
       ...baseTheme,
+      // Cria estrutura 'colors' para compatibilidade com styled-components existentes
+      colors: {
+        primary: baseTheme.primary,
+        secondary: baseTheme.secondary,
+        text: baseTheme.text.primary,
+        textSecondary: baseTheme.text.secondary,
+        textTertiary: baseTheme.text.tertiary,
+        background: baseTheme.background.primary,
+        backgroundSecondary: baseTheme.background.secondary,
+        surface: baseTheme.background.secondary, // Usa background.secondary como surface
+        success: baseTheme.status.success,
+        error: baseTheme.status.error,
+        warning: baseTheme.status.warning,
+        info: baseTheme.status.info,
+      },
       colorScheme: colorScheme || 'light',
       spacing,
       borderRadius,

@@ -1,10 +1,45 @@
 import ExpoModulesCore
 import CoreLocation
-import UserNotifications
 
-public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
+// Helper class to handle CLLocationManagerDelegate since we can't inherit from both NSObject and BaseModule
+private class GeofencingDelegate: NSObject, CLLocationManagerDelegate {
+  weak var module: ExpoGeofencingModule?
+  
+  init(module: ExpoGeofencingModule) {
+    self.module = module
+    super.init()
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+    module?.handleEnterRegion(region)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+    module?.handleExitRegion(region)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+    module?.handleMonitoringFailed(region, error: error)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+    module?.handleDetermineState(state, for: region)
+  }
+  
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    module?.handleAuthorizationChange(status)
+  }
+}
+
+public class ExpoGeofencingModule: Module {
   private var locationManager: CLLocationManager?
+  private var delegate: GeofencingDelegate?
   private var monitoredRegions: [String: CLCircularRegion] = [:]
+  // Track region states to prevent duplicate events
+  private var regionStates: [String: CLRegionState] = [:]
+  // Track last event timestamps to prevent rapid duplicate events
+  private var lastEnterTimestamps: [String: TimeInterval] = [:]
+  private var lastExitTimestamps: [String: TimeInterval] = [:]
   
   public func definition() -> ModuleDefinition {
     Name("ExpoGeofencing")
@@ -42,13 +77,12 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
   
   private func setupLocationManager() {
     locationManager = CLLocationManager()
-    locationManager?.delegate = self
+    delegate = GeofencingDelegate(module: self)
+    locationManager?.delegate = delegate
     locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-    // Only enable background updates if we have always authorization
-    if CLLocationManager.authorizationStatus() == .authorizedAlways {
-      locationManager?.allowsBackgroundLocationUpdates = true
-      locationManager?.pausesLocationUpdatesAutomatically = false
-    }
+    // Note: For geofencing, we don't need allowsBackgroundLocationUpdates
+    // Geofencing works automatically in background with "Always" authorization
+    // allowsBackgroundLocationUpdates is only needed for continuous location updates
   }
   
   private func startMonitoringRegion(identifier: String, latitude: Double, longitude: Double, radius: Double) -> Bool {
@@ -93,6 +127,9 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     
     locationManager.stopMonitoring(for: region)
     monitoredRegions.removeValue(forKey: identifier)
+    regionStates.removeValue(forKey: identifier)
+    lastEnterTimestamps.removeValue(forKey: identifier)
+    lastExitTimestamps.removeValue(forKey: identifier)
     return true
   }
   
@@ -105,6 +142,9 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
       locationManager.stopMonitoring(for: region)
     }
     monitoredRegions.removeAll()
+    regionStates.removeAll()
+    lastEnterTimestamps.removeAll()
+    lastExitTimestamps.removeAll()
     return true
   }
   
@@ -151,45 +191,81 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     return CLLocationManager.authorizationStatus() == .authorizedAlways
   }
   
-  // MARK: - CLLocationManagerDelegate
+  // MARK: - Delegate Handlers (called by GeofencingDelegate)
   
-  public func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+  fileprivate func handleEnterRegion(_ region: CLRegion) {
     guard let circularRegion = region as? CLCircularRegion else { return }
     
-    print("📍 Entered geofence region: \(region.identifier)")
+    let identifier = region.identifier
+    let currentTime = Date().timeIntervalSince1970
+    
+    // Check if we're already inside this region (prevent duplicate events)
+    if let currentState = regionStates[identifier], currentState == .inside {
+      print("📍 Already inside region \(identifier), ignoring duplicate enter event")
+      return
+    }
+    
+    // Check if we recently sent an enter event (within last 60 seconds)
+    if let lastEnter = lastEnterTimestamps[identifier],
+       currentTime - lastEnter < 60 {
+      print("📍 Recent enter event for \(identifier) (\(currentTime - lastEnter)s ago), ignoring duplicate")
+      return
+    }
+    
+    // Update state and timestamp
+    regionStates[identifier] = .inside
+    lastEnterTimestamps[identifier] = currentTime
+    
+    print("📍 Entered geofence region: \(identifier)")
     
     sendEvent("onGeofenceEnter", [
-      "identifier": region.identifier,
+      "identifier": identifier,
       "latitude": circularRegion.center.latitude,
       "longitude": circularRegion.center.longitude,
       "radius": circularRegion.radius,
-      "timestamp": Date().timeIntervalSince1970
+      "timestamp": currentTime
     ])
     
-    // Send local notification (using English as default since user's language preference is not available in Swift)
-    // The React Native layer will handle proper i18n when user taps the notification
-    sendNotification(title: "Arrived at work", body: "We've created a draft clock-in entry for you to review.", identifier: region.identifier, type: "enter")
+    // Note: Notifications are handled by the React Native layer with proper i18n support
   }
   
-  public func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+  fileprivate func handleExitRegion(_ region: CLRegion) {
     guard let circularRegion = region as? CLCircularRegion else { return }
     
-    print("📍 Exited geofence region: \(region.identifier)")
+    let identifier = region.identifier
+    let currentTime = Date().timeIntervalSince1970
+    
+    // Check if we're already outside this region (prevent duplicate events)
+    if let currentState = regionStates[identifier], currentState == .outside {
+      print("📍 Already outside region \(identifier), ignoring duplicate exit event")
+      return
+    }
+    
+    // Check if we recently sent an exit event (within last 60 seconds)
+    if let lastExit = lastExitTimestamps[identifier],
+       currentTime - lastExit < 60 {
+      print("📍 Recent exit event for \(identifier) (\(currentTime - lastExit)s ago), ignoring duplicate")
+      return
+    }
+    
+    // Update state and timestamp
+    regionStates[identifier] = .outside
+    lastExitTimestamps[identifier] = currentTime
+    
+    print("📍 Exited geofence region: \(identifier)")
     
     sendEvent("onGeofenceExit", [
-      "identifier": region.identifier,
+      "identifier": identifier,
       "latitude": circularRegion.center.latitude,
       "longitude": circularRegion.center.longitude,
       "radius": circularRegion.radius,
-      "timestamp": Date().timeIntervalSince1970
+      "timestamp": currentTime
     ])
     
-    // Send local notification (using English as default since user's language preference is not available in Swift)
-    // The React Native layer will handle proper i18n when user taps the notification
-    sendNotification(title: "Left work", body: "We've created a draft clock-out entry for you to review.", identifier: region.identifier, type: "exit")
+    // Note: Notifications are handled by the React Native layer with proper i18n support
   }
   
-  public func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+  fileprivate func handleMonitoringFailed(_ region: CLRegion?, error: Error) {
     print("❌ Geofencing monitoring failed: \(error.localizedDescription)")
     
     sendEvent("onGeofenceError", [
@@ -198,61 +274,36 @@ public class ExpoGeofencingModule: Module, CLLocationManagerDelegate {
     ])
   }
   
-  public func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-    print("📍 Region state determined: \(region.identifier) - State: \(state.rawValue)")
+  fileprivate func handleDetermineState(_ state: CLRegionState, for region: CLRegion) {
+    let identifier = region.identifier
+    print("📍 Region state determined: \(identifier) - State: \(state.rawValue)")
     
-    // If already inside region when monitoring starts, trigger entry event
+    // Update the region state
+    regionStates[identifier] = state
+    
+    // Only trigger entry event if we're inside and we weren't tracking this state before
+    // This prevents duplicate events when monitoring starts
     if state == .inside {
-      locationManager(manager, didEnterRegion: region)
+      // Only send event if we don't have a recent enter event
+      let currentTime = Date().timeIntervalSince1970
+      if let lastEnter = lastEnterTimestamps[identifier],
+         currentTime - lastEnter < 60 {
+        print("📍 Already processed enter event for \(identifier) recently, skipping")
+        return
+      }
+      handleEnterRegion(region)
+    } else {
+      // Update state to outside if we're not inside
+      regionStates[identifier] = .outside
     }
   }
   
-  public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+  fileprivate func handleAuthorizationChange(_ status: CLAuthorizationStatus) {
     print("📍 Location authorization changed: \(status.rawValue)")
     
-    // Update background location settings when authorization changes
-    if status == .authorizedAlways {
-      locationManager?.allowsBackgroundLocationUpdates = true
-      locationManager?.pausesLocationUpdatesAutomatically = false
-    } else {
-      locationManager?.allowsBackgroundLocationUpdates = false
-    }
-  }
-  
-  // MARK: - Notifications
-  
-  private func sendNotification(title: String, body: String, identifier: String, type: String) {
-    let center = UNUserNotificationCenter.current()
-    
-    // Request notification permission
-    center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-      if granted {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-        content.userInfo = [
-          "geofenceIdentifier": identifier,
-          "geofenceType": type
-        ]
-        
-        // Create trigger (immediate)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        
-        // Create request
-        let request = UNNotificationRequest(
-          identifier: "geofence_\(identifier)_\(type)_\(Date().timeIntervalSince1970)",
-          content: content,
-          trigger: trigger
-        )
-        
-        // Add notification
-        center.add(request) { error in
-          if let error = error {
-            print("❌ Failed to send notification: \(error.localizedDescription)")
-          }
-        }
-      }
-    }
+    // Note: For geofencing, we don't need to set allowsBackgroundLocationUpdates
+    // Geofencing region monitoring works automatically in background with "Always" authorization
+    // Setting allowsBackgroundLocationUpdates requires specific background modes and can cause crashes
+    // if not properly configured in Info.plist
   }
 }

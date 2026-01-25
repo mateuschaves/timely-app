@@ -45,6 +45,8 @@ PODS:
     - ExpoModulesCore
   - ExpoFont (14.0.9):
     - ExpoModulesCore
+  - ExpoGeofencing (1.0.0):
+    - ExpoModulesCore
   - ExpoHaptics (15.0.7):
     - ExpoModulesCore
   - ExpoInsights (0.10.8):
@@ -1423,6 +1425,8 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
+  - react-native-maps (1.20.1):
+    - React-Core
   - react-native-safe-area-context (5.6.2):
     - hermes-engine
     - RCTRequired
@@ -1482,6 +1486,51 @@ PODS:
     - React-ImageManager
     - React-jsi
     - react-native-safe-area-context/common
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - react-native-slider (5.0.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-slider/common (= 5.0.1)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - react-native-slider/common (5.0.1):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1970,6 +2019,7 @@ DEPENDENCIES:
   - ExpoBlur (from `../node_modules/expo-blur/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
+  - ExpoGeofencing (from `../modules/expo-geofencing/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
   - ExpoInsights (from `../node_modules/expo-insights/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
@@ -2019,7 +2069,9 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -2086,6 +2138,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
+  ExpoGeofencing:
+    :path: "../modules/expo-geofencing/ios"
   ExpoHaptics:
     :path: "../node_modules/expo-haptics/ios"
   ExpoInsights:
@@ -2183,8 +2237,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-maps:
+    :path: "../node_modules/react-native-maps"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-slider:
+    :path: "../node_modules/@react-native-community/slider"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -2271,6 +2329,7 @@ SPEC CHECKSUMS:
   ExpoBlur: b5b7a26572b3c33a11f0b2aa2f95c17c4c393b76
   ExpoFileSystem: aefcd337b94b874f88752ebefc52813b84992fad
   ExpoFont: b881d43057dceb7b31ff767b24f612609e80f60f
+  ExpoGeofencing: b65242dc4879d463ec8576105b4a77ed832738d8
   ExpoHaptics: b48d913e7e5f23816c6f130e525c9a6501b160b5
   ExpoInsights: d8319d6f548a2350d17b69079822250a380ad50b
   ExpoKeepAwake: 3f5e3ac53627849174f3603271df8e08f174ed4a
@@ -2320,7 +2379,9 @@ SPEC CHECKSUMS:
   React-logger: c3e2f8a2e284341205f61eef3d4677ab5a309dfd
   React-Mapbuffer: 603c18db65844bb81dbe62fee8fcc976eaeb7108
   React-microtasksnativemodule: d77e0c426fce34c23227394c96ca1033b30c813c
+  react-native-maps: ee1e65647460c3d41e778071be5eda10e3da6225
   react-native-safe-area-context: 53f796cb6c814661bbe99fbdfd0585d07b996cdd
+  react-native-slider: b76fa3dd989d25e8c2751c2a546674dfc0c2b6f8
   react-native-webview: a4f0775a31b73cf13cfc3d2d2b119aa94ec76e49
   React-NativeModulesApple: 1664340b8750d64e0ef3907c5e53d9481f74bcbd
   React-oscompat: ce47230ed20185e91de62d8c6d139ae61763d09c

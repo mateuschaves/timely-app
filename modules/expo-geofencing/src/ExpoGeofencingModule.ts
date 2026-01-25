@@ -72,11 +72,60 @@ class ExpoGeofencingModule extends NativeModule {
   }
 }
 
-// Create module instance
-const ExpoGeofencing = requireNativeModule<ExpoGeofencingModule>('ExpoGeofencing');
+// Create module instance with error handling
+let ExpoGeofencing: ExpoGeofencingModule;
+let geofencingFallbackWarned = false;
 
-// Create event emitter for geofence events
-const emitter = new EventEmitter(ExpoGeofencing);
+function warnFallback() {
+  if (!geofencingFallbackWarned) {
+    geofencingFallbackWarned = true;
+    console.warn(
+      '[ExpoGeofencing] Native module not available (e.g. Expo Go). Use a development build for geofencing.'
+    );
+  }
+}
+
+try {
+  ExpoGeofencing = requireNativeModule<ExpoGeofencingModule>('ExpoGeofencing');
+  if (!ExpoGeofencing || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
+    throw new Error('ExpoGeofencing module methods not available');
+  }
+} catch {
+  ExpoGeofencing = {
+    startMonitoring: () => {
+      warnFallback();
+      return false;
+    },
+    stopMonitoring: () => {
+      warnFallback();
+      return false;
+    },
+    stopAllMonitoring: () => {
+      warnFallback();
+      return false;
+    },
+    getMonitoredRegions: () => {
+      warnFallback();
+      return [];
+    },
+    requestAlwaysAuthorization: async () => {
+      warnFallback();
+      return { status: 'notDetermined' as const };
+    },
+    hasAlwaysAuthorization: () => {
+      warnFallback();
+      return false;
+    },
+  } as ExpoGeofencingModule;
+}
+
+// Create event emitter for geofence events (only when native module is available)
+let emitter: EventEmitter | null = null;
+try {
+  emitter = new EventEmitter(ExpoGeofencing);
+} catch {
+  emitter = null;
+}
 
 export default ExpoGeofencing;
 
@@ -86,7 +135,16 @@ export default ExpoGeofencing;
  * @returns Subscription object with remove() method
  */
 export function addGeofenceEnterListener(listener: (event: GeofenceEvent) => void) {
-  return emitter.addListener('onGeofenceEnter', listener);
+  if (!emitter) {
+    console.warn('ExpoGeofencing event emitter is not available');
+    return { remove: () => {} };
+  }
+  try {
+    return emitter.addListener('onGeofenceEnter', listener);
+  } catch (error) {
+    console.error('Failed to add geofence enter listener:', error);
+    return { remove: () => {} };
+  }
 }
 
 /**
@@ -95,7 +153,16 @@ export function addGeofenceEnterListener(listener: (event: GeofenceEvent) => voi
  * @returns Subscription object with remove() method
  */
 export function addGeofenceExitListener(listener: (event: GeofenceEvent) => void) {
-  return emitter.addListener('onGeofenceExit', listener);
+  if (!emitter) {
+    console.warn('ExpoGeofencing event emitter is not available');
+    return { remove: () => {} };
+  }
+  try {
+    return emitter.addListener('onGeofenceExit', listener);
+  } catch (error) {
+    console.error('Failed to add geofence exit listener:', error);
+    return { remove: () => {} };
+  }
 }
 
 /**
@@ -104,5 +171,14 @@ export function addGeofenceExitListener(listener: (event: GeofenceEvent) => void
  * @returns Subscription object with remove() method
  */
 export function addGeofenceErrorListener(listener: (event: GeofenceErrorEvent) => void) {
-  return emitter.addListener('onGeofenceError', listener);
+  if (!emitter) {
+    console.warn('ExpoGeofencing event emitter is not available');
+    return { remove: () => {} };
+  }
+  try {
+    return emitter.addListener('onGeofenceError', listener);
+  } catch (error) {
+    console.error('Failed to add geofence error listener:', error);
+    return { remove: () => {} };
+  }
 }

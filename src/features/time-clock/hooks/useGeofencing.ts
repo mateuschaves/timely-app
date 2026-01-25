@@ -1,11 +1,11 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { Platform } from 'react-native';
 import ExpoGeofencing, {
   addGeofenceEnterListener,
   addGeofenceExitListener,
   addGeofenceErrorListener,
-  GeofenceEvent,
-} from '@/../modules/expo-geofencing';
+  type GeofenceEvent,
+} from 'expo-geofencing';
 import { useAuthContext } from '@/features/auth';
 import { getUserSettings } from '@/api/get-user-settings';
 import { clockInDraft } from '@/api/clock-in-draft';
@@ -13,9 +13,11 @@ import { clockOutDraft } from '@/api/clock-out-draft';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import { useTranslation } from '@/i18n';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from '@/config/storage';
 
 const WORKPLACE_GEOFENCE_ID = 'workplace';
-const GEOFENCE_RADIUS = 100; // 100 meters
+const DEFAULT_GEOFENCE_RADIUS = 100; // 100 meters (fallback)
 
 export function useGeofencing() {
   const { user } = useAuthContext();
@@ -23,6 +25,12 @@ export function useGeofencing() {
   const [hasPermission, setHasPermission] = useState(false);
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  
+  // Track last processed events to prevent duplicates
+  const lastProcessedEventsRef = useRef<{
+    enter: number | null;
+    exit: number | null;
+  }>({ enter: null, exit: null });
 
   // Get user settings to check for workplace location
   const { data: settings } = useQuery({
@@ -64,6 +72,16 @@ export function useGeofencing() {
       return false;
     }
 
+    if (!ExpoGeofencing) {
+      console.warn('⚠️ ExpoGeofencing module is not available yet');
+      return false;
+    }
+    
+    if (typeof ExpoGeofencing.requestAlwaysAuthorization !== 'function') {
+      console.warn('⚠️ ExpoGeofencing.requestAlwaysAuthorization is not a function yet');
+      return false;
+    }
+
     try {
       const result = await ExpoGeofencing.requestAlwaysAuthorization();
       const granted = result.status === 'granted';
@@ -95,6 +113,17 @@ export function useGeofencing() {
     }
 
     try {
+      // Check if module is available
+      if (!ExpoGeofencing) {
+        console.warn('⚠️ ExpoGeofencing module is not available yet');
+        return false;
+      }
+      
+      if (typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
+        console.warn('⚠️ ExpoGeofencing.hasAlwaysAuthorization is not a function yet');
+        return false;
+      }
+
       // Check permission first
       const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
       if (!hasAuth) {
@@ -109,11 +138,32 @@ export function useGeofencing() {
       const [longitude, latitude] = settings.workLocation.coordinates;
 
       // Start monitoring
+      if (!ExpoGeofencing) {
+        console.warn('⚠️ ExpoGeofencing module is not available yet');
+        return false;
+      }
+      
+      if (typeof ExpoGeofencing.startMonitoring !== 'function') {
+        console.warn('⚠️ ExpoGeofencing.startMonitoring is not a function yet');
+        return false;
+      }
+
+      // Get radius from local storage (not from API)
+      let radius = DEFAULT_GEOFENCE_RADIUS;
+      try {
+        const storedRadius = await AsyncStorage.getItem(STORAGE_KEYS.WORKPLACE_RADIUS);
+        if (storedRadius) {
+          radius = parseInt(storedRadius, 10) || DEFAULT_GEOFENCE_RADIUS;
+        }
+      } catch (error) {
+        console.warn('Error reading radius from storage, using default:', error);
+      }
+
       const success = ExpoGeofencing.startMonitoring(
         WORKPLACE_GEOFENCE_ID,
         latitude,
         longitude,
-        GEOFENCE_RADIUS
+        radius
       );
 
       if (success) {
@@ -138,6 +188,16 @@ export function useGeofencing() {
       return false;
     }
 
+    if (!ExpoGeofencing) {
+      console.warn('⚠️ ExpoGeofencing module is not available yet');
+      return false;
+    }
+    
+    if (typeof ExpoGeofencing.stopMonitoring !== 'function') {
+      console.warn('⚠️ ExpoGeofencing.stopMonitoring is not a function yet');
+      return false;
+    }
+
     try {
       const success = ExpoGeofencing.stopMonitoring(WORKPLACE_GEOFENCE_ID);
       if (success) {
@@ -156,6 +216,21 @@ export function useGeofencing() {
    */
   const handleGeofenceEnter = useCallback(async (event: GeofenceEvent) => {
     console.log('📍 Entered workplace geofence:', event);
+
+    // Prevent duplicate events within 60 seconds
+    const now = Date.now();
+    const eventTime = event.timestamp * 1000; // Convert to milliseconds
+    const timeSinceLastEvent = lastProcessedEventsRef.current.enter 
+      ? eventTime - lastProcessedEventsRef.current.enter 
+      : Infinity;
+    
+    if (timeSinceLastEvent < 60000) {
+      console.log('⚠️ Ignoring duplicate enter event (last processed', Math.round(timeSinceLastEvent / 1000), 'seconds ago)');
+      return;
+    }
+
+    // Update last processed timestamp
+    lastProcessedEventsRef.current.enter = eventTime;
 
     try {
       // Create draft clock-in entry automatically
@@ -196,6 +271,21 @@ export function useGeofencing() {
    */
   const handleGeofenceExit = useCallback(async (event: GeofenceEvent) => {
     console.log('📍 Exited workplace geofence:', event);
+
+    // Prevent duplicate events within 60 seconds
+    const now = Date.now();
+    const eventTime = event.timestamp * 1000; // Convert to milliseconds
+    const timeSinceLastEvent = lastProcessedEventsRef.current.exit 
+      ? eventTime - lastProcessedEventsRef.current.exit 
+      : Infinity;
+    
+    if (timeSinceLastEvent < 60000) {
+      console.log('⚠️ Ignoring duplicate exit event (last processed', Math.round(timeSinceLastEvent / 1000), 'seconds ago)');
+      return;
+    }
+
+    // Update last processed timestamp
+    lastProcessedEventsRef.current.exit = eventTime;
 
     try {
       // Create draft clock-out entry automatically
@@ -261,16 +351,43 @@ export function useGeofencing() {
       return;
     }
 
-    try {
-      const regions = ExpoGeofencing.getMonitoredRegions();
-      const monitoring = regions.includes(WORKPLACE_GEOFENCE_ID);
-      setIsMonitoring(monitoring);
+    // Add a delay to ensure module is fully initialized
+    const checkStatus = () => {
+      // Check if module exists and has required methods
+      if (!ExpoGeofencing) {
+        // Silently return - module may not be loaded yet
+        return;
+      }
+      
+      if (typeof ExpoGeofencing.getMonitoredRegions !== 'function' || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
+        // Silently return - methods may not be available yet
+        return;
+      }
 
-      const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
-      setHasPermission(hasAuth);
-    } catch (error) {
-      console.error('Error checking geofence status:', error);
-    }
+      try {
+        const regions = ExpoGeofencing.getMonitoredRegions();
+        const monitoring = regions.includes(WORKPLACE_GEOFENCE_ID);
+        setIsMonitoring(monitoring);
+
+        const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
+        setHasPermission(hasAuth);
+        console.log('✅ Geofence status checked - monitoring:', monitoring, 'hasPermission:', hasAuth);
+      } catch (error) {
+        console.error('❌ Error checking geofence status:', error);
+      }
+    };
+
+    // Check after a delay to ensure module is fully initialized
+    // Use multiple timeouts to handle different initialization speeds
+    const timeout1 = setTimeout(checkStatus, 200);
+    const timeout2 = setTimeout(checkStatus, 500);
+    const timeout3 = setTimeout(checkStatus, 1000);
+    
+    return () => {
+      clearTimeout(timeout1);
+      clearTimeout(timeout2);
+      clearTimeout(timeout3);
+    };
   }, [isAvailable]);
 
   return {

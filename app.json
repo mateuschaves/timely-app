@@ -26,7 +26,10 @@
         "NSLocationAlwaysUsageDescription": "Precisamos da sua localização para detectar quando você chega ao trabalho e registrar o ponto automaticamente, mesmo com o app fechado.",
         "ITSAppUsesNonExemptEncryption": false,
         "NSSupportsLiveActivities": true,
-        "UIBackgroundModes": ["location", "remote-notification"]
+        "UIBackgroundModes": [
+          "location",
+          "remote-notification"
+        ]
       }
     },
     "plugins": [
@@ -71,6 +74,11 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.timelyapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+        }
+      },
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",

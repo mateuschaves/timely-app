@@ -26,6 +26,8 @@ import { useTheme } from '@/theme/context/ThemeContext';
  */
 export const Button: React.FC<ButtonProps> = ({
   title,
+  leftIcon,
+  compact = false,
   isLoading = false,
   destructive = false,
   variant = 'primary',
@@ -43,12 +45,16 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       destructive={destructive}
       variant={variant}
+      compact={compact}
       activeOpacity={0.7}
     >
       {isLoading ? (
         <LoadingIndicator variant={variant} theme={theme} />
       ) : (
-        <ButtonText variant={variant} destructive={destructive}>{title}</ButtonText>
+        <>
+          {leftIcon}
+          <ButtonText variant={variant} destructive={destructive}>{title}</ButtonText>
+        </>
       )}
     </StyledButton>
   );
