@@ -75,28 +75,6 @@ export const Value = styled.Text`
   color: ${({ theme }) => theme.colors.text};
 `;
 
-export const Button = styled.TouchableOpacity<{ variant?: 'primary' | 'secondary' }>`
-  background-color: ${({ theme, variant }) => 
-    variant === 'secondary' ? theme.colors.surface : theme.colors.primary};
-  padding: ${spacing.md}px;
-  border-radius: 12px;
-  align-items: center;
-  margin-top: ${spacing.md}px;
-`;
-
-export const ButtonText = styled.Text<{ variant?: 'primary' | 'secondary' }>`
-  color: ${({ theme, variant }) => {
-    if (variant === 'secondary') {
-      // Para botões secundários, usar text.primary que sempre tem contraste adequado
-      // No modo escuro será branco (#ffffff), no claro será preto (#000000)
-      return theme.text?.primary || theme.colors.text || '#000000';
-    }
-    return '#FFFFFF';
-  }};
-  font-size: 16px;
-  font-weight: 600;
-`;
-
 export const StatusBadge = styled.View<{ active?: boolean }>`
   background-color: ${({ theme, active }) => 
     active ? theme.colors.success + '20' : theme.colors.error + '20'};

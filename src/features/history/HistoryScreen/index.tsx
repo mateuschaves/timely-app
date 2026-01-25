@@ -12,6 +12,7 @@ import { useTheme } from '@/theme/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { capitalizeFirstLetter } from '@/utils/string';
 import { spacing } from '@/theme';
+import { Button } from '@/components/Button';
 import {
     Container,
     ScrollContent,
@@ -28,8 +29,6 @@ import {
     SummaryDifferenceRow,
     SummaryDifferenceLabel,
     SummaryDifferenceValue,
-    GenerateReportButton,
-    GenerateReportButtonText,
     DaysList,
     DayCard,
     DayHeader,
@@ -48,7 +47,6 @@ import {
     EventContent,
     EventTime,
     EventType,
-    ConnectionLine,
     EventDuration,
     EventDurationText,
     DurationDivider,
@@ -69,11 +67,18 @@ import {
     DraftBadgeText,
     DraftWarning,
     DraftWarningText,
+    AbsenceBadge,
+    AbsenceBadgeText,
+    AbsenceCard,
+    AbsenceReason,
+    AbsenceDescription,
     NotesContainer,
     NotesBubble,
     NotesText,
     NotesShowMore,
     NotesShowMoreText,
+    AddAbsenceButton,
+    AddAbsenceButtonText,
 } from './styles';
 import { HistorySkeletonLoader } from './SkeletonLoader';
 
@@ -448,6 +453,12 @@ export function HistoryScreen() {
                                 <HolidayBadgeText>{t('history.holiday')}</HolidayBadgeText>
                             </HolidayBadge>
                         )}
+                        {item.absence && (
+                            <AbsenceBadge>
+                                <Ionicons name="document-text" size={12} color={theme.status.info} />
+                                <AbsenceBadgeText>{t('history.absenceJustified')}</AbsenceBadgeText>
+                            </AbsenceBadge>
+                        )}
                     </DayDateContainer>
                     <DayHeaderRight>
                         {!isIncomplete && (
@@ -467,7 +478,7 @@ export function HistoryScreen() {
                                 </DayStatusText>
                             </DayStatusBadge>
                         )}
-                        {item.events && item.events.length > 0 && (
+                        {((item.events && item.events.length > 0) || item.absence) && (
                             <DayExpandIcon>
                                 <Ionicons
                                     name={isExpanded ? "chevron-up" : "chevron-down"}
@@ -511,6 +522,27 @@ export function HistoryScreen() {
                             })
                             .filter(Boolean)}
                     </EventsList>
+                )}
+
+                {isExpanded && item.absence && (
+                    <AbsenceCard>
+                        <AbsenceReason>
+                            <Ionicons name="document-text" size={16} color={theme.status.info} /> {item.absence.reason}
+                        </AbsenceReason>
+                        {item.absence.description && (
+                            <AbsenceDescription>{item.absence.description}</AbsenceDescription>
+                        )}
+                    </AbsenceCard>
+                )}
+
+                {isExpanded && (!item.events || item.events.length === 0) && !item.absence && (
+                    <AddAbsenceButton
+                        onPress={() => navigation.navigate('AddAbsence', { date: item.date })}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="add-circle-outline" size={18} color={theme.text.secondary} />
+                        <AddAbsenceButtonText>{t('history.addAbsence')}</AddAbsenceButtonText>
+                    </AddAbsenceButton>
                 )}
             </DayCard>
         );
@@ -586,12 +618,10 @@ export function HistoryScreen() {
                                     </SummaryDifferenceRow>
                                 )}
 
-                                <GenerateReportButton onPress={handleNavigateToReportPreview} activeOpacity={0.7}>
-                                    <Ionicons name="document-text" size={16} color={theme.text.inverse} />
-                                    <GenerateReportButtonText>
-                                        {t('history.generateReport')}
-                                    </GenerateReportButtonText>
-                                </GenerateReportButton>
+                                <Button
+                                    title={t('history.generateReport')}
+                                    onPress={handleNavigateToReportPreview}
+                                />
                             </MonthSummaryCard>
                         </ListHeaderContainer>
                     }

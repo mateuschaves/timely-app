@@ -10,6 +10,7 @@ import { updateClockEvent, deleteClockEvent, confirmClockEvent } from '@/api';
 import { ClockHistoryEvent } from '@/api/get-clock-history';
 import { format, parseISO } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
+import { Button } from '@/components/Button';
 import {
   Container,
   Header,
@@ -162,7 +163,7 @@ export function EditEventScreen() {
       // Invalidar todas as queries do histórico e forçar refetch
       await queryClient.invalidateQueries({ queryKey: ['clockHistory'] });
       await queryClient.refetchQueries({ queryKey: ['clockHistory'] });
-      
+
       // Invalidar outras queries relacionadas
       queryClient.invalidateQueries({ queryKey: ['lastEvent'] });
       queryClient.invalidateQueries({ queryKey: ['timeClockEntries'] });
@@ -261,83 +262,77 @@ export function EditEventScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 0}
       >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <Content>
-        <InputContainer>
-          <InputLabel>{t('history.date')}</InputLabel>
-          <PickerButton onPress={openDatePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
-            <PickerValue placeholder={!formattedDate}>
-              {formattedDate || 'YYYY-MM-DD'}
-            </PickerValue>
-          </PickerButton>
-        </InputContainer>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <Content>
+            <InputContainer>
+              <InputLabel>{t('history.date')}</InputLabel>
+              <PickerButton onPress={openDatePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
+                <PickerValue placeholder={!formattedDate}>
+                  {formattedDate || 'YYYY-MM-DD'}
+                </PickerValue>
+              </PickerButton>
+            </InputContainer>
 
-        <InputContainer>
-          <InputLabel>{t('history.hour')}</InputLabel>
-          <PickerButton onPress={openTimePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
-            <PickerValue placeholder={!formattedTime}>
-              {formattedTime || 'HH:mm'}
-            </PickerValue>
-          </PickerButton>
-        </InputContainer>
+            <InputContainer>
+              <InputLabel>{t('history.hour')}</InputLabel>
+              <PickerButton onPress={openTimePicker} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
+                <PickerValue placeholder={!formattedTime}>
+                  {formattedTime || 'HH:mm'}
+                </PickerValue>
+              </PickerButton>
+            </InputContainer>
 
-        <InputContainer>
-          <InputLabel>{t('history.notes')}</InputLabel>
-          <View style={{ position: 'relative' }}>
-            <Input
-              value={notes}
-              onChangeText={setNotes}
-              placeholder={t('history.notes')}
-              placeholderTextColor={theme.text.tertiary}
-              editable={!isSaving && !isDeleting && !isConfirming}
-              multiline
-              numberOfLines={3}
-              style={{ minHeight: 80, textAlignVertical: 'top', paddingRight: notes?.length ? 48 : 16 }}
-            />
-            {!!notes?.length && (
-              <TouchableOpacity
-                onPress={() => setNotes('')}
-                disabled={isSaving || isDeleting || isConfirming}
-                activeOpacity={0.7}
-                style={{
-                  position: 'absolute',
-                  right: 12,
-                  top: 12,
-                  padding: 4,
-                  borderRadius: 12,
-                  backgroundColor: theme.background.secondary,
-                }}
-              >
-                <Ionicons name="close-circle" size={20} color={theme.text.tertiary} />
-              </TouchableOpacity>
-            )}
-          </View>
-        </InputContainer>
+            <InputContainer>
+              <InputLabel>{t('history.notes')}</InputLabel>
+              <View style={{ position: 'relative' }}>
+                <Input
+                  value={notes}
+                  onChangeText={setNotes}
+                  placeholder={t('history.notes')}
+                  placeholderTextColor={theme.text.tertiary}
+                  editable={!isSaving && !isDeleting && !isConfirming}
+                  multiline
+                  numberOfLines={3}
+                  style={{ minHeight: 80, textAlignVertical: 'top', paddingRight: notes?.length ? 48 : 16 }}
+                />
+                {!!notes?.length && (
+                  <TouchableOpacity
+                    onPress={() => setNotes('')}
+                    disabled={isSaving || isDeleting || isConfirming}
+                    activeOpacity={0.7}
+                    style={{
+                      position: 'absolute',
+                      right: 12,
+                      top: 12,
+                      padding: 4,
+                      borderRadius: 12,
+                      backgroundColor: theme.background.secondary,
+                    }}
+                  >
+                    <Ionicons name="close-circle" size={20} color={theme.text.tertiary} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </InputContainer>
 
-        <ButtonContainer>
-          {event.isDraft && (
-            <ConfirmButton onPress={handleConfirm} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
-              <Ionicons name="checkmark-circle" size={20} color={theme.text.inverse} />
-              <ConfirmButtonText>
-                {isConfirming ? t('common.loading') : t('history.confirmEvent')}
-              </ConfirmButtonText>
-            </ConfirmButton>
-          )}
+            <ButtonContainer>
+              <Button
+                title={t('common.save')}
+                onPress={handleSave}
+                isLoading={isSaving}
+                disabled={isDeleting}
+              />
 
-          <SaveButton onPress={handleSave} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
-            <SaveButtonText>
-              {isSaving ? t('common.loading') : t('common.save')}
-            </SaveButtonText>
-          </SaveButton>
-
-          <DeleteButton onPress={handleDelete} disabled={isSaving || isDeleting || isConfirming} activeOpacity={0.7}>
-            <DeleteButtonText>
-              {isDeleting ? t('common.loading') : t('common.delete')}
-            </DeleteButtonText>
-          </DeleteButton>
-        </ButtonContainer>
-      </Content>
-      </TouchableWithoutFeedback>
+              <Button
+                title={t('common.delete')}
+                onPress={handleDelete}
+                isLoading={isDeleting}
+                destructive
+                disabled={isSaving}
+              />
+            </ButtonContainer>
+          </Content>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
 
       <Modal

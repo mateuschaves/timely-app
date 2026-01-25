@@ -2,7 +2,8 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, WorkplaceLocationScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
-import { EditEventScreen, ReportPreviewScreen } from '@/features/history';
+import { EditEventScreen, ReportPreviewScreen, AddAbsenceScreen } from '@/features/history';
+import { AbsencesListScreen } from '@/features/absences';
 
 export type AppStackParamList = {
   Main: undefined;
@@ -15,6 +16,8 @@ export type AppStackParamList = {
   DeleteAccount: undefined;
   EditEvent: { event: any };
   ReportPreview: { startDate: string; endDate: string; monthLabel?: string };
+  AddAbsence: { date?: string };
+  AbsencesList: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -94,6 +97,22 @@ export function AppNavigator() {
       <Stack.Screen
         name="ReportPreview"
         component={ReportPreviewScreen}
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="AddAbsence"
+        component={AddAbsenceScreen}
+        options={{
+          presentation: 'card',
+          animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="AbsencesList"
+        component={AbsencesListScreen}
         options={{
           presentation: 'card',
           animation: 'slide_from_right',

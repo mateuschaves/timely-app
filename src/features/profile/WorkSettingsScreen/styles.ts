@@ -137,22 +137,6 @@ export const TimeHint = styled.Text<{ theme: any }>`
   margin-bottom: ${spacing.sm}px;
 `;
 
-export const SaveButton = styled.TouchableOpacity<{ disabled?: boolean; theme: any }>`
-  background-color: ${({ theme }) => (theme.colorScheme === 'dark' ? '#1a1a1a' : theme.primary)};
-  border-radius: ${borderRadius.lg}px;
-  padding: ${spacing.md}px ${spacing.lg}px;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${spacing.sm}px;
-  opacity: ${(props: { disabled?: boolean }) => (props.disabled ? 0.6 : 1)};
-`;
-
-export const SaveButtonText = styled.Text<{ theme: any }>`
-  color: ${({ theme }) => (theme.colorScheme === 'dark' ? theme.text.primary : theme.text.inverse)};
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-`;
-
 export const HolidayRow = styled.View`
   flex-direction: row;
   align-items: center;
@@ -187,25 +171,6 @@ export const HolidayActions = styled.View`
 
 export const HolidayActionButton = styled.TouchableOpacity`
   padding: ${spacing.sm}px;
-`;
-
-export const AddHolidayButton = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: ${spacing.md}px;
-  border-radius: ${borderRadius.md}px;
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.primary};
-  border-style: dashed;
-  margin-top: ${spacing.sm}px;
-`;
-
-export const AddHolidayButtonText = styled.Text<{ theme: any }>`
-  font-size: ${typography.sizes.md}px;
-  color: ${({ theme }) => theme.primary};
-  font-weight: ${typography.weights.semibold};
-  margin-left: ${spacing.xs}px;
 `;
 
 export const HolidayInputRow = styled.View`

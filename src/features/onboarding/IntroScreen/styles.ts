@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { spacing, borderRadius, typography } from '@/theme';
+import { spacing, typography } from '@/theme';
 
 export const Container = styled(SafeAreaView)<{ theme: any }>`
   flex: 1;
@@ -45,32 +45,4 @@ export const ButtonContainer = styled.View`
   width: 100%;
   gap: ${spacing.md}px;
   margin-top: ${spacing.xl}px;
-`;
-
-export const PrimaryButton = styled.TouchableOpacity<{ theme: any }>`
-  background-color: ${({ theme }) => theme.primary};
-  padding: ${spacing.md}px ${spacing.lg}px;
-  border-radius: ${borderRadius.lg}px;
-  align-items: center;
-  justify-content: center;
-  min-height: 50px;
-`;
-
-export const PrimaryButtonText = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.semibold};
-  color: #ffffff;
-`;
-
-export const SecondaryButton = styled.TouchableOpacity`
-  padding: ${spacing.md}px ${spacing.lg}px;
-  align-items: center;
-  justify-content: center;
-  min-height: 50px;
-`;
-
-export const SecondaryButtonText = styled.Text`
-  font-size: ${typography.sizes.md}px;
-  font-weight: ${typography.weights.medium};
-  color: ${({ theme }) => theme.text.secondary};
 `;

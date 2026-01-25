@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '@/config/storage';
 import { MapPreview } from './MapPreview';
 import { spacing } from '@/theme';
+import { Button } from '@/components/Button';
 import {
   Container,
   Content,
@@ -28,8 +29,6 @@ import {
   Row,
   Label,
   Value,
-  Button,
-  ButtonText,
   StatusBadge,
   StatusText,
   WarningBox,
@@ -44,7 +43,7 @@ export function WorkplaceLocationScreen() {
   const { showSuccess, showError } = useFeedback();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  
+
   const {
     isAvailable,
     isMonitoring,
@@ -54,9 +53,9 @@ export function WorkplaceLocationScreen() {
     requestPermission,
     workplaceLocation,
   } = useGeofencing();
-  
+
   const { requestLocationPermission, isLoading: isLoadingLocation } = useLocation();
-  
+
   const [isSetting, setIsSetting] = useState(false);
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<LocationCoordinates | null>(null);
@@ -96,7 +95,7 @@ export function WorkplaceLocationScreen() {
     try {
       // Request location permission
       const location = await requestLocationPermission();
-      
+
       if (!location) {
         Alert.alert(
           'Permissão necessária',
@@ -116,7 +115,7 @@ export function WorkplaceLocationScreen() {
 
       // Request always permission for geofencing
       const permissionGranted = await requestPermission();
-      
+
       if (permissionGranted) {
         // Start monitoring
         await startMonitoring();
@@ -126,8 +125,8 @@ export function WorkplaceLocationScreen() {
           'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização. Você pode habilitar isso nas configurações do dispositivo.',
           [
             { text: 'Agora não', style: 'cancel' },
-            { 
-              text: 'Abrir Configurações', 
+            {
+              text: 'Abrir Configurações',
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
@@ -166,7 +165,7 @@ export function WorkplaceLocationScreen() {
 
       // Request always permission for geofencing
       const permissionGranted = await requestPermission();
-      
+
       if (permissionGranted) {
         // Start monitoring
         await startMonitoring();
@@ -176,8 +175,8 @@ export function WorkplaceLocationScreen() {
           'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização. Você pode habilitar isso nas configurações do dispositivo.',
           [
             { text: 'Agora não', style: 'cancel' },
-            { 
-              text: 'Abrir Configurações', 
+            {
+              text: 'Abrir Configurações',
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
@@ -212,7 +211,7 @@ export function WorkplaceLocationScreen() {
           return;
         }
       }
-      
+
       const success = await startMonitoring();
       if (success) {
         showSuccess(t('profile.geofenceActivated'));
@@ -235,7 +234,7 @@ export function WorkplaceLocationScreen() {
           <WarningBox>
             <Ionicons name="information-circle" size={24} color={theme.status.warning} />
             <WarningText>
-              Detecção automática de chegada ao trabalho não está disponível neste dispositivo. 
+              Detecção automática de chegada ao trabalho não está disponível neste dispositivo.
               Este recurso requer iOS.
             </WarningText>
           </WarningBox>
@@ -252,12 +251,12 @@ export function WorkplaceLocationScreen() {
         </BackButton>
         <HeaderTitle>Localização do Trabalho</HeaderTitle>
       </Header>
-      
+
       <Content>
         <Section>
           <SectionTitle>Detecção Automática</SectionTitle>
           <SectionDescription>
-            Configure o local de trabalho para ser notificado automaticamente quando chegar ou sair, 
+            Configure o local de trabalho para ser notificado automaticamente quando chegar ou sair,
             mesmo com o aplicativo fechado.
           </SectionDescription>
 
@@ -302,37 +301,26 @@ export function WorkplaceLocationScreen() {
           </Card>
 
           {!workplaceLocation ? (
-            <>
-              <Button onPress={() => setShowMapPicker(true)} disabled={isSetting}>
-                <ButtonText>Selecionar no Mapa</ButtonText>
-              </Button>
-              <Button variant="secondary" onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
-                {isSetting || isLoadingLocation ? (
-                  <ActivityIndicator color={theme.text.primary} />
-                ) : (
-                  <ButtonText variant="secondary">Usar Localização Atual</ButtonText>
-                )}
-              </Button>
-            </>
+            <Button
+              title="Usar Localização Atual"
+              onPress={handleSetCurrentLocation}
+              disabled={isSetting || isLoadingLocation}
+              isLoading={isSetting || isLoadingLocation}
+            />
           ) : (
             <>
-              <Button onPress={handleToggleMonitoring}>
-                <ButtonText>
-                  {isMonitoring ? 'Desativar Detecção' : 'Ativar Detecção'}
-                </ButtonText>
-              </Button>
+              <Button
+                title={isMonitoring ? 'Desativar Detecção' : 'Ativar Detecção'}
+                onPress={handleToggleMonitoring}
+              />
 
-              <Button variant="secondary" onPress={() => setShowMapPicker(true)} disabled={isSetting}>
-                <ButtonText variant="secondary">Alterar no Mapa</ButtonText>
-              </Button>
-
-              <Button variant="secondary" onPress={handleSetCurrentLocation} disabled={isSetting || isLoadingLocation}>
-                {isSetting || isLoadingLocation ? (
-                  <ActivityIndicator color={theme.text.primary} />
-                ) : (
-                  <ButtonText variant="secondary">Atualizar Localização</ButtonText>
-                )}
-              </Button>
+              <Button
+                title="Atualizar Localização"
+                variant="secondary"
+                onPress={handleSetCurrentLocation}
+                disabled={isSetting || isLoadingLocation}
+                isLoading={isSetting || isLoadingLocation}
+              />
             </>
           )}
         </Section>
@@ -354,7 +342,7 @@ export function WorkplaceLocationScreen() {
           <WarningBox>
             <Ionicons name="alert-circle" size={24} color={theme.status.warning} />
             <WarningText>
-              Permissão "Sempre" de localização não concedida. A detecção automática não funcionará com o app fechado. 
+              Permissão "Sempre" de localização não concedida. A detecção automática não funcionará com o app fechado.
               Habilite nas configurações do dispositivo.
             </WarningText>
           </WarningBox>

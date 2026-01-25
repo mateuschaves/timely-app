@@ -11,6 +11,7 @@ import { STORAGE_KEYS } from '@/config/storage';
 import { useWorkSettings } from '@/features/profile/hooks/useWorkSettings';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/Button';
 import {
   Container,
   Content,
@@ -28,8 +29,6 @@ import {
   InfoLabel,
   InfoValueContainer,
   InfoValue,
-  Button,
-  ButtonText,
   EmptyState,
   EmptyStateText,
   SettingsRow,
@@ -252,6 +251,23 @@ export function ProfileScreen() {
                 </InfoCard>
               </Section>
 
+              {/* Justificativas de Ausência */}
+              <Section>
+                <InfoCard>
+                  <SettingsRow
+                    onPress={() => navigation.navigate('AbsencesList')}
+                    activeOpacity={0.7}
+                  >
+                    <InfoLeft>
+                      <InfoLabel>{t('profile.absences')}</InfoLabel>
+                    </InfoLeft>
+                    <ChevronIcon>
+                      <Ionicons name="chevron-forward" size={20} color={theme.text.tertiary} />
+                    </ChevronIcon>
+                  </SettingsRow>
+                </InfoCard>
+              </Section>
+
               {/* Privacidade e Segurança */}
               <Section>
                 <InfoCard>
@@ -269,9 +285,11 @@ export function ProfileScreen() {
                 </InfoCard>
               </Section>
 
-              <Button onPress={handleSignOut}>
-                <ButtonText>{t('profile.logout')}</ButtonText>
-              </Button>
+              <Button 
+                title={t('profile.logout')}
+                destructive
+                onPress={handleSignOut}
+              />
             </>
           ) : (
             <EmptyState>

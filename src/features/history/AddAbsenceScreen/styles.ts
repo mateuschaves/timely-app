@@ -75,7 +75,9 @@ export const PickerButton = styled.TouchableOpacity<{ disabled?: boolean; theme:
   shadow-opacity: ${({ theme }) => theme.shadows.sm.shadowOpacity};
   shadow-radius: ${({ theme }) => theme.shadows.sm.shadowRadius}px;
   elevation: ${({ theme }) => theme.shadows.sm.elevation};
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   opacity: ${props => (props.disabled ? 0.6 : 1)};
 `;
 
@@ -90,8 +92,12 @@ export const ButtonContainer = styled.View`
   margin-top: ${spacing.xl}px;
 `;
 
-export const ModalOverlay = styled.View`
-  flex: 1;
+export const ModalOverlay = styled.TouchableOpacity`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.4);
   justify-content: center;
   align-items: center;
@@ -140,4 +146,3 @@ export const PickerActionText = styled.Text<{ theme: any }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
 `;
-

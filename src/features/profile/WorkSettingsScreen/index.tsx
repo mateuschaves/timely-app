@@ -14,6 +14,7 @@ import { format, parseISO, isValid, startOfMonth, endOfMonth, eachDayOfInterval,
 import { ptBR, enUS, fr, de } from 'date-fns/locale';
 import * as Localization from 'expo-localization';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Button } from '@/components/Button';
 import {
     Container,
     Content,
@@ -33,16 +34,12 @@ import {
     SectionDivider,
     TimePickerTitle,
     TimePickerWrapper,
-    SaveButton,
-    SaveButtonText,
     HolidayRow,
     HolidayInfo,
     HolidayDate,
     HolidayName,
     HolidayActions,
     HolidayActionButton,
-    AddHolidayButton,
-    AddHolidayButtonText,
     HolidayInputRow,
     HolidayNameInput,
     EmptyHolidaysText,
@@ -1097,21 +1094,22 @@ export function WorkSettingsScreen() {
                                 </React.Fragment>
                             )}
                             {!isAddingHoliday && (
-                                <AddHolidayButton
+                                <Button 
+                                    title={t('profile.addHoliday')}
+                                    variant="outline"
                                     onPress={() => setIsAddingHoliday(true)}
                                     disabled={updateSettingsMutation.isPending}
-                                    activeOpacity={0.7}
-                                >
-                                    <Ionicons name="add-circle-outline" size={20} color={theme.primary} />
-                                    <AddHolidayButtonText>{t('profile.addHoliday')}</AddHolidayButtonText>
-                                </AddHolidayButton>
+                                />
                             )}
                         </SettingSection>
                     </SettingsCard>
 
-                    <SaveButton onPress={handleSave} disabled={updateSettingsMutation.isPending} activeOpacity={0.7}>
-                        <SaveButtonText>{updateSettingsMutation.isPending ? t('common.loading') : t('common.save')}</SaveButtonText>
-                    </SaveButton>
+                    <Button 
+                        title={updateSettingsMutation.isPending ? t('common.loading') : t('common.save')}
+                        onPress={handleSave}
+                        disabled={updateSettingsMutation.isPending}
+                        isLoading={updateSettingsMutation.isPending}
+                    />
                 </ScrollView>
             </Content>
             <Modal
@@ -1145,24 +1143,12 @@ export function WorkSettingsScreen() {
                                             />
                                         </TimePickerWrapper>
                                         {Platform.OS === 'ios' && (
-                                            <TouchableOpacity
-                                                onPress={() => setTimePickerState({ dayKey: null, type: null })}
-                                                style={{
-                                                    marginTop: spacing.lg,
-                                                    paddingHorizontal: spacing.xl,
-                                                    paddingVertical: spacing.md,
-                                                    backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : theme.primary,
-                                                    borderRadius: borderRadius.md,
-                                                    width: '100%',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    borderWidth: colorScheme === 'dark' ? 1 : 0,
-                                                    borderColor: colorScheme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
-                                                }}
-                                                activeOpacity={0.7}
-                                            >
-                                                <SaveButtonText>{t('common.done')}</SaveButtonText>
-                                            </TouchableOpacity>
+                                            <View style={{ width: '100%', marginTop: spacing.lg }}>
+                                                <Button 
+                                                    title={t('common.done')}
+                                                    onPress={() => setTimePickerState({ dayKey: null, type: null })}
+                                                />
+                                            </View>
                                         )}
                                     </>
                                 )}

@@ -44,7 +44,8 @@
   "navigation": {
     "home": "Startseite",
     "history": "Verlauf",
-    "profile": "Profil"
+    "profile": "Profil",
+    "absences": "Begründungen"
   },
   "home": {
     "clockIn": "Stempeln - Ein",
@@ -120,7 +121,19 @@
     "pdfGenerationError": "Fehler beim Erstellen des Berichts. Bitte versuchen Sie es erneut.",
     "previewUnavailable": "Vorschau nicht verfügbar.",
     "downloadSuccess": "PDF wurde gespeichert.",
-    "downloadError": "Fehler beim Speichern des PDFs."
+    "downloadError": "Fehler beim Speichern des PDFs.",
+    "addAbsence": "Begründung Hinzufügen",
+    "addAbsenceTitle": "Abwesenheitsbegründung",
+    "absenceDate": "Datum",
+    "absenceReason": "Grund",
+    "absenceDescription": "Beschreibung",
+    "absenceDescriptionPlaceholder": "Fügen Sie Details zur Abwesenheit hinzu (optional)",
+    "absenceReasonPlaceholder": "Z.B.: Arzttermin",
+    "absenceSuccess": "Begründung erfolgreich hinzugefügt!",
+    "absenceError": "Fehler beim Hinzufügen der Begründung. Bitte versuchen Sie es erneut.",
+    "absenceClockRecordsExist": "Für dieses Datum existieren bereits Zeiterfassungen",
+    "absenceReasonRequired": "Der Grund ist erforderlich",
+    "absenceJustified": "Begründet"
   },
   "profile": {
     "title": "Profil",
@@ -207,7 +220,8 @@
     "deleteAccountConfirmTitle": "Löschung bestätigen",
     "deleteAccountConfirmMessage": "Sind Sie absolut sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion ist dauerhaft und alle Ihre Daten gehen verloren.",
     "deleteAccountConfirmButton": "Ja, Konto löschen",
-    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut."
+    "deleteAccountError": "Fehler beim Löschen des Kontos. Bitte versuchen Sie es erneut.",
+    "absences": "Abwesenheitsbegründungen"
   },
   "errors": {
     "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
@@ -260,5 +274,12 @@
       "skipFailed": "Onboarding konnte nicht übersprungen werden. Bitte versuchen Sie es erneut.",
       "completeFailed": "Onboarding konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "absences": {
+    "title": "Begründungen",
+    "empty": "Keine Begründungen gefunden",
+    "reason": "Grund",
+    "description": "Beschreibung",
+    "addNew": "Begründung Hinzufügen"
   }
 }

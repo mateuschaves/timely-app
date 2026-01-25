@@ -68,31 +68,3 @@ export const ButtonRow = styled.View`
   gap: ${spacing.sm}px;
   margin-top: ${spacing.md}px;
 `;
-
-export const PrimaryButton = styled.TouchableOpacity<{ disabled?: boolean; theme?: any }>`
-  flex: 1;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: ${spacing.xs}px;
-  padding: ${spacing.md}px;
-  border-radius: ${borderRadius.md}px;
-  background-color: ${({ theme }) => theme.primary};
-  opacity: ${props => (props.disabled ? 0.6 : 1)};
-`;
-
-export const SecondaryButton = styled(PrimaryButton)`
-  background-color: transparent;
-  border-width: 1px;
-  border-color: ${({ theme }: any) => theme.primary};
-`;
-
-export const ButtonText = styled.Text<{ theme?: any }>`
-  color: ${({ theme }) => theme.text.inverse};
-  font-size: ${typography.sizes.sm}px;
-  font-weight: ${typography.weights.semibold};
-`;
-
-export const SecondaryButtonText = styled(ButtonText)`
-  color: ${({ theme }) => theme.primary};
-`;

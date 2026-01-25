@@ -280,7 +280,7 @@ describe('WorkSettingsScreen', () => {
   it('should disable inputs when saving', async () => {
     mockUpdateUserSettings.mockImplementation(() => new Promise(() => { })); // Never resolves
 
-    const { getByText } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
+    const { getByText, UNSAFE_getByType } = render(<WorkSettingsScreen />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(getByText('common.save')).toBeTruthy();
@@ -290,7 +290,8 @@ describe('WorkSettingsScreen', () => {
     fireEvent.press(saveButton);
 
     await waitFor(() => {
-      expect(getByText('common.loading')).toBeTruthy();
+      // When the button is loading, it should show the ActivityIndicator instead of text
+      expect(UNSAFE_getByType('ActivityIndicator')).toBeTruthy();
     });
   });
 

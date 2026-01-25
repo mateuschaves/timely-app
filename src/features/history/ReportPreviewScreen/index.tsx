@@ -11,6 +11,7 @@ import { generateMonthlyPdf } from '@/api/generate-monthly-pdf';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { capitalizeFirstLetter } from '@/utils/string';
 import { fileSystemService } from '@/utils/fileSystem';
+import { Button } from '@/components/Button';
 import {
   Container,
   Header,
@@ -22,10 +23,6 @@ import {
   ErrorBox,
   ErrorText,
   ButtonRow,
-  PrimaryButton,
-  SecondaryButton,
-  ButtonText,
-  SecondaryButtonText,
 } from './styles';
 
 export type ReportPreviewRouteParams = {
@@ -205,23 +202,20 @@ export function ReportPreviewScreen() {
         </PreviewContainer>
 
         <ButtonRow>
-          <PrimaryButton onPress={handleShare} disabled={isLoading || isSharing} activeOpacity={0.7}>
-            {isSharing ? (
-              <ActivityIndicator size="small" color={theme.text.inverse} />
-            ) : (
-              <Ionicons name="share-outline" size={18} color={theme.text.inverse} />
-            )}
-            <ButtonText>{t('history.shareReport')}</ButtonText>
-          </PrimaryButton>
+          <Button 
+            title={t('history.shareReport')}
+            onPress={handleShare}
+            disabled={isLoading || isSharing}
+            isLoading={isSharing}
+          />
 
-          <SecondaryButton onPress={handleDownload} disabled={isLoading || isDownloading} activeOpacity={0.7}>
-            {isDownloading ? (
-              <ActivityIndicator size="small" color={theme.primary} />
-            ) : (
-              <Ionicons name="download-outline" size={18} color={theme.primary} />
-            )}
-            <SecondaryButtonText>{t('history.downloadReport')}</SecondaryButtonText>
-          </SecondaryButton>
+          <Button 
+            title={t('history.downloadReport')}
+            variant="secondary"
+            onPress={handleDownload}
+            disabled={isLoading || isDownloading}
+            isLoading={isDownloading}
+          />
         </ButtonRow>
       </Content>
     </Container>
