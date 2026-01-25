@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text } from 'react-native';
+import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
@@ -261,14 +261,27 @@ export function WorkplaceLocationScreen() {
           </SectionDescription>
 
           <Card>
-            <Row>
-              <Label>Status</Label>
-              <StatusBadge active={isMonitoring}>
-                <StatusText active={isMonitoring}>
-                  {isMonitoring ? 'Ativo' : 'Inativo'}
-                </StatusText>
-              </StatusBadge>
-            </Row>
+            {workplaceLocation ? (
+              <Row>
+                <Label>{t('profile.automaticDetection')}</Label>
+                <Switch
+                  value={isMonitoring}
+                  onValueChange={handleToggleMonitoring}
+                  trackColor={{
+                    false: theme.colors?.borderLight ?? '#767577',
+                    true: theme.colors?.success ?? '#34C759',
+                  }}
+                  thumbColor={isMonitoring ? '#fff' : '#f4f3f4'}
+                />
+              </Row>
+            ) : (
+              <Row>
+                <Label>Status</Label>
+                <StatusBadge active={false}>
+                  <StatusText active={false}>Inativo</StatusText>
+                </StatusBadge>
+              </Row>
+            )}
 
             {workplaceLocation && (
               <>
@@ -279,6 +292,7 @@ export function WorkplaceLocationScreen() {
                 <MapPreview
                   location={workplaceLocation}
                   radius={storedRadius || undefined}
+                  onPress={() => setShowMapPicker(true)}
                 />
                 {storedRadius && (
                   <View style={{ marginTop: spacing.sm }}>
@@ -302,26 +316,19 @@ export function WorkplaceLocationScreen() {
 
           {!workplaceLocation ? (
             <Button
-              title="Usar Localização Atual"
-              onPress={handleSetCurrentLocation}
+              title="Definir Localização"
+              onPress={() => setShowMapPicker(true)}
               disabled={isSetting || isLoadingLocation}
               isLoading={isSetting || isLoadingLocation}
             />
           ) : (
-            <>
-              <Button
-                title={isMonitoring ? 'Desativar Detecção' : 'Ativar Detecção'}
-                onPress={handleToggleMonitoring}
-              />
-
-              <Button
-                title="Atualizar Localização"
-                variant="secondary"
-                onPress={handleSetCurrentLocation}
-                disabled={isSetting || isLoadingLocation}
-                isLoading={isSetting || isLoadingLocation}
-              />
-            </>
+            <Button
+              title="Atualizar Localização"
+              variant="secondary"
+              onPress={() => setShowMapPicker(true)}
+              disabled={isSetting || isLoadingLocation}
+              isLoading={isSetting || isLoadingLocation}
+            />
           )}
         </Section>
 
@@ -358,11 +365,50 @@ export function WorkplaceLocationScreen() {
         <MapLocationPicker
           initialLocation={workplaceLocation || undefined}
           initialRadius={storedRadius || 100}
-          onLocationChange={handleMapLocationChange}
-          onClose={async () => {
+          onLocationChange={(location, radius) => {
+            setSelectedLocation(location);
+            setSelectedRadius(radius);
+          }}
+          onClose={() => setShowMapPicker(false)}
+          onConfirm={async (location, radius) => {
+            setSelectedLocation(location);
+            setSelectedRadius(radius);
             setShowMapPicker(false);
-            if (selectedLocation) {
-              await handleSaveMapLocation();
+            
+            // Save the location
+            setIsSetting(true);
+            try {
+              await updateSettingsMutation.mutateAsync({
+                workLocation: location,
+              });
+              await AsyncStorage.setItem(STORAGE_KEYS.WORKPLACE_RADIUS, radius.toString());
+              setStoredRadius(radius);
+              
+              const permissionGranted = await requestPermission();
+              if (permissionGranted) {
+                await startMonitoring();
+              } else {
+                Alert.alert(
+                  'Permissão adicional necessária',
+                  'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização.',
+                  [
+                    { text: 'Agora não', style: 'cancel' },
+                    {
+                      text: 'Abrir Configurações',
+                      onPress: () => {
+                        if (Platform.OS === 'ios') {
+                          Linking.openURL('app-settings:');
+                        }
+                      }
+                    },
+                  ]
+                );
+              }
+            } catch (error) {
+              console.error('Error saving workplace location:', error);
+              showError('Erro ao salvar localização do trabalho');
+            } finally {
+              setIsSetting(false);
             }
           }}
         />
