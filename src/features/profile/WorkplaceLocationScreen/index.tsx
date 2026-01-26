@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AppStackParamList } from '@/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useGeofencing } from '@/features/time-clock/hooks/useGeofencing';
@@ -39,7 +41,7 @@ import {
 } from './styles';
 
 export function WorkplaceLocationScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
   const { theme } = useTheme();
   const { showSuccess, showError } = useFeedback();
   const queryClient = useQueryClient();
@@ -202,17 +204,7 @@ export function WorkplaceLocationScreen() {
   const handleToggleMonitoring = useCallback(async () => {
     // Check premium access first
     if (!hasGeofencing) {
-      Alert.alert(
-        t('profile.geofencingPremiumTitle'),
-        t('profile.geofencingPremiumMessage'),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('profile.upgradeToPremium'), onPress: () => {
-            // TODO: Navigate to subscription screen
-            console.log('Navigate to subscription screen');
-          }},
-        ]
-      );
+      navigation.navigate('Paywall', { feature: 'geofencing' });
       return;
     }
 
@@ -238,7 +230,7 @@ export function WorkplaceLocationScreen() {
         showError(t('profile.geofenceActivationError'));
       }
     }
-  }, [hasGeofencing, isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
+  }, [hasGeofencing, navigation, isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
 
   if (!isAvailable) {
     return (

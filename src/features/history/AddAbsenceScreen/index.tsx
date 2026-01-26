@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Alert, Keyboard, Platform, TouchableWithoutFeedback, Text } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AppStackParamList } from '@/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -40,7 +42,7 @@ type AddAbsenceRouteProp = RouteProp<AddAbsenceRouteParams, 'AddAbsence'>;
 
 export function AddAbsenceScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
   const route = useRoute<AddAbsenceRouteProp>();
   const { showSuccess, showError } = useFeedback();
   const { theme, colorScheme } = useTheme();
@@ -79,20 +81,7 @@ export function AddAbsenceScreen() {
   const handleSave = async () => {
     // Check premium access first
     if (!hasJustifiedAbsences) {
-      Alert.alert(
-        t('profile.justifiedAbsencesPremiumTitle'),
-        t('profile.justifiedAbsencesPremiumMessage'),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          { 
-            text: t('profile.upgradeToPremium'), 
-            onPress: () => {
-              // TODO: Navigate to subscription screen
-              console.log('Navigate to subscription screen');
-            }
-          },
-        ]
-      );
+      navigation.navigate('Paywall', { feature: 'justified_absences' });
       return;
     }
 
