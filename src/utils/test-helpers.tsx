@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/theme/context/ThemeContext';
 import { ThemeWrapper } from '@/theme/ThemeWrapper';
 import { FeedbackProvider } from './feedback';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SubscriptionProvider } from '@/features/subscriptions';
 
 interface TestWrapperProps {
   children: React.ReactNode;
@@ -26,9 +27,11 @@ export function TestWrapper({ children, queryClient }: TestWrapperProps) {
       <ThemeProvider>
         <ThemeWrapper>
           <QueryClientProvider client={testQueryClient}>
-            <FeedbackProvider>
-              {children}
-            </FeedbackProvider>
+            <SubscriptionProvider>
+              <FeedbackProvider>
+                {children}
+              </FeedbackProvider>
+            </SubscriptionProvider>
           </QueryClientProvider>
         </ThemeWrapper>
       </ThemeProvider>

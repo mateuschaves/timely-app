@@ -205,5 +205,35 @@ global.console.tron = {
   error: jest.fn(),
 };
 
+// Mock RevenueCat service
+jest.mock('@/features/subscriptions/services/RevenueCatService', () => ({
+  revenueCatService: {
+    configure: jest.fn(() => Promise.resolve()),
+    getOfferings: jest.fn(() => Promise.resolve(null)),
+    getCustomerInfo: jest.fn(() => Promise.resolve({
+      entitlements: { active: {} },
+      activeSubscriptions: [],
+      allPurchasedProductIdentifiers: [],
+      latestExpirationDate: null,
+      firstSeen: new Date().toISOString(),
+      originalAppUserId: 'test_user',
+      requestDate: new Date().toISOString(),
+      allExpirationDates: {},
+      allPurchaseDates: {},
+      originalApplicationVersion: '1.0.0',
+      originalPurchaseDate: null,
+      managementURL: null,
+      nonSubscriptionTransactions: [],
+    })),
+    purchasePackage: jest.fn(),
+    restorePurchases: jest.fn(),
+    login: jest.fn(),
+    logout: jest.fn(),
+    isSDKConfigured: jest.fn(() => false),
+    hasActiveSubscription: jest.fn(() => Promise.resolve(false)),
+    getActiveEntitlements: jest.fn(() => Promise.resolve([])),
+  },
+}));
+
 // Mock __DEV__
 global.__DEV__ = true;
