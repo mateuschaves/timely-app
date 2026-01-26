@@ -232,6 +232,7 @@ jest.mock('@/features/subscriptions/services/RevenueCatService', () => ({
     isSDKConfigured: jest.fn(() => false),
     hasActiveSubscription: jest.fn(() => Promise.resolve(false)),
     getActiveEntitlements: jest.fn(() => Promise.resolve([])),
+    addCustomerInfoUpdateListener: jest.fn(() => jest.fn()),
   },
 }));
 

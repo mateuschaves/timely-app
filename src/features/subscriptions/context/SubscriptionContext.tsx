@@ -239,6 +239,30 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({
     }
   }, [apiKey, appUserId, initialize]);
 
+  /**
+   * Set up listener for customer info updates
+   * This ensures the context stays in sync with subscription changes
+   */
+  useEffect(() => {
+    if (!revenueCatService.isSDKConfigured()) {
+      return;
+    }
+
+    const removeListener = revenueCatService.addCustomerInfoUpdateListener(
+      (customerInfo) => {
+        console.log('Customer info updated:', customerInfo);
+        setState((prev) => ({
+          ...prev,
+          customerInfo,
+        }));
+      }
+    );
+
+    return () => {
+      removeListener();
+    };
+  }, []);
+
   const value: SubscriptionContextValue = {
     ...state,
     initialize,
