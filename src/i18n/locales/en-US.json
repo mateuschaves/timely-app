@@ -231,7 +231,15 @@
     "deleteAccountConfirmTitle": "Confirm deletion",
     "deleteAccountConfirmMessage": "Are you absolutely sure you want to delete your account? This action is permanent and all your data will be lost.",
     "deleteAccountConfirmButton": "Yes, delete account",
-    "deleteAccountError": "Error deleting account. Please try again."
+    "deleteAccountError": "Error deleting account. Please try again.",
+    "premiumFeature": "Premium Feature",
+    "premiumRequired": "Premium Subscription Required",
+    "geofencingPremiumTitle": "Automatic Detection is Premium",
+    "geofencingPremiumMessage": "Automatic work entry/exit detection is a premium feature. Subscribe to unlock this and other exclusive features.",
+    "justifiedAbsencesPremiumTitle": "Justified Absences are Premium",
+    "justifiedAbsencesPremiumMessage": "Recording justified absences is a premium feature. Subscribe to unlock this and other exclusive features.",
+    "upgradeToPremium": "Subscribe to Premium",
+    "learnMore": "Learn More"
   },
   "errors": {
     "generic": "An error occurred. Please try again.",

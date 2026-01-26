@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Keyboard, Platform, TouchableWithoutFeedback } from 'react-native';
+import { Alert, Keyboard, Platform, TouchableWithoutFeedback, Text } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { useFeedback } from '@/utils/feedback';
 import { useCreateAbsence } from '@/features/absences/hooks/useAbsences';
 import { Button } from '@/components/Button';
+import { usePremiumFeatures } from '@/features/subscriptions';
 import {
   Container,
   Header,
@@ -44,6 +45,7 @@ export function AddAbsenceScreen() {
   const { showSuccess, showError } = useFeedback();
   const { theme, colorScheme } = useTheme();
   const createAbsenceMutation = useCreateAbsence();
+  const { hasJustifiedAbsences } = usePremiumFeatures();
   
   const initialDate = route.params?.date ? new Date(route.params.date) : new Date();
   
@@ -75,6 +77,25 @@ export function AddAbsenceScreen() {
   };
 
   const handleSave = async () => {
+    // Check premium access first
+    if (!hasJustifiedAbsences) {
+      Alert.alert(
+        t('profile.justifiedAbsencesPremiumTitle'),
+        t('profile.justifiedAbsencesPremiumMessage'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { 
+            text: t('profile.upgradeToPremium'), 
+            onPress: () => {
+              // TODO: Navigate to subscription screen
+              console.log('Navigate to subscription screen');
+            }
+          },
+        ]
+      );
+      return;
+    }
+
     if (!reason.trim()) {
       Alert.alert(t('common.error'), t('history.absenceReasonRequired'));
       return;
@@ -151,10 +172,32 @@ export function AddAbsenceScreen() {
           <BackButton onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={24} color={theme.text.primary} />
           </BackButton>
-          <HeaderTitle>{t('history.addAbsenceTitle')}</HeaderTitle>
+          <HeaderTitle>
+            {t('history.addAbsenceTitle')}
+            {!hasJustifiedAbsences && (
+              <Text style={{ fontSize: 12, color: theme.status.warning }}>
+                {' '}({t('profile.premiumFeature')})
+              </Text>
+            )}
+          </HeaderTitle>
         </Header>
 
         <Content>
+          {!hasJustifiedAbsences && (
+            <InputContainer>
+              <Text style={{ 
+                color: theme.status.warning, 
+                fontSize: 14, 
+                textAlign: 'center',
+                padding: 12,
+                backgroundColor: theme.background.secondary,
+                borderRadius: 8,
+                marginBottom: 8
+              }}>
+                ⭐ {t('profile.justifiedAbsencesPremiumMessage')}
+              </Text>
+            </InputContainer>
+          )}
           <InputContainer>
             <InputLabel>{t('history.absenceDate')}</InputLabel>
             <PickerButton onPress={openDatePicker}>

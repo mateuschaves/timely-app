@@ -70,6 +70,10 @@ export {
   usePurchase,
   useSubscriptionUser,
 } from './hooks/useSubscriptions';
+export {
+  usePremiumFeatures,
+  ENTITLEMENTS,
+} from './hooks/usePremiumFeatures';
 
 // Services
 export { revenueCatService } from './services/RevenueCatService';

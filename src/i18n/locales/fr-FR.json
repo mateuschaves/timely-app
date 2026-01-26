@@ -233,7 +233,15 @@
     "deleteAccountConfirmMessage": "Êtes-vous absolument sûr de vouloir supprimer votre compte ? Cette action est permanente et toutes vos données seront perdues.",
     "deleteAccountConfirmButton": "Oui, supprimer le compte",
     "deleteAccountError": "Erreur lors de la suppression du compte. Veuillez réessayer.",
-    "absences": "Justificatifs d'Absence"
+    "absences": "Justificatifs d'Absence",
+    "premiumFeature": "Fonctionnalité Premium",
+    "premiumRequired": "Abonnement Premium requis",
+    "geofencingPremiumTitle": "La détection automatique est Premium",
+    "geofencingPremiumMessage": "La détection automatique d'entrée/sortie du travail est une fonctionnalité premium. Abonnez-vous pour débloquer cette fonctionnalité et d'autres exclusives.",
+    "justifiedAbsencesPremiumTitle": "Les absences justifiées sont Premium",
+    "justifiedAbsencesPremiumMessage": "L'enregistrement des absences justifiées est une fonctionnalité premium. Abonnez-vous pour débloquer cette fonctionnalité et d'autres exclusives.",
+    "upgradeToPremium": "S'abonner à Premium",
+    "learnMore": "En savoir plus"
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",

@@ -229,7 +229,15 @@
     "deleteAccountConfirmTitle": "Confirmar exclusão",
     "deleteAccountConfirmMessage": "Tem certeza absoluta que deseja deletar sua conta? Esta ação é permanente e todos os seus dados serão perdidos.",
     "deleteAccountConfirmButton": "Sim, deletar conta",
-    "deleteAccountError": "Erro ao deletar conta. Tente novamente."
+    "deleteAccountError": "Erro ao deletar conta. Tente novamente.",
+    "premiumFeature": "Recurso Premium",
+    "premiumRequired": "Assinatura Premium Necessária",
+    "geofencingPremiumTitle": "Detecção Automática é Premium",
+    "geofencingPremiumMessage": "A detecção automática de entrada/saída no trabalho é um recurso premium. Assine para desbloquear este e outros recursos exclusivos.",
+    "justifiedAbsencesPremiumTitle": "Faltas Justificadas são Premium",
+    "justifiedAbsencesPremiumMessage": "Registrar faltas justificadas é um recurso premium. Assine para desbloquear este e outros recursos exclusivos.",
+    "upgradeToPremium": "Assinar Premium",
+    "learnMore": "Saiba Mais"
   },
   "errors": {
     "generic": "Ocorreu um erro. Tente novamente.",
