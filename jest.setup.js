@@ -1,6 +1,28 @@
 import '@testing-library/jest-native/extend-expect';
 import { jest } from '@jest/globals';
 
+// Mock @expo/vector-icons
+jest.mock('@expo/vector-icons', () => {
+  const React = require('react');
+  const MockIcon = (props: any) => React.createElement('Icon', props, props.children);
+  
+  return {
+    Ionicons: MockIcon,
+    MaterialIcons: MockIcon,
+    MaterialCommunityIcons: MockIcon,
+    FontAwesome: MockIcon,
+    FontAwesome5: MockIcon,
+    Feather: MockIcon,
+    AntDesign: MockIcon,
+    Entypo: MockIcon,
+    EvilIcons: MockIcon,
+    Foundation: MockIcon,
+    Octicons: MockIcon,
+    SimpleLineIcons: MockIcon,
+    Zocial: MockIcon,
+  };
+});
+
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => {
   const storage: Record<string, string> = {};
