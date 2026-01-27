@@ -75,6 +75,7 @@ class ExpoGeofencingModule extends NativeModule {
 // Create module instance with error handling
 let ExpoGeofencing: ExpoGeofencingModule;
 let geofencingFallbackWarned = false;
+let isNativeModuleAvailable = false;
 
 function warnFallback() {
   if (!geofencingFallbackWarned) {
@@ -90,6 +91,7 @@ try {
   if (!ExpoGeofencing || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
     throw new Error('ExpoGeofencing module methods not available');
   }
+  isNativeModuleAvailable = true;
 } catch {
   ExpoGeofencing = {
     startMonitoring: () => {
@@ -121,10 +123,13 @@ try {
 
 // Create event emitter for geofence events (only when native module is available)
 let emitter: EventEmitter | null = null;
-try {
-  emitter = new EventEmitter(ExpoGeofencing);
-} catch {
-  emitter = null;
+if (isNativeModuleAvailable) {
+  try {
+    emitter = new EventEmitter(ExpoGeofencing);
+  } catch (error) {
+    console.warn('[ExpoGeofencing] Failed to create event emitter:', error);
+    emitter = null;
+  }
 }
 
 export default ExpoGeofencing;
