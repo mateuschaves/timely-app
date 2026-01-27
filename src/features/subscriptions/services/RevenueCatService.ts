@@ -165,6 +165,25 @@ class RevenueCatService {
   }
 
   /**
+   * Add listener for customer info updates
+   * @param callback - Function to call when customer info is updated
+   * @returns Function to remove the listener
+   */
+  public addCustomerInfoUpdateListener(
+    callback: (customerInfo: CustomerInfo) => void
+  ): () => void {
+    try {
+      const listener = Purchases.addCustomerInfoUpdateListener(callback);
+      return () => {
+        listener.remove();
+      };
+    } catch (error) {
+      console.error('Failed to add customer info update listener:', error);
+      return () => {}; // Return no-op cleanup function
+    }
+  }
+
+  /**
    * Check if configured
    */
   public isSDKConfigured(): boolean {

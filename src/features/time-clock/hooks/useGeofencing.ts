@@ -15,6 +15,7 @@ import * as Notifications from 'expo-notifications';
 import { useTranslation } from '@/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '@/config/storage';
+import { usePremiumFeatures } from '@/features/subscriptions';
 
 const WORKPLACE_GEOFENCE_ID = 'workplace';
 const DEFAULT_GEOFENCE_RADIUS = 100; // 100 meters (fallback)
@@ -25,6 +26,7 @@ export function useGeofencing() {
   const [hasPermission, setHasPermission] = useState(false);
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { hasGeofencing } = usePremiumFeatures();
   
   // Track last processed events to prevent duplicates
   const lastProcessedEventsRef = useRef<{
@@ -107,6 +109,12 @@ export function useGeofencing() {
       return false;
     }
 
+    // Check premium access
+    if (!hasGeofencing) {
+      console.log('Geofencing requires premium subscription');
+      return false;
+    }
+
     if (!settings?.workLocation) {
       console.log('No workplace location configured');
       return false;
@@ -178,7 +186,7 @@ export function useGeofencing() {
       console.error('Error starting geofence monitoring:', error);
       return false;
     }
-  }, [isAvailable, settings?.workLocation, requestPermission]);
+  }, [isAvailable, hasGeofencing, settings?.workLocation, requestPermission]);
 
   /**
    * Stop monitoring workplace geofence
@@ -394,6 +402,7 @@ export function useGeofencing() {
     isAvailable,
     isMonitoring,
     hasPermission,
+    hasPremiumAccess: hasGeofencing,
     startMonitoring,
     stopMonitoring,
     requestPermission,

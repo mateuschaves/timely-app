@@ -2,6 +2,41 @@
 // Mock expo/src/winter/runtime.native module before Expo tries to load it
 jest.mock('expo/src/winter/runtime.native', () => ({}), { virtual: true });
 
+// Mock styled-components/native to handle TouchableOpacity and ScrollView
+jest.mock('styled-components/native', () => {
+  const React = require('react');
+  const RN = require('react-native');
+  
+  // Create a function that returns the component and adds styled-components API
+  const createStyledComponent = (Component) => {
+    const styledComponent = () => Component;
+    styledComponent.attrs = () => styledComponent;
+    styledComponent.withConfig = () => styledComponent;
+    return styledComponent;
+  };
+  
+  const styled = (component) => {
+    return createStyledComponent(component);
+  };
+  
+  // Add support for common React Native components
+  styled.View = createStyledComponent(RN.View);
+  styled.Text = createStyledComponent(RN.Text);
+  styled.TouchableOpacity = createStyledComponent(RN.TouchableOpacity);
+  styled.ScrollView = createStyledComponent(RN.ScrollView);
+  styled.Image = createStyledComponent(RN.Image);
+  styled.TextInput = createStyledComponent(RN.TextInput);
+  
+  // Mock ThemeProvider
+  const ThemeProvider = ({ children, theme }) => React.createElement(React.Fragment, null, children);
+  
+  return {
+    __esModule: true,
+    default: styled,
+    ThemeProvider: ThemeProvider,
+  };
+});
+
 // Mock TextDecoder and TextEncoder (Node.js built-in)
 if (typeof global.TextDecoder === 'undefined') {
   try {

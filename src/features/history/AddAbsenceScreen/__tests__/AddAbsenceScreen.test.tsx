@@ -68,7 +68,13 @@ describe('AddAbsenceScreen', () => {
     expect(getByText(/justificativa|absence/i)).toBeTruthy();
   });
 
-  it('should show error when reason is empty', async () => {
+  it('should navigate to paywall when trying to save without premium access', async () => {
+    const mockNavigate = jest.fn();
+    require('@react-navigation/native').useNavigation = jest.fn(() => ({
+      navigate: mockNavigate,
+      goBack: mockGoBack,
+    }));
+
     const TestWrapper = createTestWrapper();
     const { getByText } = render(
       <TestWrapper>
@@ -80,7 +86,7 @@ describe('AddAbsenceScreen', () => {
     fireEvent.press(saveButton);
 
     await waitFor(() => {
-      expect(Alert.alert).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('Paywall', { feature: 'justified_absences' });
     });
 
     expect(mockMutate).not.toHaveBeenCalled();

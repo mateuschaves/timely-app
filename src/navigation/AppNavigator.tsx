@@ -4,6 +4,7 @@ import { BottomTabNavigator } from './BottomTabNavigator';
 import { LanguageScreen, AppearanceScreen, EditNameScreen, WorkSettingsScreen, WorkplaceLocationScreen, PrivacyAndSecurityScreen, DeleteAccountScreen } from '@/features/profile';
 import { EditEventScreen, ReportPreviewScreen, AddAbsenceScreen } from '@/features/history';
 import { AbsencesListScreen } from '@/features/absences';
+import { PaywallScreen } from '@/features/subscriptions';
 
 export type AppStackParamList = {
   Main: undefined;
@@ -18,6 +19,7 @@ export type AppStackParamList = {
   ReportPreview: { startDate: string; endDate: string; monthLabel?: string };
   AddAbsence: { date?: string };
   AbsencesList: undefined;
+  Paywall: { feature?: 'geofencing' | 'justified_absences' };
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -116,6 +118,14 @@ export function AppNavigator() {
         options={{
           presentation: 'card',
           animation: 'slide_from_right',
+        }}
+      />
+      <Stack.Screen
+        name="Paywall"
+        component={PaywallScreen}
+        options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
         }}
       />
     </Stack.Navigator>

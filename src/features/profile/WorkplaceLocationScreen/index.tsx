@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { AppStackParamList } from '@/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/theme/context/ThemeContext';
 import { useGeofencing } from '@/features/time-clock/hooks/useGeofencing';
@@ -16,6 +18,7 @@ import { STORAGE_KEYS } from '@/config/storage';
 import { MapPreview } from './MapPreview';
 import { spacing } from '@/theme';
 import { Button } from '@/components/Button';
+import { usePremiumFeatures } from '@/features/subscriptions';
 import {
   Container,
   Content,
@@ -38,16 +41,18 @@ import {
 } from './styles';
 
 export function WorkplaceLocationScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<AppStackParamList>>();
   const { theme } = useTheme();
   const { showSuccess, showError } = useFeedback();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  const { hasGeofencing } = usePremiumFeatures();
 
   const {
     isAvailable,
     isMonitoring,
     hasPermission,
+    hasPremiumAccess,
     startMonitoring,
     stopMonitoring,
     requestPermission,
@@ -98,8 +103,8 @@ export function WorkplaceLocationScreen() {
 
       if (!location) {
         Alert.alert(
-          'Permissão necessária',
-          'Precisamos da permissão de localização para definir o local de trabalho.'
+          t('profile.permissionRequired'),
+          t('profile.locationPermissionRequired')
         );
         return;
       }
@@ -121,12 +126,12 @@ export function WorkplaceLocationScreen() {
         await startMonitoring();
       } else {
         Alert.alert(
-          'Permissão adicional necessária',
-          'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização. Você pode habilitar isso nas configurações do dispositivo.',
+          t('profile.additionalPermissionRequired'),
+          t('profile.alwaysLocationPermissionForBackground'),
           [
-            { text: 'Agora não', style: 'cancel' },
+            { text: t('profile.notNow'), style: 'cancel' },
             {
-              text: 'Abrir Configurações',
+              text: t('profile.openSettings'),
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
@@ -138,7 +143,7 @@ export function WorkplaceLocationScreen() {
       }
     } catch (error) {
       console.error('Error setting workplace location:', error);
-      showError('Erro ao definir localização do trabalho');
+      showError(t('profile.errorSettingLocation'));
     } finally {
       setIsSetting(false);
     }
@@ -171,12 +176,12 @@ export function WorkplaceLocationScreen() {
         await startMonitoring();
       } else {
         Alert.alert(
-          'Permissão adicional necessária',
-          'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização. Você pode habilitar isso nas configurações do dispositivo.',
+          t('profile.additionalPermissionRequired'),
+          t('profile.alwaysLocationPermissionForBackground'),
           [
-            { text: 'Agora não', style: 'cancel' },
+            { text: t('profile.notNow'), style: 'cancel' },
             {
-              text: 'Abrir Configurações',
+              text: t('profile.openSettings'),
               onPress: () => {
                 if (Platform.OS === 'ios') {
                   Linking.openURL('app-settings:');
@@ -190,13 +195,19 @@ export function WorkplaceLocationScreen() {
       setShowMapPicker(false);
     } catch (error) {
       console.error('Error saving workplace location:', error);
-      showError('Erro ao salvar localização do trabalho');
+      showError(t('profile.errorSavingLocation'));
     } finally {
       setIsSetting(false);
     }
   }, [selectedLocation, selectedRadius, updateSettingsMutation, requestPermission, startMonitoring, showError]);
 
   const handleToggleMonitoring = useCallback(async () => {
+    // Check premium access first
+    if (!hasGeofencing) {
+      navigation.navigate('Paywall', { feature: 'geofencing' });
+      return;
+    }
+
     if (isMonitoring) {
       stopMonitoring();
       showSuccess(t('profile.geofenceDeactivated'));
@@ -205,8 +216,8 @@ export function WorkplaceLocationScreen() {
         const granted = await requestPermission();
         if (!granted) {
           Alert.alert(
-            'Permissão necessária',
-            'Precisamos da permissão "Sempre" de localização para detectar quando você chega ao trabalho com o app fechado.'
+            t('profile.permissionRequired'),
+            t('profile.alwaysLocationPermissionMessage')
           );
           return;
         }
@@ -219,7 +230,7 @@ export function WorkplaceLocationScreen() {
         showError(t('profile.geofenceActivationError'));
       }
     }
-  }, [isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
+  }, [hasGeofencing, navigation, isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
 
   if (!isAvailable) {
     return (
@@ -228,14 +239,13 @@ export function WorkplaceLocationScreen() {
           <BackButton onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
           </BackButton>
-          <HeaderTitle>Localização do Trabalho</HeaderTitle>
+          <HeaderTitle>{t('profile.workplaceLocationTitle')}</HeaderTitle>
         </Header>
         <Content>
           <WarningBox>
             <Ionicons name="information-circle" size={24} color={theme.status.warning} />
             <WarningText>
-              Detecção automática de chegada ao trabalho não está disponível neste dispositivo.
-              Este recurso requer iOS.
+              {t('profile.workplaceLocationNotAvailable')}
             </WarningText>
           </WarningBox>
         </Content>
@@ -249,16 +259,31 @@ export function WorkplaceLocationScreen() {
         <BackButton onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={theme.text.primary} />
         </BackButton>
-        <HeaderTitle>Localização do Trabalho</HeaderTitle>
+        <HeaderTitle>{t('profile.workplaceLocationTitle')}</HeaderTitle>
       </Header>
 
       <Content>
         <Section>
-          <SectionTitle>Detecção Automática</SectionTitle>
+          <SectionTitle>
+            {t('profile.automaticDetectionTitle')}
+            {!hasGeofencing && (
+              <Text style={{ fontSize: 12, color: theme.status.warning, marginLeft: 8 }}>
+                ({t('profile.premiumFeature')})
+              </Text>
+            )}
+          </SectionTitle>
           <SectionDescription>
-            Configure o local de trabalho para ser notificado automaticamente quando chegar ou sair,
-            mesmo com o aplicativo fechado.
+            {t('profile.automaticDetectionDescription')}
           </SectionDescription>
+
+          {!hasGeofencing && (
+            <WarningBox style={{ marginBottom: 16 }}>
+              <Ionicons name="star" size={20} color={theme.status.warning} />
+              <WarningText>
+                {t('profile.geofencingPremiumMessage')}
+              </WarningText>
+            </WarningBox>
+          )}
 
           <Card>
             {workplaceLocation ? (
@@ -278,7 +303,7 @@ export function WorkplaceLocationScreen() {
               <Row>
                 <Label>Status</Label>
                 <StatusBadge active={false}>
-                  <StatusText active={false}>Inativo</StatusText>
+                  <StatusText active={false}>{t('profile.inactive')}</StatusText>
                 </StatusBadge>
               </Row>
             )}
@@ -286,7 +311,7 @@ export function WorkplaceLocationScreen() {
             {workplaceLocation && (
               <>
                 <Row style={{ marginTop: 16 }}>
-                  <Label>Localização Salva</Label>
+                  <Label>{t('profile.locationSaved')}</Label>
                   <Ionicons name="checkmark-circle" size={20} color={theme.status.success} />
                 </Row>
                 <MapPreview
@@ -297,7 +322,7 @@ export function WorkplaceLocationScreen() {
                 {storedRadius && (
                   <View style={{ marginTop: spacing.sm }}>
                     <Text style={[styles.radiusText, { color: theme.text.secondary }]}>
-                      Raio de detecção: {storedRadius}m
+                      {t('profile.detectionRadiusMeters', { radius: storedRadius })}
                     </Text>
                   </View>
                 )}
@@ -308,7 +333,7 @@ export function WorkplaceLocationScreen() {
               <WarningBox style={{ marginTop: 16 }}>
                 <Ionicons name="alert-circle" size={20} color={theme.status.warning} />
                 <WarningText>
-                  Nenhuma localização configurada. Defina a localização do trabalho para ativar a detecção automática.
+                  {t('profile.noLocationConfigured')}
                 </WarningText>
               </WarningBox>
             )}
@@ -316,14 +341,14 @@ export function WorkplaceLocationScreen() {
 
           {!workplaceLocation ? (
             <Button
-              title="Definir Localização"
+              title={t('profile.setLocation')}
               onPress={() => setShowMapPicker(true)}
               disabled={isSetting || isLoadingLocation}
               isLoading={isSetting || isLoadingLocation}
             />
           ) : (
             <Button
-              title="Atualizar Localização"
+              title={t('profile.updateLocation')}
               variant="secondary"
               onPress={() => setShowMapPicker(true)}
               disabled={isSetting || isLoadingLocation}
@@ -333,14 +358,10 @@ export function WorkplaceLocationScreen() {
         </Section>
 
         <Section>
-          <SectionTitle>Como Funciona</SectionTitle>
+          <SectionTitle>{t('profile.howItWorksTitle')}</SectionTitle>
           <Card>
             <SectionDescription>
-              1. Defina a localização do seu trabalho{'\n'}
-              2. Ative a detecção automática{'\n'}
-              3. Quando você chegar ou sair do trabalho, receberá uma notificação para registrar o ponto{'\n'}
-              4. Toque na notificação para confirmar e registrar{'\n\n'}
-              ⚠️ Para funcionar com o app fechado, é necessário conceder permissão "Sempre" de localização.
+              {t('profile.howItWorksDescription')}
             </SectionDescription>
           </Card>
         </Section>
@@ -349,8 +370,7 @@ export function WorkplaceLocationScreen() {
           <WarningBox>
             <Ionicons name="alert-circle" size={24} color={theme.status.warning} />
             <WarningText>
-              Permissão "Sempre" de localização não concedida. A detecção automática não funcionará com o app fechado.
-              Habilite nas configurações do dispositivo.
+              {t('profile.alwaysPermissionNotGranted')}
             </WarningText>
           </WarningBox>
         )}
@@ -389,12 +409,12 @@ export function WorkplaceLocationScreen() {
                 await startMonitoring();
               } else {
                 Alert.alert(
-                  'Permissão adicional necessária',
-                  'Para detectar automaticamente quando você chega ao trabalho com o app fechado, precisamos da permissão "Sempre" de localização.',
+                  t('profile.additionalPermissionRequired'),
+                  t('profile.alwaysLocationPermissionForBackground'),
                   [
-                    { text: 'Agora não', style: 'cancel' },
+                    { text: t('profile.notNow'), style: 'cancel' },
                     {
-                      text: 'Abrir Configurações',
+                      text: t('profile.openSettings'),
                       onPress: () => {
                         if (Platform.OS === 'ios') {
                           Linking.openURL('app-settings:');
@@ -406,7 +426,7 @@ export function WorkplaceLocationScreen() {
               }
             } catch (error) {
               console.error('Error saving workplace location:', error);
-              showError('Erro ao salvar localização do trabalho');
+              showError(t('profile.errorSavingLocation'));
             } finally {
               setIsSetting(false);
             }
