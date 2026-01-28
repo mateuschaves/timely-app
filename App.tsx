@@ -64,12 +64,13 @@ function NavigationContent() {
   const { handleDeeplink, clock } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
-  const { startMonitoring } = useGeofencing();
+  const { isMonitoring, startMonitoring } = useGeofencing();
   useNotifications();
 
   const lastProcessedUrl = useRef<string | null>(null);
   const isProcessingRef = useRef(false);
   const initialUrlChecked = useRef(false);
+  const geofencingInitialized = useRef(false);
 
   // Define processDeeplink as a useCallback so it can be used in multiple effects
   const processDeeplink = useCallback(async (url: string) => {
@@ -162,23 +163,35 @@ function NavigationContent() {
     return () => subscription.remove();
   }, [isAuthenticated, processDeeplink]);
 
-  // Initialize geofencing when authenticated
+  // Re-initialize geofencing if it was previously active
+  // This ensures monitoring resumes when app reopens if user had it enabled
+  // Note: The native module may still be monitoring in background, but we need to
+  // re-establish event listeners and app-side state when the app launches
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || geofencingInitialized.current) return;
 
-    const initGeofencing = async () => {
-      try {
-        await startMonitoring();
-      } catch (error) {
-        console.error('Error initializing geofencing:', error);
-      }
-    };
+    // Only re-start monitoring if it was already active in the native module
+    // isMonitoring is retrieved from the native module by useGeofencing hook
+    if (isMonitoring) {
+      geofencingInitialized.current = true;
+      
+      const initGeofencing = async () => {
+        try {
+          await startMonitoring();
+          console.log('✅ Resumed geofencing monitoring on app start');
+        } catch (error) {
+          console.error('Error resuming geofencing:', error);
+        }
+      };
 
-    // Delay initialization slightly to allow app to fully load
-    setTimeout(() => {
-      initGeofencing();
-    }, 2000);
-  }, [isAuthenticated, startMonitoring]);
+      // Delay initialization slightly to allow app to fully load
+      const timeoutId = setTimeout(() => {
+        initGeofencing();
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isAuthenticated, isMonitoring, startMonitoring]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
