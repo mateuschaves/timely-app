@@ -64,7 +64,6 @@ function NavigationContent() {
   const { handleDeeplink, clock } = useTimeClock();
   const { nextAction } = useLastEvent();
   const navigation = useNavigation<any>();
-  const { startMonitoring } = useGeofencing();
   useNotifications();
 
   const lastProcessedUrl = useRef<string | null>(null);
@@ -161,24 +160,6 @@ function NavigationContent() {
 
     return () => subscription.remove();
   }, [isAuthenticated, processDeeplink]);
-
-  // Initialize geofencing when authenticated
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const initGeofencing = async () => {
-      try {
-        await startMonitoring();
-      } catch (error) {
-        console.error('Error initializing geofencing:', error);
-      }
-    };
-
-    // Delay initialization slightly to allow app to fully load
-    setTimeout(() => {
-      initGeofencing();
-    }, 2000);
-  }, [isAuthenticated, startMonitoring]);
 
   useEffect(() => {
     if (!isAuthenticated) return;
