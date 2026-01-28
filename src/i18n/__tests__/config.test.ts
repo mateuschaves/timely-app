@@ -17,6 +17,7 @@ describe('i18n config', () => {
     expect(SUPPORTED_LANGUAGES).toContain('en-US');
     expect(SUPPORTED_LANGUAGES).toContain('fr-FR');
     expect(SUPPORTED_LANGUAGES).toContain('de-DE');
+    expect(SUPPORTED_LANGUAGES).toContain('es-ES');
   });
 
   it('should export LANGUAGE_MAP', () => {
@@ -24,6 +25,7 @@ describe('i18n config', () => {
     expect(LANGUAGE_MAP.en).toBe('en-US');
     expect(LANGUAGE_MAP.fr).toBe('fr-FR');
     expect(LANGUAGE_MAP.de).toBe('de-DE');
+    expect(LANGUAGE_MAP.es).toBe('es-ES');
   });
 
   it('should export DEFAULT_LANGUAGE', () => {
@@ -36,6 +38,7 @@ describe('i18n config', () => {
       expect(LANGUAGE_MAP['en']).toBe('en-US');
       expect(LANGUAGE_MAP['fr']).toBe('fr-FR');
       expect(LANGUAGE_MAP['de']).toBe('de-DE');
+      expect(LANGUAGE_MAP['es']).toBe('es-ES');
     });
 
     it('should have default language', () => {
