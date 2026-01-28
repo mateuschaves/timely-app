@@ -8,10 +8,11 @@ import ptBR from './locales/pt-BR.json';
 import enUS from './locales/en-US.json';
 import frFR from './locales/fr-FR.json';
 import deDE from './locales/de-DE.json';
+import esES from './locales/es-ES.json';
 
 import { STORAGE_KEYS } from '@/config/storage';
 
-export const SUPPORTED_LANGUAGES = ['pt-BR', 'en-US', 'fr-FR', 'de-DE'] as const;
+export const SUPPORTED_LANGUAGES = ['pt-BR', 'en-US', 'fr-FR', 'de-DE', 'es-ES'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
 
 export const LANGUAGE_MAP: Record<string, SupportedLanguage> = {
@@ -19,6 +20,7 @@ export const LANGUAGE_MAP: Record<string, SupportedLanguage> = {
   'fr': 'fr-FR',
   'de': 'de-DE',
   'en': 'en-US',
+  'es': 'es-ES',
 };
 
 export const DEFAULT_LANGUAGE: SupportedLanguage = 'en-US';
@@ -57,6 +59,9 @@ i18n
       },
       'de-DE': {
         translation: deDE,
+      },
+      'es-ES': {
+        translation: esES,
       },
     },
     lng: getInitialLanguage(),

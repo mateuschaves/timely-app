@@ -33,6 +33,7 @@ export function LanguageScreen() {
     { value: 'en-US', label: t('profile.languageEnglish') },
     { value: 'fr-FR', label: t('profile.languageFrench') },
     { value: 'de-DE', label: t('profile.languageGerman') },
+    { value: 'es-ES', label: t('profile.languageSpanish') },
   ];
 
   const handleLanguageChange = (language: LanguageOption) => {

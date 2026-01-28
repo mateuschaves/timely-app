@@ -106,6 +106,8 @@ export function ProfileScreen() {
         return t('profile.languageFrench');
       case 'de-DE':
         return t('profile.languageGerman');
+      case 'es-ES':
+        return t('profile.languageSpanish');
       default:
         return t('profile.languageSystem');
     }

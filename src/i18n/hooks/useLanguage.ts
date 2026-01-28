@@ -5,7 +5,7 @@ import { Platform, NativeModules } from 'react-native';
 import { i18n, SUPPORTED_LANGUAGES, LANGUAGE_MAP, DEFAULT_LANGUAGE, SupportedLanguage } from '@/i18n/config';
 import { STORAGE_KEYS } from '@/config/storage';
 
-export type LanguageOption = 'pt-BR' | 'en-US' | 'fr-FR' | 'de-DE' | 'system';
+export type LanguageOption = 'pt-BR' | 'en-US' | 'fr-FR' | 'de-DE' | 'es-ES' | 'system';
 
 export function useLanguage() {
   const [currentLanguage, setCurrentLanguage] = useState<LanguageOption>('system');
