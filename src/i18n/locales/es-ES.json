@@ -220,7 +220,7 @@
     "automaticDetectionTitle": "Detección Automática",
     "automaticDetectionDescription": "Configure la ubicación de su lugar de trabajo para recibir notificaciones automáticamente cuando llegue o salga, incluso con la aplicación cerrada.",
     "howItWorksTitle": "Cómo Funciona",
-    "howItWorksDescription": "1. Establezca la ubicación de su lugar de trabajo\\n2. Active la detección automática\\n3. Cuando llegue o salga del trabajo, recibirá una notificación para fichar entrada/salida\\n4. Pulse la notificación para confirmar y registrar\\n\\n⚠️ Para funcionar con la aplicación cerrada, debe conceder el permiso de ubicación \"Siempre\".",
+    "howItWorksDescription": "1. Establezca la ubicación de su lugar de trabajo\n2. Active la detección automática\n3. Cuando llegue o salga del trabajo, recibirá una notificación para fichar entrada/salida\n4. Pulse la notificación para confirmar y registrar\n\n⚠️ Para funcionar con la aplicación cerrada, debe conceder el permiso de ubicación \"Siempre\".",
     "alwaysPermissionNotGranted": "Permiso de ubicación \"Siempre\" no concedido. La detección automática no funcionará con la aplicación cerrada. Actívelo en la configuración del dispositivo.",
     "locationPermissionRequired": "Necesitamos el permiso de ubicación para establecer la ubicación del lugar de trabajo.",
     "errorSettingLocation": "Error al establecer la ubicación del lugar de trabajo",

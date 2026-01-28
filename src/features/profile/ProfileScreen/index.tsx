@@ -58,7 +58,7 @@ export function ProfileScreen() {
           await fetchUserMe();
 
           const savedLanguage = await AsyncStorage.getItem(STORAGE_KEYS.LANGUAGE);
-          if (savedLanguage === 'system' || (savedLanguage && ['pt-BR', 'en-US', 'fr-FR', 'de-DE'].includes(savedLanguage))) {
+          if (savedLanguage === 'system' || (savedLanguage && ['pt-BR', 'en-US', 'fr-FR', 'de-DE', 'es-ES'].includes(savedLanguage))) {
             setCurrentLanguage(savedLanguage as LanguageOption);
           } else {
             setCurrentLanguage('system');
