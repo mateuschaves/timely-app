@@ -13,7 +13,6 @@ import { useOnboarding } from './src/features/onboarding';
 import { FeedbackProvider } from './src/utils/feedback';
 import { ThemeProvider, ThemeWrapper } from './src/theme';
 import { useTimeClock } from './src/features/time-clock/hooks/useTimeClock';
-import { useGeofencing } from './src/features/time-clock/hooks/useGeofencing';
 import { useLastEvent } from './src/features/home/hooks/useLastEvent';
 import { useNotifications } from './src/hooks/useNotifications';
 import * as Notifications from 'expo-notifications';
