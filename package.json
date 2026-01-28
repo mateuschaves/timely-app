@@ -37,7 +37,6 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@revenuecat/purchases-typescript-internal-esm": "^17.28.1",
-    "@sentry/react-native": "^7.10.0",
     "@tanstack/react-query": "^5.56.0",
     "axios": "^1.6.5",
     "date-fns": "^4.1.0",

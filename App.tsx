@@ -26,9 +26,6 @@ import './src/i18n/config';
 // Previne que a splash screen seja escondida automaticamente
 SplashScreen.preventAutoHideAsync();
 
-// Inicializa o Sentry
-initSentry();
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -338,6 +335,11 @@ function Navigation() {
 }
 
 function AppContent() {
+  // Inicializa o Sentry quando o app é montado
+  useEffect(() => {
+    initSentry();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -353,4 +355,4 @@ function AppContent() {
   );
 }
 
-export default Sentry.wrap(AppContent);
+export default Sentry.Native.wrap(AppContent);

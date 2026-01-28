@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native';
+import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
 
 export const initSentry = () => {
@@ -7,7 +7,9 @@ export const initSentry = () => {
   
   // Só inicializa o Sentry se tiver um DSN configurado
   if (!SENTRY_DSN) {
-    console.log('Sentry DSN não configurado. Sentry não será inicializado.');
+    if (__DEV__) {
+      console.log('Sentry DSN não configurado. Sentry não será inicializado.');
+    }
     return;
   }
 
@@ -19,15 +21,18 @@ export const initSentry = () => {
     environment: __DEV__ ? 'development' : 'production',
     // Define a versão da release
     release: `timely-app@${Constants.expoConfig?.version || '1.0.0'}`,
-    // Define o percentual de transações para performance monitoring
-    tracesSampleRate: 1.0,
+    // Define o percentual de transações para performance monitoring (10%)
+    // Ajuste conforme necessário para balancear visibilidade e custos
+    tracesSampleRate: __DEV__ ? 1.0 : 0.1,
     // Habilita auto session tracking
     enableAutoSessionTracking: true,
-    // Session tracking timeout (em segundos)
+    // Session tracking interval (30000ms = 30 segundos)
     sessionTrackingIntervalMillis: 30000,
   });
 
-  console.log('Sentry inicializado com sucesso');
+  if (__DEV__) {
+    console.log('Sentry inicializado com sucesso');
+  }
 };
 
 // Exporta o Sentry para uso em outros lugares da aplicação

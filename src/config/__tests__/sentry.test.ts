@@ -1,8 +1,10 @@
 // Mock Sentry before importing
 let mockSentryInit = jest.fn();
-jest.mock('@sentry/react-native', () => ({
+jest.mock('sentry-expo', () => ({
   init: mockSentryInit,
-  wrap: jest.fn((component) => component),
+  Native: {
+    wrap: jest.fn((component) => component),
+  },
 }));
 
 // Mock expo-constants
@@ -37,6 +39,7 @@ describe('sentry', () => {
 
   it('should not initialize Sentry when DSN is not configured', () => {
     mockExpoConfig.extra.sentryDsn = '';
+    global.__DEV__ = true; // Set to dev mode to see console.log
     
     const { initSentry } = require('../sentry');
     const consoleSpy = jest.spyOn(console, 'log');
@@ -63,11 +66,12 @@ describe('sentry', () => {
       enabled: true,
       environment: 'production',
       release: 'timely-app@1.0.0',
-      tracesSampleRate: 1.0,
+      tracesSampleRate: 0.1, // 10% in production
       enableAutoSessionTracking: true,
       sessionTrackingIntervalMillis: 30000,
     });
-    expect(consoleSpy).toHaveBeenCalledWith('Sentry inicializado com sucesso');
+    // No console.log in production
+    expect(consoleSpy).not.toHaveBeenCalled();
     
     consoleSpy.mockRestore();
   });
@@ -84,6 +88,7 @@ describe('sentry', () => {
       expect.objectContaining({
         enabled: false,
         environment: 'development',
+        tracesSampleRate: 1.0, // 100% in development
       })
     );
   });

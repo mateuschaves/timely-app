@@ -13,7 +13,9 @@ Este projeto está configurado para usar o Sentry para monitoramento de erros e 
 
 ### 2. Configurar o DSN
 
-Adicione o DSN do Sentry no arquivo `app.json`:
+**IMPORTANTE:** Nunca commite o DSN real no repositório. O arquivo `app.json` deve manter o `sentryDsn` vazio no repositório.
+
+Para desenvolvimento local ou testes, você pode adicionar temporariamente o DSN no arquivo `app.json`:
 
 ```json
 {
@@ -25,7 +27,7 @@ Adicione o DSN do Sentry no arquivo `app.json`:
 }
 ```
 
-**Importante:** Para segurança, é recomendado usar variáveis de ambiente em produção através do EAS Build:
+**Para produção, use SEMPRE variáveis de ambiente através do EAS Build:**
 
 ```json
 {
@@ -73,7 +75,11 @@ O Sentry está configurado para capturar automaticamente:
 O Sentry está configurado com:
 - Tracking de navegação automático
 - Session tracking
-- Performance monitoring com 100% de sample rate
+- Performance monitoring com taxa de amostragem configurável:
+  - **Desenvolvimento**: 100% (`tracesSampleRate: 1.0`)
+  - **Produção**: 10% (`tracesSampleRate: 0.1`)
+
+**Importante sobre custos:** A taxa de amostragem de 10% em produção ajuda a balancear visibilidade e custos. Se você tem muito tráfego ou quer reduzir custos, considere diminuir para 0.05 (5%) ou 0.01 (1%). Para mais informações sobre precificação, consulte a [documentação do Sentry sobre Performance Monitoring](https://docs.sentry.io/product/performance/).
 
 ### Ambientes
 
