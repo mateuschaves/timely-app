@@ -19,11 +19,15 @@ import { useNotifications } from './src/hooks/useNotifications';
 import * as Notifications from 'expo-notifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
+import { initSentry, Sentry } from './src/config/sentry';
 import './src/config/reactotron.d';
 import './src/i18n/config';
 
 // Previne que a splash screen seja escondida automaticamente
 SplashScreen.preventAutoHideAsync();
+
+// Inicializa o Sentry
+initSentry();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -333,7 +337,7 @@ function Navigation() {
   );
 }
 
-export default function App() {
+function AppContent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -348,3 +352,5 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+export default Sentry.wrap(AppContent);
