@@ -1,10 +1,10 @@
 import * as Sentry from '@sentry/react-native';
 import Constants from 'expo-constants';
 
-// Sentry DSN - Em produção, deve ser configurado via variável de ambiente
-const SENTRY_DSN = Constants.expoConfig?.extra?.sentryDsn || '';
-
 export const initSentry = () => {
+  // Lê o DSN do Sentry da configuração
+  const SENTRY_DSN = Constants.expoConfig?.extra?.sentryDsn || '';
+  
   // Só inicializa o Sentry se tiver um DSN configurado
   if (!SENTRY_DSN) {
     console.log('Sentry DSN não configurado. Sentry não será inicializado.');
