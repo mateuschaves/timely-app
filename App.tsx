@@ -19,6 +19,7 @@ import { useNotifications } from './src/hooks/useNotifications';
 import * as Notifications from 'expo-notifications';
 import { setupReactotron } from './src/config/reactotron';
 import { STORAGE_KEYS } from './src/config/storage';
+import { initSentry, Sentry } from './src/config/sentry';
 import './src/config/reactotron.d';
 import './src/i18n/config';
 
@@ -346,7 +347,12 @@ function Navigation() {
   );
 }
 
-export default function App() {
+function AppContent() {
+  // Inicializa o Sentry quando o app é montado
+  useEffect(() => {
+    initSentry();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -361,3 +367,5 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+export default Sentry.Native.wrap(AppContent);
