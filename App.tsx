@@ -86,9 +86,10 @@ function NavigationContent() {
   }
 
   // Show onboarding if user is authenticated but hasn't completed onboarding
-  if (isAuthenticated && !isOnboardingCompleted) {
-    return <OnboardingNavigator />;
-  }
+  // TEMPORARILY DISABLED
+  // if (isAuthenticated && !isOnboardingCompleted) {
+  //   return <OnboardingNavigator />;
+  // }
 
   return (
     <>
