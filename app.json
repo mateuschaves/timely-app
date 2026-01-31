@@ -35,7 +35,6 @@
     "plugins": [
       "expo-apple-authentication",
       "expo-localization",
-      "sentry-expo",
       [
         "expo-updates",
         {

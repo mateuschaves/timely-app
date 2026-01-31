@@ -106,3 +106,5 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli*.bak
+
+.env.local

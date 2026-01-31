@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -12,17 +12,21 @@ import {
   Container,
   Content,
   Header,
-  HeaderTitle,
   BackButton,
   CloseButton,
   HeroSection,
+  HeroIcon,
+  HeroEmoji,
   HeroTitle,
   HeroSubtitle,
-  FeaturesSection,
+  FeaturesContainer,
   FeatureItem,
-  FeatureIcon,
-  FeatureText,
-  PackagesSection,
+  FeatureCheckIcon,
+  FeatureTextContainer,
+  FeatureTitle,
+  FeatureSubtitle,
+  PackagesSectionContainer,
+  PackagesRow,
   PackageCard,
   PackageHeader,
   PackageName,
@@ -30,6 +34,7 @@ import {
   PackagePriceUnit,
   PackageDescription,
   PackageHighlight,
+  PackageHighlightText,
   ButtonContainer,
   RestoreButton,
   RestoreButtonText,
@@ -62,20 +67,34 @@ export function PaywallScreen() {
     {
       icon: 'location' as const,
       text: t('subscriptions.featureGeofencing'),
+      description: t('subscriptions.featureGeofencingDesc'),
     },
     {
       icon: 'calendar' as const,
       text: t('subscriptions.featureJustifiedAbsences'),
+      description: t('subscriptions.featureJustifiedAbsencesDesc'),
     },
     {
       icon: 'analytics' as const,
       text: t('subscriptions.featureAdvancedReports'),
-    },
-    {
-      icon: 'cloud-upload' as const,
-      text: t('subscriptions.featureCloudBackup'),
+      description: t('subscriptions.featureAdvancedReportsDesc'),
     },
   ];
+
+  useEffect(() => {
+    if (packages.length === 0) {
+      return;
+    }
+
+    const selectedStillExists = selectedPackage
+      ? packages.some((pkg) => pkg.identifier === selectedPackage.identifier)
+      : false;
+
+    if (!selectedPackage || !selectedStillExists) {
+      const annualPackage = packages.find((pkg) => pkg.packageType === 'ANNUAL');
+      setSelectedPackage(annualPackage ?? packages[0]);
+    }
+  }, [packages, selectedPackage]);
 
   const handlePurchase = async () => {
     if (!selectedPackage) {
@@ -164,10 +183,9 @@ export function PaywallScreen() {
           <CloseButton onPress={() => navigation.goBack()}>
             <Ionicons name="close" size={24} color={theme.text.primary} />
           </CloseButton>
-          <HeaderTitle>{t('subscriptions.title')}</HeaderTitle>
         </Header>
         <LoadingContainer>
-          <ActivityIndicator size="large" color={theme.colors.primary} />
+          <ActivityIndicator size="large" color={theme.primary} />
         </LoadingContainer>
       </Container>
     );
@@ -180,7 +198,6 @@ export function PaywallScreen() {
           <CloseButton onPress={() => navigation.goBack()}>
             <Ionicons name="close" size={24} color={theme.text.primary} />
           </CloseButton>
-          <HeaderTitle>{t('subscriptions.title')}</HeaderTitle>
         </Header>
         <ErrorContainer>
           <Ionicons name="alert-circle" size={48} color={theme.status.error} />
@@ -196,44 +213,52 @@ export function PaywallScreen() {
         <CloseButton onPress={() => navigation.goBack()}>
           <Ionicons name="close" size={24} color={theme.text.primary} />
         </CloseButton>
-        <HeaderTitle>{t('subscriptions.title')}</HeaderTitle>
       </Header>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <Content>
           <HeroSection>
+            <HeroIcon>
+              <HeroEmoji>⏰</HeroEmoji>
+            </HeroIcon>
             <HeroTitle>{t('subscriptions.heroTitle')}</HeroTitle>
             <HeroSubtitle>{t('subscriptions.heroSubtitle')}</HeroSubtitle>
           </HeroSection>
 
-          <FeaturesSection>
+          <FeaturesContainer>
             {features.map((feature, index) => (
               <FeatureItem key={index}>
-                <FeatureIcon>
-                  <Ionicons name={feature.icon} size={24} color={theme.colors.primary} />
-                </FeatureIcon>
-                <FeatureText>{feature.text}</FeatureText>
+                <FeatureCheckIcon>
+                  <Ionicons name="checkmark" size={20} color={theme.secondary} />
+                </FeatureCheckIcon>
+                <FeatureTextContainer>
+                  <FeatureTitle>{feature.text}</FeatureTitle>
+                  <FeatureSubtitle>{feature.description || ''}</FeatureSubtitle>
+                </FeatureTextContainer>
               </FeatureItem>
             ))}
-          </FeaturesSection>
+          </FeaturesContainer>
 
-          <PackagesSection>
-            {packages.map((pkg) => (
-              <PackageCard
-                key={pkg.identifier}
-                isSelected={selectedPackage?.identifier === pkg.identifier}
-                isRecommended={isRecommended(pkg)}
-                onPress={() => setSelectedPackage(pkg)}
-                activeOpacity={0.7}
-              >
-                {isRecommended(pkg) && (
-                  <PackageHighlight>
-                    <Ionicons name="star" size={16} color={theme.colors.background} />
-                    {t('subscriptions.recommended')}
-                  </PackageHighlight>
-                )}
-                <PackageHeader>
-                  <PackageName>{getPackageDisplayName(pkg)}</PackageName>
+          <PackagesSectionContainer>
+            <PackagesRow>
+              {packages.slice(0, 2).map((pkg) => (
+                <PackageCard
+                  key={pkg.identifier}
+                  isSelected={selectedPackage?.identifier === pkg.identifier}
+                  isRecommended={isRecommended(pkg)}
+                  onPress={() => setSelectedPackage(pkg)}
+                  activeOpacity={0.7}
+                  style={{ flex: 1, marginHorizontal: 4 }}
+                >
+                  {isRecommended(pkg) && (
+                    <PackageHighlight>
+                      <Ionicons name="star" size={14} color={theme.background.primary} />
+                      <PackageHighlightText>{t('subscriptions.recommended')}</PackageHighlightText>
+                    </PackageHighlight>
+                  )}
+                  <PackageHeader>
+                    <PackageName>{getPackageDisplayName(pkg)}</PackageName>
+                  </PackageHeader>
                   <PackagePrice>
                     {pkg.product.priceString}
                     <PackagePriceUnit>
@@ -242,11 +267,11 @@ export function PaywallScreen() {
                       {pkg.packageType === 'WEEKLY' && `/${t('subscriptions.week')}`}
                     </PackagePriceUnit>
                   </PackagePrice>
-                </PackageHeader>
-                <PackageDescription>{getPackageDescription(pkg)}</PackageDescription>
-              </PackageCard>
-            ))}
-          </PackagesSection>
+                  <PackageDescription>{getPackageDescription(pkg)}</PackageDescription>
+                </PackageCard>
+              ))}
+            </PackagesRow>
+          </PackagesSectionContainer>
 
           <ButtonContainer>
             <Button
