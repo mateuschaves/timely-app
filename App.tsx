@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as SplashScreen from 'expo-splash-screen';
 import { AuthProvider, useAuthContext } from './src/features/auth';
-import { SubscriptionProvider } from './src/features/subscriptions';
+import { SubscriptionProvider, SubscriptionAuthSync } from './src/features/subscriptions';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
 import { OnboardingNavigator } from './src/navigation/OnboardingNavigator';
@@ -22,7 +22,7 @@ import { Platform } from 'react-native';
 SplashScreen.preventAutoHideAsync();
 
 const REVENUECAT_API_KEY = Platform.select({
-  ios: 'test_YVLYOxJIIWXPufinNXuknZzCrbk',
+  ios: 'appl_QNrzMhLQHcdNJWeOXnMJPmtoQdz',
   android: 'test_YVLYOxJIIWXPufinNXuknZzCrbk',
 });
 
@@ -129,6 +129,7 @@ function AppContent() {
         <ThemeWrapper>
           <AuthProvider>
             <SubscriptionProvider apiKey={REVENUECAT_API_KEY}>
+              <SubscriptionAuthSync />
               <FeedbackProvider>
                 <Navigation />
               </FeedbackProvider>

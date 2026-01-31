@@ -35,7 +35,6 @@ import {
   PackageHighlight,
   PackageHighlightText,
   ButtonContainer,
-  RestoreButton,
   RestoreButtonText,
   LoadingContainer,
   ErrorContainer,
@@ -279,9 +278,7 @@ export function PaywallScreen() {
             />
           </ButtonContainer>
 
-          <RestoreButton onPress={handleRestore} disabled={isPurchasing}>
-            <RestoreButtonText>{t('subscriptions.restorePurchases')}</RestoreButtonText>
-          </RestoreButton>
+          <RestoreButtonText onPress={handleRestore}>{t('subscriptions.restorePurchases')}</RestoreButtonText>
         </Content>
       </ScrollView>
     </Container>

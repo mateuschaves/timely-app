@@ -91,8 +91,8 @@ export const ContinueButton = styled.TouchableOpacity<{ theme: any; disabled?: b
   min-height: 50px;
 `;
 
-export const ContinueButtonText = styled.Text<{ disabled?: boolean }>`
+export const ContinueButtonText = styled.Text<{ theme: any; disabled?: boolean }>`
   font-size: ${typography.sizes.md}px;
   font-weight: ${typography.weights.semibold};
-  color: ${({ disabled }) => (disabled ? '#999' : '#ffffff')};
+  color: ${({ theme, disabled }) => (disabled ? theme.text.secondary : '#ffffff')};
 `;

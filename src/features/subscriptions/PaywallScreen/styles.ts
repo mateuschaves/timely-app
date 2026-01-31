@@ -101,8 +101,8 @@ export const FeatureItem = styled.View`
   align-items: flex-start;
   gap: ${spacing.sm}px;
   padding-bottom: ${spacing.sm}px;
-  border-bottom-width: 1px;
   border-bottom-color: ${({ theme }) => theme.border.light};
+  margin-bottom: ${spacing.sm}px;
   
   &:last-child {
     border-bottom-width: 0;
@@ -257,8 +257,9 @@ export const RestoreButton = styled.TouchableOpacity`
 export const RestoreButtonText = styled.Text`
   font-size: 15px;
   color: ${({ theme }) => theme.primary};
-  font-weight: 700;
   letter-spacing: 0.3px;
+  text-align: center;
+  margin-top: ${spacing.md}px;
 `;
 
 export const LoadingContainer = styled.View`

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
+import { Alert, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '@/navigation/AppNavigator';
@@ -8,7 +8,7 @@ import { useTheme } from '@/theme/context/ThemeContext';
 import { useGeofencing } from '@/features/time-clock/hooks/useGeofencing';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUserSettings, WorkLocation } from '@/api/update-user-settings';
+import { updateUserSettings } from '@/api/update-user-settings';
 import { useFeedback } from '@/utils/feedback';
 import { useTranslation } from '@/i18n';
 import { MapLocationPicker } from './MapLocationPicker';
@@ -67,6 +67,7 @@ export function WorkplaceLocationScreen() {
   const [selectedLocation, setSelectedLocation] = useState<LocationCoordinates | null>(null);
   const [selectedRadius, setSelectedRadius] = useState<number>(100);
   const [storedRadius, setStoredRadius] = useState<number | null>(null);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -379,15 +380,6 @@ export function WorkplaceLocationScreen() {
           )}
         </Section>
 
-        <Section>
-          <SectionTitle>{t('profile.howItWorksTitle')}</SectionTitle>
-          <Card>
-            <SectionDescription>
-              {t('profile.howItWorksDescription')}
-            </SectionDescription>
-          </Card>
-        </Section>
-
         {!hasPermission && workplaceLocation && (
           <WarningBox>
             <Ionicons name="alert-circle" size={24} color={theme.status.warning} />
@@ -454,6 +446,75 @@ export function WorkplaceLocationScreen() {
             }
           }}
         />
+      </Modal>
+
+      <Modal
+        visible={showHelpModal}
+        animationType="slide"
+        presentationStyle="formSheet"
+        onRequestClose={() => setShowHelpModal(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: theme.background.primary }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.md }}>
+            <Text style={{ flex: 1, fontSize: 18, fontWeight: '600', color: theme.text.primary }}>
+              {t('profile.frequentlyAsked')}
+            </Text>
+            <Button
+              onPress={() => setShowHelpModal(false)}
+              style={{ paddingHorizontal: 8 }}
+              variant="ghost"
+            >
+              <Ionicons name="close" size={24} color={theme.text.primary} />
+            </Button>
+          </View>
+
+          <View style={{ flex: 1, paddingHorizontal: spacing.lg, paddingVertical: spacing.md }}>
+            <View style={{ marginBottom: spacing.lg }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.text.primary, marginBottom: spacing.sm }}>
+                ❓ {t('profile.faqQuestion1')}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.text.secondary, lineHeight: 20 }}>
+                {t('profile.faqAnswer1')}
+              </Text>
+            </View>
+
+            <View style={{ marginBottom: spacing.lg }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.text.primary, marginBottom: spacing.sm }}>
+                ❓ {t('profile.faqQuestion2')}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.text.secondary, lineHeight: 20 }}>
+                {t('profile.faqAnswer2')}
+              </Text>
+            </View>
+
+            <View style={{ marginBottom: spacing.lg }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.text.primary, marginBottom: spacing.sm }}>
+                ⚠️ {t('profile.faqQuestion3')}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.text.secondary, lineHeight: 20 }}>
+                {t('profile.faqAnswer3')}
+              </Text>
+            </View>
+
+            <View style={{ marginBottom: spacing.lg }}>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.text.primary, marginBottom: spacing.sm }}>
+                📍 {t('profile.faqQuestion4')}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.text.secondary, lineHeight: 20 }}>
+                {t('profile.faqAnswer4')}
+              </Text>
+            </View>
+
+            <View>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: theme.text.primary, marginBottom: spacing.sm }}>
+                🔔 {t('profile.faqQuestion5')}
+              </Text>
+              <Text style={{ fontSize: 13, color: theme.text.secondary, lineHeight: 20 }}>
+                {t('profile.faqAnswer5')}
+              </Text>
+            </View>
+          </View>
+        </View>
       </Modal>
     </Container>
   );

@@ -37,9 +37,9 @@ export function useNotifications() {
       }
     };
 
-    if (settings) {
+    if (settings?.workSchedule) {
       setupNotifications();
     }
-  }, [settings, t]);
+  }, [settings?.workSchedule, t]);
 }
 

@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useOnboarding } from '../hooks/useOnboarding';
 import { WorkModel } from '../types';
+import { Button } from '@/components/Button';
 import {
   Container,
   Header,
@@ -16,8 +17,6 @@ import {
   OptionTitle,
   OptionDescription,
   ButtonContainer,
-  ContinueButton,
-  ContinueButtonText,
 } from './styles';
 
 interface WorkModelOption {
@@ -127,15 +126,11 @@ export function WorkModelSelectionScreen() {
       </Content>
 
       <ButtonContainer>
-        <ContinueButton
+        <Button
+          title={t('onboarding.workModel.continue')}
           onPress={handleContinue}
           disabled={!selectedModel}
-          activeOpacity={0.8}
-        >
-          <ContinueButtonText disabled={!selectedModel}>
-            {t('onboarding.workModel.continue')}
-          </ContinueButtonText>
-        </ContinueButton>
+        />
       </ButtonContainer>
     </Container>
   );
