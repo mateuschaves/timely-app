@@ -38,6 +38,7 @@ export interface UpdateUserSettingsRequest {
   hourlyRate?: number;
   lunchBreakMinutes?: number;
   hourMultipliers?: HourMultipliers;
+  autoDetectArrival?: boolean;
 }
 
 export interface UpdateUserSettingsResponse {
@@ -48,6 +49,7 @@ export interface UpdateUserSettingsResponse {
   hourlyRate?: number;
   lunchBreakMinutes?: number;
   hourMultipliers?: HourMultipliers;
+  autoDetectArrival?: boolean;
 }
 
 export const updateUserSettings = async (

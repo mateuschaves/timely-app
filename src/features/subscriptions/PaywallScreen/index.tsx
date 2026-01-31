@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { ScrollView, ActivityIndicator } from 'react-native';
 import { useTranslation } from '@/i18n';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,7 +12,6 @@ import {
   Container,
   Content,
   Header,
-  BackButton,
   CloseButton,
   HeroSection,
   HeroIcon,
@@ -60,8 +59,6 @@ export function PaywallScreen() {
   const { packages, currentOffering, isLoading: isLoadingOfferings } = useSubscriptions();
   const { purchase, restore, isLoading: isPurchasing } = usePurchase();
   const [selectedPackage, setSelectedPackage] = useState<PurchasesPackage | null>(null);
-
-  const feature = route.params?.feature;
 
   const features = [
     {
