@@ -7,6 +7,7 @@ import { useAuthContext } from '@/features/auth';
 import { useTimeClock } from '@/features/time-clock/hooks/useTimeClock';
 import { useLocation } from '@/features/time-clock/hooks/useLocation';
 import { useLiveActivity } from '@/features/time-clock/hooks/useLiveActivity';
+import { useGeofencing } from '@/features/time-clock/hooks/useGeofencing';
 import { useLastEvent } from '../hooks/useLastEvent';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -35,6 +36,7 @@ export function HomeScreen() {
   const { startWorkSessionActivity, stopWorkSessionActivity } = useLiveActivity();
   const { hasWorkSettings, canShowCard } = useWorkSettings();
   const { hasHourlyRate, canShowCard: canShowHourlyRateCard } = useHourlyRate();
+  const { refreshStatus } = useGeofencing();
   const [hasLocationPermission, setHasLocationPermission] = useState<boolean | null>(null);
   const [isCheckingLocation, setIsCheckingLocation] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -136,7 +138,10 @@ export function HomeScreen() {
 
       // Refazer queries de userSettings quando a tela recebe foco para atualizar os hints
       queryClient.invalidateQueries({ queryKey: ['userSettings'] });
-    }, [queryClient])
+
+      // Sincronizar status de geofencing com o valor do backend (autoDetectArrival)
+      refreshStatus();
+    }, [queryClient, refreshStatus])
   );
 
   // Manage Live Activity based on current user state (clocked in or not)

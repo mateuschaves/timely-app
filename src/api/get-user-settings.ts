@@ -11,6 +11,7 @@ export interface UserSettingsResponse {
   lunchBreakMinutes?: number;
   hourMultipliers?: HourMultipliers;
   timeFormat12h?: boolean;
+  autoDetectArrival?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

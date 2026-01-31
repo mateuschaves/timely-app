@@ -65,6 +65,32 @@ export function useGeofencing() {
   // Check if geofencing is available (iOS only for now)
   const isAvailable = Platform.OS === 'ios';
 
+  const refreshStatus = useCallback(() => {
+    if (!isAvailable) {
+      return;
+    }
+
+    if (!ExpoGeofencing) {
+      return;
+    }
+
+    if (typeof ExpoGeofencing.getMonitoredRegions !== 'function' || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
+      return;
+    }
+
+    try {
+      const regions = ExpoGeofencing.getMonitoredRegions();
+      const monitoring = regions.includes(WORKPLACE_GEOFENCE_ID);
+      setIsMonitoring(monitoring);
+
+      const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
+      setHasPermission(hasAuth);
+      console.log('✅ Geofence status checked - monitoring:', monitoring, 'hasPermission:', hasAuth);
+    } catch (error) {
+      console.error('❌ Error checking geofence status:', error);
+    }
+  }, [isAvailable]);
+
   /**
    * Request "Always" location permission needed for background geofencing
    */
@@ -353,50 +379,40 @@ export function useGeofencing() {
     };
   }, [isAvailable, handleGeofenceEnter, handleGeofenceExit, handleGeofenceError]);
 
+  // Sync monitoring state with autoDetectArrival setting from backend
+  useEffect(() => {
+    if (!isAvailable || !settings) {
+      return;
+    }
+
+    // First, check current status to synchronize with actual state
+    refreshStatus();
+
+    // If autoDetectArrival is false but we're monitoring, stop it
+    if (settings.autoDetectArrival === false && isMonitoring) {
+      stopMonitoring();
+      return;
+    }
+
+    // If autoDetectArrival is true but we're not monitoring, start it
+    if (settings.autoDetectArrival === true && !isMonitoring && settings.workLocation && hasGeofencing) {
+      startMonitoring();
+      return;
+    }
+  }, [settings?.autoDetectArrival, isAvailable, isMonitoring, stopMonitoring, startMonitoring, settings?.workLocation, hasGeofencing, refreshStatus]);
+
   // Check current monitoring status on mount
   useEffect(() => {
     if (!isAvailable) {
       return;
     }
 
-    // Add a delay to ensure module is fully initialized
-    const checkStatus = () => {
-      // Check if module exists and has required methods
-      if (!ExpoGeofencing) {
-        // Silently return - module may not be loaded yet
-        return;
-      }
-      
-      if (typeof ExpoGeofencing.getMonitoredRegions !== 'function' || typeof ExpoGeofencing.hasAlwaysAuthorization !== 'function') {
-        // Silently return - methods may not be available yet
-        return;
-      }
-
-      try {
-        const regions = ExpoGeofencing.getMonitoredRegions();
-        const monitoring = regions.includes(WORKPLACE_GEOFENCE_ID);
-        setIsMonitoring(monitoring);
-
-        const hasAuth = ExpoGeofencing.hasAlwaysAuthorization();
-        setHasPermission(hasAuth);
-        console.log('✅ Geofence status checked - monitoring:', monitoring, 'hasPermission:', hasAuth);
-      } catch (error) {
-        console.error('❌ Error checking geofence status:', error);
-      }
-    };
-
-    // Check after a delay to ensure module is fully initialized
-    // Use multiple timeouts to handle different initialization speeds
-    const timeout1 = setTimeout(checkStatus, 200);
-    const timeout2 = setTimeout(checkStatus, 500);
-    const timeout3 = setTimeout(checkStatus, 1000);
-    
-    return () => {
-      clearTimeout(timeout1);
-      clearTimeout(timeout2);
-      clearTimeout(timeout3);
-    };
-  }, [isAvailable]);
+    // Only check status on mount if we don't have settings yet
+    // (settings will trigger the sync effect above)
+    if (!settings) {
+      refreshStatus();
+    }
+  }, [isAvailable, settings, refreshStatus]);
 
   return {
     isAvailable,
@@ -406,6 +422,7 @@ export function useGeofencing() {
     startMonitoring,
     stopMonitoring,
     requestPermission,
+    refreshStatus,
     workplaceLocation: settings?.workLocation,
   };
 }

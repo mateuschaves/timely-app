@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Alert, ActivityIndicator, Platform, Linking, Modal, View, StyleSheet, Text, Switch } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { AppStackParamList } from '@/navigation/AppNavigator';
 import { Ionicons } from '@expo/vector-icons';
@@ -56,6 +56,7 @@ export function WorkplaceLocationScreen() {
     startMonitoring,
     stopMonitoring,
     requestPermission,
+    refreshStatus,
     workplaceLocation,
   } = useGeofencing();
 
@@ -66,6 +67,12 @@ export function WorkplaceLocationScreen() {
   const [selectedLocation, setSelectedLocation] = useState<LocationCoordinates | null>(null);
   const [selectedRadius, setSelectedRadius] = useState<number>(100);
   const [storedRadius, setStoredRadius] = useState<number | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshStatus();
+    }, [refreshStatus])
+  );
 
   // Load stored radius on mount
   useEffect(() => {
@@ -208,29 +215,44 @@ export function WorkplaceLocationScreen() {
       return;
     }
 
-    if (isMonitoring) {
-      stopMonitoring();
-      showSuccess(t('profile.geofenceDeactivated'));
-    } else {
-      if (!hasPermission) {
-        const granted = await requestPermission();
-        if (!granted) {
-          Alert.alert(
-            t('profile.permissionRequired'),
-            t('profile.alwaysLocationPermissionMessage')
-          );
-          return;
-        }
-      }
+    const newMonitoringState = !isMonitoring;
 
-      const success = await startMonitoring();
-      if (success) {
-        showSuccess(t('profile.geofenceActivated'));
+    try {
+      if (newMonitoringState) {
+        if (!hasPermission) {
+          const granted = await requestPermission();
+          if (!granted) {
+            Alert.alert(
+              t('profile.permissionRequired'),
+              t('profile.alwaysLocationPermissionMessage')
+            );
+            return;
+          }
+        }
+
+        const success = await startMonitoring();
+        if (success) {
+          // Update backend with new setting
+          await updateSettingsMutation.mutateAsync({
+            autoDetectArrival: true,
+          });
+          showSuccess(t('profile.geofenceActivated'));
+        } else {
+          showError(t('profile.geofenceActivationError'));
+        }
       } else {
-        showError(t('profile.geofenceActivationError'));
+        stopMonitoring();
+        // Update backend with new setting
+        await updateSettingsMutation.mutateAsync({
+          autoDetectArrival: false,
+        });
+        showSuccess(t('profile.geofenceDeactivated'));
       }
+    } catch (error) {
+      console.error('Error toggling geofencing:', error);
+      showError(t('profile.geofenceActivationError'));
     }
-  }, [hasGeofencing, navigation, isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, showSuccess, showError, t]);
+  }, [hasGeofencing, navigation, isMonitoring, hasPermission, requestPermission, startMonitoring, stopMonitoring, updateSettingsMutation, showSuccess, showError, t]);
 
   if (!isAvailable) {
     return (
